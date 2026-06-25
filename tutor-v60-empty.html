@@ -1,0 +1,3693 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Репетитор</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#241500;--ink2:#4a3520;--ink3:#786050;
+  --bg:#f4f3ee;--bg2:#fff;--bg3:#eeede7;--bg4:#e5e4dc;
+  --accent:#FFE500;--al:#FFFCE0;--am:#FFE500;
+  --ok:#2d5f3f;--ok-l:#e4f0e8;--ok-m:#9dc9ae;
+  --warn:#a8420f;--wl:#faeae3;
+  --purple:#5b4a8a;--pl:#eeeaf8;
+  --blue:#1f4e78;--blue-l:#e6f0f8;
+  --border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.05);
+  --sh:0 1px 3px rgba(0,0,0,.07),0 4px 12px rgba(0,0,0,.05);
+  --r:5px;--r2:8px;
+  /* Type scale — modular, 6 sizes (replaces 13 ad-hoc sizes) */
+  --fs-xs:12px;   /* captions, meta — min legible */
+  --fs-sm:13px;   /* secondary body */
+  --fs-md:15px;   /* primary body */
+  --fs-lg:18px;   /* section / card titles */
+  --fs-xl:22px;   /* page stats */
+  --fs-2xl:28px;  /* hero numbers */
+  /* Spacing scale — 4px grid */
+  --sp1:4px;--sp2:8px;--sp3:12px;--sp4:16px;--sp5:20px;--sp6:24px;
+  /* Status colors (was hardcoded inline) */
+  --status-debt:#a8420f;--status-prepay:#1f4e78;--status-ok:#2d5f3f;
+  --neutral:#6b6b62;
+  --cancel-bg:#d4d3ca;--cancel-ink:#4a4a40;
+}
+body{font-family:'Outfit',system-ui,-apple-system,sans-serif;font-size:15px;color:var(--ink);background:var(--bg);min-height:100vh}
+#app{display:flex;height:100vh;overflow:hidden}
+svg use{pointer-events:none}
+
+/* Focus-visible — keyboard accessibility (WCAG 2.4.7) */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+button:focus-visible,.nav-i:focus-visible,.tab:focus-visible,.att-item:focus-visible,.hg-cell:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:0}
+/* Remove outline only for mouse users who didn't tab */
+:focus:not(:focus-visible){outline:none}
+
+/* Sidebar */
+.sb{width:216px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border2)}
+.sb-name{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.03em;font-family:'Syne',sans-serif}
+.sb-sub{font-size:12px;color:var(--ink3);margin-top:2px}
+.sb-nav{padding:10px 8px;flex:1}
+.nav-i{display:flex;align-items:center;gap:10px;padding:10px 11px;min-height:40px;border-radius:var(--r);cursor:pointer;font-size:13px;font-weight:500;color:var(--ink3);transition:all .14s;margin-bottom:1px;border:1px solid transparent}
+.nav-i svg{flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.nav-i:hover{background:var(--bg3);color:var(--ink2)}
+.nav-i.on{background:var(--al);color:var(--ink);border-color:var(--am)}
+.sb-footer{padding:10px 8px;border-top:1px solid var(--border2)}
+
+/* Main */
+.main{flex:1;overflow-y:auto;background:var(--bg)}
+.pg{display:none;padding:28px 32px 40px}
+.pg.on{display:block}
+.pg-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.pg-title{font-size:22px;font-weight:800;letter-spacing:-.03em;font-family:'Syne',sans-serif}
+.row{display:flex;gap:8px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;min-height:40px;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;border:1px solid transparent;font-family:'Syne',sans-serif;transition:all .14s;white-space:nowrap;line-height:1}
+.btn svg{stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.btn-p{background:var(--accent);color:var(--ink)}.btn-p:hover{opacity:.88}
+.btn-g{background:var(--bg2);color:var(--ink2);border-color:var(--border)}.btn-g:hover{background:var(--bg3)}
+.btn-d{background:var(--wl);color:var(--warn)}.btn-d:hover{border-color:var(--warn)}
+.btn-sm{padding:7px 12px;min-height:32px;font-size:12px}
+
+/* Section label */
+.sec-lbl{font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px}
+
+/* Students table */
+.st-table{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.st-toolbar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border2)}
+.search{position:relative;flex:1;display:block}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none;display:flex;align-items:center;stroke:var(--ink3);fill:none;stroke-width:1.9;stroke-linecap:round}
+.search input{width:100%;padding:8px 10px 8px 34px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--ink);font-size:13px;font-family:inherit;outline:none;transition:border-color .14s;width:100%;display:block}
+.search input:focus{border-color:var(--accent)}
+.tabs{display:flex;gap:1px;background:var(--bg3);padding:2px;border-radius:8px}
+.tab{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;color:var(--ink3);transition:all .14s}
+.tab.on{background:var(--bg2);color:var(--ink);box-shadow:var(--sh)}
+.st-head{display:grid;grid-template-columns:1fr 160px 36px;padding:8px 14px;border-bottom:1px solid var(--border2);background:var(--bg3)}
+.st-head span{font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em}
+.st-row{display:grid;grid-template-columns:1fr 160px 36px;padding:11px 14px;border-bottom:1px solid var(--border2);align-items:center;cursor:pointer;transition:background .12s}
+.st-row:last-child{border-bottom:none}
+.st-row:hover{background:var(--bg3)}
+.st-name-cell{display:flex;align-items:center;gap:9px}
+.st-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.st-name{font-weight:700;font-size:14px;font-family:'Syne',sans-serif}
+.st-note{font-size:12px;color:var(--ink3);margin-top:2px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.type-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:99px}
+.tb-ind{background:var(--pl);color:var(--purple)}
+.tb-grp{background:var(--ok-l);color:var(--ok)}
+.tb-both{background:var(--bg3);color:var(--ink2);border:1px solid var(--border)}
+.tb-warn{background:var(--wl);color:var(--warn);border:1px solid rgba(168,66,15,.2)}
+.more-btn{opacity:0;background:none;border:none;cursor:pointer;color:var(--ink3);padding:4px;border-radius:6px;display:flex;align-items:center;transition:all .14s}
+.more-btn svg{stroke:currentColor;fill:currentColor;stroke-width:0}
+.st-row:hover .more-btn{opacity:1}
+.more-btn:hover{background:var(--bg4);color:var(--ink)}
+
+/* Groups grid */
+.groups-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.gc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;cursor:pointer;transition:all .14s}
+.gc:hover{border-color:var(--am);box-shadow:var(--sh)}
+.gc-bar{height:3px}
+.gc-body{padding:16px}
+.gc-name{font-size:15px;font-weight:700;margin-bottom:3px;font-family:'Syne',sans-serif}
+.gc-meta{font-size:12px;color:var(--ink3);margin-bottom:10px}
+.gc-avs{display:flex;margin-bottom:8px}
+.gc-av{width:24px;height:24px;border-radius:50%;border:2px solid var(--bg2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-left:-5px;flex-shrink:0}
+.gc-av:first-child{margin-left:0}
+.gc-sched{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.day-chip{font-size:12px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--bg3);color:var(--ink2)}
+.gc-add{background:var(--bg3);border:1.5px dashed var(--border);border-radius:var(--r2);padding:20px;text-align:center;cursor:pointer;transition:all .14s;color:var(--ink3);font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px;min-height:90px}
+.gc-add svg{stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.gc-add:hover{border-color:var(--am);color:var(--ink);background:var(--al)}
+
+/* Schedule page */
+.week-nav{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.week-nav button{background:none;border:1px solid var(--border);border-radius:8px;width:30px;height:30px;cursor:pointer;color:var(--ink2);display:flex;align-items:center;justify-content:center;transition:background .14s}
+.week-nav button svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.week-nav button:hover{background:var(--bg3)}
+.week-lbl{font-size:15px;font-weight:600}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.day-col{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;min-height:160px}
+.day-head{padding:8px 6px;text-align:center;border-bottom:1px solid var(--border2)}
+.day-name{font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
+.day-num{font-size:18px;font-weight:700;margin-top:1px}
+.day-col.today .day-head{background:var(--al)}
+.day-col.today .day-num{color:var(--ink)}
+.day-body{padding:5px}
+.lesson-chip{padding:4px 7px;border-radius:7px;margin-bottom:3px;cursor:pointer;transition:opacity .14s}
+.lesson-chip:hover{opacity:.8}
+.lc-time{font-size:12px;color:rgba(255,255,255,.75)}
+.lc-name{font-size:12px;font-weight:600;color:#fff}
+
+/* Payments */
+.pay-table{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.pay-head{display:grid;grid-template-columns:1fr 80px 80px 90px 100px;padding:9px 16px;border-bottom:1px solid var(--border);background:var(--bg3)}
+.pay-head span{font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em}
+.pay-gr{display:flex;align-items:center;gap:8px;padding:7px 16px;background:var(--bg3);border-bottom:1px solid var(--border2)}
+.pay-gr-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pay-gr-name{font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em}
+.pay-row{display:grid;grid-template-columns:1fr 80px 80px 90px 100px;padding:12px 16px;border-bottom:1px solid var(--border2);align-items:center;transition:background .12s}
+.pay-row:last-child{border-bottom:none}
+.pay-row:hover{background:var(--bg3)}
+.pay-name{font-weight:600;font-size:13px}
+.pay-sub{font-size:12px;color:var(--ink3)}
+.pay-num{font-size:13px;color:var(--ink2)}
+.pay-debt{font-size:13px;font-weight:600;color:var(--warn)}
+.pay-ok{font-size:13px;color:var(--ok)}
+.pay-btn{font-size:12px;padding:4px 11px;border-radius:7px;background:var(--ok-l);color:var(--ok);border:1px solid var(--ok-m);cursor:pointer;font-weight:600;font-family:inherit;transition:background .14s}
+.pay-btn:hover{background:var(--ok-m)}
+
+/* Settings */
+.settings-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:22px 24px;max-width:480px;margin-bottom:16px}
+.settings-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.settings-sub{font-size:13px;color:var(--ink3);margin-bottom:20px;line-height:1.5}
+
+/* Modals */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.42);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;backdrop-filter:blur(2px)}
+.overlay.on{display:flex}
+.modal{background:var(--bg2);border-radius:18px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.18);border:1px solid var(--border)}
+.modal-lg{max-width:580px}
+.mhead{display:flex;align-items:center;justify-content:space-between;padding:20px 22px 16px;border-bottom:1px solid var(--border2);position:sticky;top:0;background:var(--bg2);z-index:1}
+.mtitle{font-size:15px;font-weight:700;letter-spacing:-.02em;font-family:'Syne',sans-serif}
+.mclose{background:var(--bg3);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--ink3);transition:all .14s}
+.mclose:hover{background:var(--bg4);color:var(--ink)}
+.mclose svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.mbody{padding:20px 22px}
+.mfoot{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid var(--border2);position:sticky;bottom:0;background:var(--bg2)}
+.mfoot-l{margin-right:auto}
+
+/* Form */
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.flbl{font-size:12px;font-weight:700;color:var(--ink2);letter-spacing:.02em;margin-bottom:6px;display:block}
+.fhint{font-size:12px;color:var(--ink3);margin-bottom:6px;line-height:1.5}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+input[type=text],input[type=number],input[type=tel],select,textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:9px;background:var(--bg);color:var(--ink);font-size:13px;font-family:inherit;outline:none;transition:border-color .14s,box-shadow .14s;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--al)}
+textarea{resize:vertical;min-height:75px;line-height:1.6}
+.price-hint{font-size:12px;color:var(--ink3);margin-top:5px}
+.price-hint b{color:var(--ok)}
+
+/* Divider inside modal */
+.mdiv{border:none;border-top:1px solid var(--border2);margin:18px 0}
+
+/* Lesson type */
+.lt-list{display:flex;flex-direction:column;gap:7px}
+.lt-row{border:1.5px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .14s}
+.lt-row.on{border-color:var(--am)}
+.lt-header{display:flex;align-items:center;gap:11px;padding:12px 13px;cursor:pointer;user-select:none;transition:background .14s}
+.lt-header:hover{background:var(--bg3)}
+.lt-row.on .lt-header{background:var(--al)}
+.lt-cb{width:19px;height:19px;border-radius:5px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .14s;background:var(--bg2)}
+.lt-row.on .lt-cb{background:var(--accent);border-color:var(--accent)}
+.lt-cb svg{width:10px;height:10px;stroke:var(--ink);stroke-width:2.5;fill:none;opacity:0;transition:opacity .14s}
+.lt-row.on .lt-cb svg{opacity:1}
+.lt-lbl{font-size:13px;font-weight:600}
+.lt-sub{font-size:12px;color:var(--ink3);margin-top:2px}
+.lt-expand{padding:0 13px 13px;display:none;border-top:1px solid var(--border2);background:var(--bg);margin-top:0}
+.lt-row.on .lt-expand{display:block;padding-top:12px}
+
+/* Schedule widget */
+.sched-list{display:flex;flex-direction:column;gap:6px}
+.sched-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:9px}
+.sched-item.conflict{border-color:var(--warn);background:var(--wl)}
+.sched-day-sel,.sched-time{padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-size:12px;font-family:inherit;outline:none}
+.sched-time{width:76px}
+.sched-conflict-msg{font-size:12px;color:var(--warn);margin-left:4px;flex:1}
+.sched-del{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--ink3);padding:3px;border-radius:5px;display:flex;align-items:center;transition:all .14s;flex-shrink:0}
+.sched-del svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.sched-del:hover{background:var(--wl);color:var(--warn)}
+.sched-add{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--ink3);cursor:pointer;border:none;background:none;font-family:inherit;padding:4px 0;margin-top:6px;transition:color .14s}
+.sched-add svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.sched-add:hover{color:var(--ink)}
+
+/* Group chips + inline creation */
+.lt-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.lt-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--ink2);background:var(--bg2);transition:all .14s}
+.lt-chip:hover{border-color:currentColor}
+.lt-chip.on{border-color:currentColor}
+.lt-chip svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.5}
+.grp-info-card{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;margin-top:6px;margin-bottom:4px}
+.grp-info-row{display:flex;align-items:flex-start;gap:6px;font-size:12px;color:var(--ink3);margin-bottom:3px}
+.grp-info-row:last-child{margin-bottom:0}
+.grp-info-row b{color:var(--ink2);font-weight:600}
+.grp-info-sched{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
+.ing-btn{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--ink3);cursor:pointer;border:none;background:none;font-family:inherit;padding:3px 0;transition:color .14s}
+.ing-btn svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.ing-btn:hover{color:var(--ink)}
+.ing-form{margin-top:8px;padding:11px 13px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;animation:fadeUp .16s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+.ing-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ing-input{flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:7px;background:var(--bg2);color:var(--ink);font-size:13px;font-family:inherit;outline:none;transition:border-color .14s}
+.ing-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--al)}
+.ing-colors{display:flex;gap:5px}
+.ing-sw{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .12s,border-color .12s;flex-shrink:0}
+.ing-sw:hover{transform:scale(1.15)}
+.ing-sw.on{border-color:var(--ink)}
+.ing-actions{display:flex;justify-content:flex-end;gap:6px}
+.ing-cancel{padding:5px 11px;border:1px solid var(--border);border-radius:7px;background:none;color:var(--ink3);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:background .14s}
+.ing-cancel:hover{background:var(--bg4)}
+.ing-save{padding:5px 13px;border:none;border-radius:7px;background:var(--accent);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .14s}
+.ing-save:hover{opacity:.88}
+
+/* Colors */
+.colors{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
+.csw{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .12s,border-color .12s}
+.csw:hover{transform:scale(1.15)}
+.csw.on{border-color:var(--ink)}
+
+/* File upload */
+.file-upload{border:1.5px dashed var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all .14s;color:var(--ink3);font-size:13px}
+.file-upload:hover{border-color:var(--am);color:var(--ink);background:var(--al)}
+.file-upload input{display:none}
+.file-list{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.file-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg3);border-radius:8px;font-size:12px}
+.file-item-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-item-del{background:none;border:none;cursor:pointer;color:var(--ink3);padding:2px;border-radius:4px;display:flex;align-items:center;transition:color .14s}
+.file-item-del svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.file-item-del:hover{color:var(--warn)}
+
+/* Picker */
+.picker-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:6px}
+.picker-search{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border2)}
+.picker-search svg{stroke:var(--ink3);fill:none;stroke-width:1.9;stroke-linecap:round;flex-shrink:0}
+.picker-search input{border:none;background:transparent;font-size:13px;font-family:inherit;outline:none;flex:1;color:var(--ink)}
+.picker-list{max-height:200px;overflow-y:auto}
+.pick-item{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--border2);transition:background .12s}
+.pick-item:last-child{border-bottom:none}
+.pick-item:hover{background:var(--bg3)}
+.pick-item.on{background:var(--al)}
+.pick-cb{width:17px;height:17px;border-radius:5px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .14s}
+.pick-item.on .pick-cb{background:var(--accent);border-color:var(--accent)}
+.pick-cb svg{width:9px;height:9px;stroke:var(--ink);stroke-width:2.5;fill:none;display:none}
+.pick-item.on .pick-cb svg{display:block}
+.pick-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.pick-info{flex:1}
+.pick-name{font-size:13px;font-weight:500}
+.pick-sub{font-size:12px;color:var(--ink3);margin-top:1px}
+.pick-count{font-size:12px;color:var(--ink3);margin-top:6px}
+.picker-empty{padding:18px;text-align:center;font-size:13px;color:var(--ink3)}
+
+/* Empty state */
+.empty{padding:48px 20px;text-align:center;color:var(--ink3)}
+.empty svg{stroke:var(--ink3);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:.22;margin:0 auto 12px;display:block}
+.empty-t{font-size:15px;font-weight:600;color:var(--ink2);margin-bottom:5px}
+.empty-s{font-size:12px;line-height:1.7;margin-bottom:16px}
+
+
+/* Hour grid (week view) */
+.hour-grid{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.hg-scroll{max-height:calc(100vh - 220px);overflow-y:auto}
+/* single shared grid: gutter column + 7 day columns */
+.hg-header,.hg-body-grid{display:grid;grid-template-columns:52px repeat(7,1fr)}
+.hg-header{position:sticky;top:0;z-index:5;background:var(--bg2);border-bottom:1px solid var(--border)}
+.hg-corner{border-right:1px solid var(--border2);background:var(--bg2)}
+.hg-day-head{padding:8px 4px;text-align:center;border-right:1px solid var(--border2)}
+.hg-day-head:last-child{border-right:none}
+.hg-day-head.today{background:var(--al)}
+.hg-day-name{font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
+.hg-day-head.today .hg-day-name{color:var(--ink)}
+.hg-day-num{font-size:18px;font-weight:700;margin-top:1px}
+.hg-day-head.today .hg-day-num{color:var(--ink)}
+.hg-gutter-col{display:flex;flex-direction:column;border-right:1px solid var(--border2)}
+.hg-hour-label{font-size:12px;color:var(--ink3);text-align:right;padding:2px 6px 0 0;box-sizing:border-box;position:relative;top:-6px}
+.hg-day-col{position:relative;border-right:1px solid var(--border2)}
+.hg-day-col:last-child{border-right:none}
+.hg-day-col.today{background:rgba(45,95,63,.025)}
+.hg-cell{border-bottom:1px solid var(--border2);box-sizing:border-box;cursor:pointer;transition:background .1s}
+.hg-cell:hover{background:var(--al)}
+.hg-event{position:absolute;left:2px;right:2px;border-radius:6px;padding:3px 6px;cursor:pointer;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.12);transition:filter .12s;z-index:2}
+.hg-event:hover{filter:brightness(.93)}
+.hg-event.cancelled{background:var(--cancel-bg)!important}
+.hg-event.cancelled .hg-event-time,.hg-event.cancelled .hg-event-name{color:var(--cancel-ink)}
+.hg-event.cancelled .hg-event-name{text-decoration:line-through}
+.hg-event-time{font-size:12px;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:3px;line-height:1.2}
+.hg-event-name{font-size:12px;font-weight:600;color:#fff;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Month view */
+.month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0;border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;background:var(--border)}
+.month-day-head{background:var(--bg3);padding:6px;text-align:center;font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;border-right:1px solid var(--border)}
+.month-day-head:last-child{border-right:none}
+.month-cell{background:var(--bg2);padding:6px;min-height:80px;border-right:1px solid var(--border2);border-bottom:1px solid var(--border2);vertical-align:top;cursor:default}
+.month-cell:nth-child(7n){border-right:none}
+.month-cell.today{background:var(--al)}
+.month-cell.other-month{background:var(--bg3);opacity:.6}
+.month-num{font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:3px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.month-cell.today .month-num{background:var(--accent);color:#fff}
+.month-chip{font-size:12px;font-weight:600;padding:2px 6px;border-radius:5px;margin-bottom:2px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;transition:opacity .12s}
+.month-chip:hover{opacity:.8}
+
+/* Sched nav buttons */
+#sched-prev,#sched-next{background:none;border:1px solid var(--border);border-radius:8px;width:28px;height:28px;cursor:pointer;color:var(--ink2);display:flex;align-items:center;justify-content:center;transition:background .14s;flex-shrink:0}
+#sched-prev svg,#sched-next svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#sched-prev:hover,#sched-next:hover{background:var(--bg3)}
+
+/* Event type toggle */
+.ev-type-btn{padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .14s;color:var(--ink3);background:var(--bg)}
+.ev-type-btn:hover{border-color:var(--am);background:var(--al);color:var(--ink)}
+.ev-type-btn.on{border-color:var(--am);background:var(--al);color:var(--ink)}
+
+/* Lesson chip enhanced */
+.lesson-chip{padding:5px 8px;border-radius:7px;margin-bottom:3px;cursor:pointer;transition:opacity .14s;position:relative}
+.lesson-chip:hover{opacity:.85}
+.lc-type-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.6);display:inline-block;margin-right:3px;vertical-align:1px}
+
+/* Attendance item */
+.att-item{display:flex;align-items:center;gap:10px;padding:11px 12px;min-height:44px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;transition:all .14s;user-select:none;justify-content:space-between}
+.att-item:hover{background:var(--bg3)}
+.att-item.present{background:var(--al);border-color:var(--am)}
+.att-item.absent{background:var(--bg2);border-color:var(--border)}
+.att-cb{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .14s;background:var(--bg2)}
+.att-item.present .att-cb{background:var(--accent);border-color:var(--accent)}
+.att-cb svg{width:10px;height:10px;stroke:var(--ink);stroke-width:2.5;fill:none;opacity:0;transition:opacity .14s}
+.att-item.present .att-cb svg{opacity:1}
+.att-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.att-name{font-size:13px;font-weight:500;flex:1}
+.att-status{font-size:12px;font-weight:600;padding:2px 8px;border-radius:99px}
+.att-item.present .att-status{background:var(--ok-m);color:var(--ok)}
+.att-item.absent .att-status{color:var(--ink3)}
+
+/* Payment card */
+.pay-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.pay-card-head{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--border2)}
+.pay-card-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.pay-card-name{font-size:15px;font-weight:700;flex:1}
+.pay-card-groups{font-size:12px;color:var(--ink3)}
+.pay-balance{font-size:15px;font-weight:700;white-space:nowrap;text-align:right}
+.pay-balance-ok{color:#1f4e78}
+.pay-balance-debt{color:#8b1a1a}
+.pay-balance-pre{color:#2d5f3f}
+.pay-card-body{padding:12px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pay-stat{font-size:12px;color:var(--ink3)}
+.pay-stat b{color:var(--ink2);font-weight:600}
+.pay-history-toggle{font-size:12px;color:var(--ok);cursor:pointer;background:none;border:none;font-family:inherit;padding:0;margin-left:auto}
+.pay-history{border-top:1px solid var(--border2);padding:0 16px}
+.pay-hist-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border2);font-size:12px}
+.pay-hist-row:last-child{border-bottom:none}
+.pay-hist-amount{font-weight:600;margin-left:auto;white-space:nowrap}
+.pay-hist-type{font-size:12px;padding:2px 7px;border-radius:99px;font-weight:600}
+.pay-hist-prepay{background:var(--blue-l,#e6f0f8);color:var(--blue,#1f4e78)}
+.pay-hist-pay{background:var(--ok-l);color:var(--ok)}
+.pay-summary-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px}
+.pay-summary-lbl{font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.pay-summary-val{font-size:22px;font-weight:700;letter-spacing:-.03em}
+
+/* Journal */
+.journal-student-item{display:flex;align-items:center;gap:9px;padding:10px 12px;cursor:pointer;transition:background .12s;border-bottom:1px solid var(--border2)}
+.journal-student-item:last-child{border-bottom:none}
+.journal-student-item:hover{background:var(--bg3)}
+.journal-student-item.active{background:var(--al)}
+.journal-entry{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg2);border-radius:9px;margin-bottom:6px;font-size:12px}
+.journal-entry-date{color:var(--ink3);min-width:100px}
+.journal-entry-label{flex:1;color:var(--ink2)}
+.journal-badge{font-size:12px;font-weight:600;padding:2px 9px;border-radius:99px}
+.j-present{background:var(--ok-l);color:var(--ok)}
+.j-absent{background:var(--wl);color:var(--warn)}
+.j-unknown{background:var(--bg3);color:var(--ink3)}
+
+/* Payment card expanded */
+.pay-card-expanded{border-top:1px solid var(--border2)}
+.pay-txn-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border2);font-size:13px}
+.pay-txn-row:last-child{border-bottom:none}
+
+
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* Tour tooltip */
+.tour-hl{position:fixed;z-index:250;pointer-events:none;border-radius:12px;box-shadow:0 0 0 4px var(--accent),0 0 0 9999px rgba(0,0,0,.45);transition:all .3s ease}
+.tour-tip{position:fixed;z-index:251;background:var(--ink);color:#fff;border-radius:12px;padding:16px 20px;max-width:320px;font-size:13px;line-height:1.6;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.tour-tip-arrow{position:absolute;width:10px;height:10px;background:var(--ink);transform:rotate(45deg)}
+.tour-tip-title{font-weight:700;font-size:15px;margin-bottom:4px}
+.tour-tip-foot{display:flex;align-items:center;gap:8px;margin-top:12px}
+.tour-tip-step{font-size:12px;opacity:.6}
+.tour-tip-btns{display:flex;gap:8px}
+.tour-tip-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .12s}
+.tour-tip-btn:hover{background:rgba(255,255,255,.25)}
+.tour-tip-btn.primary{background:var(--accent);border-color:var(--accent);color:var(--ink)}
+
+
+/* Toast */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;z-index:300;opacity:0;transform:translateY(8px);transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.22)}
+.toast.on{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- SVG sprite -->
+<svg style="display:none">
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75M21 21v-2a4 4 0 00-3-3.85"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.5 9a2.5 2 0 00-5 0c0 3 5 2.5 5 5.5a2.5 2 0 01-5 0M12 7v1m0 8v1"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></symbol>
+  <symbol id="i-user-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></symbol>
+  <symbol id="i-folder-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1" fill="none" stroke="currentColor" stroke-width="2.5"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="i-chevl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15,18 9,12 15,6"/></symbol>
+  <symbol id="i-chevr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9,18 15,12 9,6"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></symbol>
+  <symbol id="i-paperclip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66L9.41 17.41a2 2 0 01-2.83-2.83l8.49-8.48"/></symbol>
+  <symbol id="i-journal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></symbol>
+</svg>
+
+<!-- Sidebar -->
+<aside class="sb">
+  <div class="sb-logo">
+    <div class="sb-name">Репетитор</div>
+    <div class="sb-sub">Облік учнів</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-i on" role="button" tabindex="0" aria-label="Головна" onclick="nav('dash')" id="n-dash"><svg width="17" height="17"><use href="#i-home"/></svg> Головна</div>
+    <div class="nav-i" role="button" tabindex="0" aria-label="Учні" onclick="nav('students')" id="n-students"><svg width="17" height="17"><use href="#i-user"/></svg> Учні</div>
+    <div class="nav-i" role="button" tabindex="0" aria-label="Групи" onclick="nav('groups')" id="n-groups"><svg width="17" height="17"><use href="#i-users"/></svg> Групи</div>
+    <div class="nav-i" role="button" tabindex="0" aria-label="Розклад" onclick="nav('schedule')" id="n-schedule"><svg width="17" height="17"><use href="#i-cal"/></svg> Розклад</div>
+    <div class="nav-i" role="button" tabindex="0" aria-label="Оплати" onclick="nav('payments')" id="n-payments"><svg width="17" height="17"><use href="#i-coin"/></svg> Оплати</div>
+    <div class="nav-i" role="button" tabindex="0" aria-label="Журнал" onclick="nav('journal')" id="n-journal"><svg width="17" height="17"><use href="#i-journal"/></svg> Журнал</div>
+  </nav>
+  <div class="sb-footer">
+    <div class="nav-i" role="button" tabindex="0" aria-label="Налаштування" onclick="nav('settings')" id="n-settings"><svg width="17" height="17"><use href="#i-settings"/></svg> Налаштування</div>
+  </div>
+</aside>
+
+<main class="main">
+  <!-- Dashboard -->
+  <div class="pg on" id="pg-dash">
+    <div class="pg-head"><div class="pg-title">Головна</div></div>
+    <div id="dash-content"></div>
+  </div>
+
+  <!-- Students -->
+  <div class="pg" id="pg-students">
+    <div class="pg-head">
+      <div class="pg-title">Учні</div>
+      <button class="btn btn-p" id="btn-new-student" onclick="openStudent()"><svg width="15" height="15"><use href="#i-user-plus"/></svg> Новий учень</button>
+    </div>
+    <div class="st-table">
+      <div class="st-toolbar">
+        <div class="search">
+          <span class="search-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></span>
+          <input type="text" id="st-search" aria-label="Пошук учня" placeholder="Пошук учня…" oninput="renderStudents()">
+        </div>
+      </div>
+      <div class="st-head"><span>Учень</span><span>Тип</span><span></span></div>
+      <div id="st-body"></div>
+    </div>
+  </div>
+
+  <!-- Groups -->
+  <div class="pg" id="pg-groups">
+    <div class="pg-head">
+      <div class="pg-title">Групи</div>
+      <button class="btn btn-p" id="btn-new-group" onclick="openGroup()"><svg width="15" height="15"><use href="#i-folder-plus"/></svg> Нова група</button>
+    </div>
+    <div class="groups-grid" id="groups-grid"></div>
+  </div>
+
+  <!-- Schedule -->
+  <div class="pg" id="pg-schedule">
+    <div class="pg-head" style="flex-direction:column;align-items:flex-start;gap:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+        <div class="pg-title">Розклад</div>
+        <button class="btn btn-p" onclick="openEvent()"><svg width="15" height="15"><use href="#i-plus"/></svg> Нова подія</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="tabs">
+          <div class="tab on" id="sched-tab-week" onclick="setSchedView('week')">Тиждень</div>
+          <div class="tab" id="sched-tab-month" onclick="setSchedView('month')">Місяць</div>
+        </div>
+        <button id="sched-prev" aria-label="Попередній період" onclick="schedPrev()"><svg width="14" height="14"><use href="#i-chevl"/></svg></button>
+        <span class="week-lbl" id="week-lbl" style="min-width:160px;text-align:center"></span>
+        <button id="sched-next" aria-label="Наступний період" onclick="schedNext()"><svg width="14" height="14"><use href="#i-chevr"/></svg></button>
+      </div>
+    </div>
+    <div id="sched-body"></div>
+  </div>
+
+  <!-- Journal -->
+  <div class="pg" id="pg-journal">
+    <div class="pg-head"><div class="pg-title">Журнал відвідуваності</div></div>
+    <div style="display:flex;gap:16px;align-items:flex-start">
+      <!-- Left panel -->
+      <div style="width:224px;flex-shrink:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden">
+        <!-- Filter tabs -->
+        <div style="padding:8px 8px;border-bottom:1px solid var(--border2)">
+          <div class="tabs" style="width:100%">
+            <div class="tab on" id="j-tab-ind" onclick="setJournalTab('ind')" style="flex:1;text-align:center">Інд.</div>
+            <div class="tab" id="j-tab-grp" onclick="setJournalTab('grp')" style="flex:1;text-align:center">Групи</div>
+          </div>
+        </div>
+        <div id="journal-student-list" style="max-height:calc(100vh - 200px);overflow-y:auto"></div>
+      </div>
+      <!-- Detail panel -->
+      <div style="flex:1;min-width:0">
+        <div id="journal-detail">
+          <div class="empty"><svg width="40" height="40"><use href="#i-journal"/></svg><div class="empty-t">Оберіть учня або групу</div><div class="empty-s">Виберіть зліва щоб побачити журнал відвідуваності</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payments -->
+  <div class="pg" id="pg-payments">
+    <div class="pg-head">
+      <div class="pg-title">Оплати</div>
+    </div>
+    <!-- Summary bar -->
+    <div id="pay-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;max-width:640px"></div>
+    <!-- Filter -->
+    <div style="margin-bottom:16px;max-width:640px">
+      <div class="tabs">
+        <div class="tab on" id="pay-filter-all" onclick="setPayFilter('all')">Всі</div>
+        <div class="tab" id="pay-filter-debt" onclick="setPayFilter('debt')" style="color:var(--warn)">Борг</div>
+        <div class="tab" id="pay-filter-prepay" onclick="setPayFilter('prepay')">Передплата</div>
+        <div class="tab" id="pay-filter-ok" onclick="setPayFilter('ok')">Розраховано</div>
+      </div>
+    </div>
+    <!-- Student payment cards -->
+    <div id="pay-body" style="display:flex;flex-direction:column;gap:10px;max-width:640px"></div>
+  </div>
+
+  <!-- Settings -->
+  <div class="pg" id="pg-settings">
+    <div class="pg-head"><div class="pg-title">Налаштування</div></div>
+
+    <div class="settings-card">
+      <div class="settings-title">Розклад — діапазон годин</div>
+      <div class="settings-sub">Які години показувати в тижневій сітці розкладу.</div>
+      <div class="fgrid">
+        <div class="field" style="margin-bottom:0">
+          <label class="flbl">Початок дня</label>
+          <select id="cfg-day-start" onchange="saveSettings()">
+            <option value="5">5:00</option><option value="6">6:00</option><option value="7">7:00</option><option value="8">8:00</option><option value="9">9:00</option><option value="10">10:00</option><option value="11">11:00</option><option value="12">12:00</option><option value="13">13:00</option><option value="14">14:00</option><option value="15">15:00</option><option value="16">16:00</option><option value="17">17:00</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label class="flbl">Кінець дня</label>
+          <select id="cfg-day-end" onchange="saveSettings()">
+            <option value="12">12:00</option><option value="13">13:00</option><option value="14">14:00</option><option value="15">15:00</option><option value="16">16:00</option><option value="17">17:00</option><option value="18">18:00</option><option value="19">19:00</option><option value="20">20:00</option><option value="21">21:00</option><option value="22">22:00</option><option value="23">23:00</option><option value="24">24:00</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-card">
+      <div class="settings-title">Ціни та тривалість занять</div>
+      <div class="settings-sub">Дефолтні значення для нових учнів і груп. Можна змінити окремо в кожній картці.</div>
+      <div style="font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;margin-top:4px">Індивідуальні</div>
+      <div class="fgrid" style="margin-bottom:18px">
+        <div class="field" style="margin-bottom:0">
+          <label class="flbl">Ціна за заняття (₴)</label>
+          <input type="number" id="cfg-ind" placeholder="Сума" oninput="saveSettings()">
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label class="flbl">Тривалість</label>
+          <select id="cfg-ind-dur" onchange="saveSettings()">
+            <option value="30">30 хвилин</option>
+            <option value="45">45 хвилин</option>
+            <option value="60" selected>1 година</option>
+            <option value="90">1.5 години</option>
+            <option value="120">2 години</option>
+          </select>
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Групові</div>
+      <div class="fgrid">
+        <div class="field" style="margin-bottom:0">
+          <label class="flbl">Ціна за заняття — на учня (₴)</label>
+          <input type="number" id="cfg-grp" placeholder="Сума" oninput="saveSettings()">
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label class="flbl">Тривалість</label>
+          <select id="cfg-grp-dur" onchange="saveSettings()">
+            <option value="30">30 хвилин</option>
+            <option value="45">45 хвилин</option>
+            <option value="60" selected>1 година</option>
+            <option value="90">1.5 години</option>
+            <option value="120">2 години</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-card">
+      <div class="settings-title">Тур по застосунку</div>
+      <div class="settings-sub">Покроковий огляд всіх розділів застосунку з підказками.</div>
+      <button class="btn btn-p btn-sm" onclick="startTour()">▶ Запустити тур</button>
+    </div>
+  </div>
+</main>
+</div>
+
+<!-- Student modal -->
+<div class="overlay" id="ov-s">
+  <div class="modal">
+    <div class="mhead">
+      <span class="mtitle" id="ms-title">Новий учень</span>
+      <button class="mclose" aria-label="Закрити" onclick="closeModal('ov-s')"><svg width="13" height="13"><use href="#i-x"/></svg></button>
+    </div>
+
+    <!-- VIEW MODE -->
+    <div id="ms-view" style="display:none">
+      <div class="mbody" id="ms-view-body"></div>
+      <div class="mfoot">
+        <div class="mfoot-l"><button class="btn btn-d btn-sm" id="ms-del-view" onclick="deleteStudent()" style="display:none"><svg width="13" height="13"><use href="#i-trash"/></svg> Видалити</button></div>
+        <button class="btn btn-g" onclick="closeModal('ov-s')">Закрити</button>
+        <button class="btn btn-p" onclick="msSetEdit()">Редагувати</button>
+      </div>
+    </div>
+
+    <!-- EDIT MODE -->
+    <div id="ms-edit" style="display:none">
+    <div class="mbody">
+      <input type="hidden" id="ms-id">
+
+      <!-- Name -->
+      <div class="field">
+        <label class="flbl">Ім'я та прізвище</label>
+        <input type="text" id="ms-name" placeholder="Ім'я та прізвище">
+      </div>
+
+      <!-- Class / Age / Contacts -->
+      <div class="fgrid" style="margin-bottom:12px">
+        <div class="field" style="margin-bottom:0"><label class="flbl">Клас</label><input type="text" id="ms-class" placeholder="Клас"></div>
+        <div class="field" style="margin-bottom:0"><label class="flbl">Вік</label><input type="text" id="ms-age" placeholder="Вік"></div>
+      </div>
+      <div class="fgrid" style="margin-bottom:0">
+        <div class="field" style="margin-bottom:0"><label class="flbl">Контакт учня</label><input type="tel" id="ms-phone" placeholder="Телефон"></div>
+        <div class="field" style="margin-bottom:0"><label class="flbl">Контакт батьків</label><input type="tel" id="ms-parent" placeholder="Телефон"></div>
+      </div>
+
+      <hr class="mdiv">
+
+      <!-- Lesson type -->
+      <div class="field">
+        <label class="flbl">Тип занять</label>
+        <div class="lt-list">
+
+          <!-- Individual -->
+          <div class="lt-row" id="lt-ind">
+            <div class="lt-header" onclick="toggleLt('ind')">
+              <div class="lt-cb"><svg viewBox="0 0 12 10"><use href="#i-check"/></svg></div>
+              <div>
+                <div class="lt-lbl">Індивідуальні заняття</div>
+                <div class="lt-sub">Один на один</div>
+              </div>
+            </div>
+            <div class="lt-expand">
+              <div class="fgrid" style="margin-bottom:12px">
+                <div class="field" style="margin-bottom:0">
+                  <label class="flbl">Ціна за заняття (₴)</label>
+                  <input type="number" id="ms-ind-price" placeholder="Сума" onclick="event.stopPropagation()">
+                  <div class="price-hint" id="ms-ind-hint"></div>
+                </div>
+              </div>
+              <label class="flbl">Розклад індивідуальних занять</label>
+              <div class="fhint">Можна задати кілька слотів на тиждень</div>
+              <div class="sched-list" id="ms-sched"></div>
+              <button class="sched-add" onclick="addSched('ms-sched','s')">
+                <svg width="13" height="13"><use href="#i-plus"/></svg> Додати час
+              </button>
+            </div>
+          </div>
+
+          <!-- Group -->
+          <div class="lt-row" id="lt-grp">
+            <div class="lt-header" onclick="toggleLt('grp')">
+              <div class="lt-cb"><svg viewBox="0 0 12 10"><use href="#i-check"/></svg></div>
+              <div>
+                <div class="lt-lbl">Групові заняття</div>
+                <div class="lt-sub">Разом з іншими учнями</div>
+              </div>
+            </div>
+            <div class="lt-expand" onclick="event.stopPropagation()">
+              <div class="lt-chips" id="lt-chips"></div>
+              <div id="lt-grp-info"></div>
+              <div id="lt-grp-no-groups-hint" style="display:none;margin-bottom:8px">
+                <div style="font-size:12px;color:var(--ink3);background:var(--bg3);border-radius:8px;padding:9px 12px;line-height:1.6">
+                  Груп ще немає — спочатку створіть групу у вкладці <b>Групи</b>
+                </div>
+              </div>
+              iv>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <hr class="mdiv">
+
+      <!-- Attendance journal -->
+      <div id="ms-journal-section" style="display:none">
+        <div class="field" style="margin-bottom:0">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <label class="flbl" style="margin-bottom:0">Журнал відвідуваності</label>
+          </div>
+          <div id="ms-journal" style="display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto"></div>
+        </div>
+        <hr class="mdiv">
+      </div>
+
+      <!-- Notes -->
+      <div class="field">
+        <label class="flbl">Нотатки</label>
+        <div class="fhint">Цілі навчання, рівень знань, особливості</div>
+        <textarea id="ms-notes" placeholder="Готується до НМТ. Сильна алгебра, слабка геометрія…"></textarea>
+      </div>
+    </div>
+    <div class="mfoot">
+      <div class="mfoot-l"><button class="btn btn-d btn-sm" id="ms-del" onclick="deleteStudent()" style="display:none"><svg width="13" height="13"><use href="#i-trash"/></svg> Видалити</button></div>
+      <button class="btn btn-g" onclick="document.getElementById('ms-id').value?msSetView():closeModal('ov-s')">Скасувати</button>
+      <button class="btn btn-p" onclick="saveStudent()">Зберегти</button>
+    </div>
+    </div><!-- end ms-edit -->
+  </div>
+</div>
+
+<!-- Group modal -->
+<div class="overlay" id="ov-g">
+  <div class="modal modal-lg">
+    <div class="mhead">
+      <span class="mtitle" id="mg-title">Нова група</span>
+      <button class="mclose" aria-label="Закрити" onclick="closeModal('ov-g')"><svg width="13" height="13"><use href="#i-x"/></svg></button>
+    </div>
+
+    <!-- VIEW MODE -->
+    <div id="mg-view" style="display:none">
+      <div class="mbody" id="mg-view-body"></div>
+      <div class="mfoot">
+        <div class="mfoot-l"><button class="btn btn-d btn-sm" id="mg-del-view" onclick="deleteGroup()" style="display:none"><svg width="13" height="13"><use href="#i-trash"/></svg> Видалити</button></div>
+        <button class="btn btn-g" onclick="closeModal('ov-g')">Закрити</button>
+        <button class="btn btn-p" onclick="mgSetEdit()">Редагувати</button>
+      </div>
+    </div>
+
+    <!-- EDIT MODE -->
+    <div id="mg-edit" style="display:none">
+    <div class="mbody">
+      <input type="hidden" id="mg-id">
+      <div class="fgrid">
+        <div class="field"><label class="flbl">Назва групи</label><input type="text" id="mg-name" placeholder="Назва групи"></div>
+        <div class="field"><label class="flbl">Колір</label><div class="colors" id="mg-colors"></div></div>
+      </div>
+      <div class="field">
+        <label class="flbl">Ціна за заняття — на учня (₴)</label>
+        <input type="number" id="mg-price" placeholder="Сума" oninput="renderGrpPreview()">
+        <div class="price-hint" id="mg-price-hint"></div>
+      </div>
+
+      <!-- Schedule -->
+      <div class="field">
+        <label class="flbl">Розклад групи</label>
+        <div class="fhint">Задайте дні і час занять — з'явиться в розкладі для всіх учнів групи</div>
+        <div class="sched-list" id="mg-sched"></div>
+        <button class="sched-add" onclick="addSched('mg-sched','g')">
+          <svg width="13" height="13"><use href="#i-plus"/></svg> Додати час
+        </button>
+      </div>
+
+      <!-- Students picker -->
+      <div class="field">
+        <label class="flbl">Учні групи</label>
+        <div class="fhint">Учень може бути в кількох групах одночасно</div>
+        <div class="picker-wrap">
+          <div class="picker-search">
+            <svg width="14" height="14"><use href="#i-search"/></svg>
+            <input type="text" id="mg-search" placeholder="Пошук учня…" oninput="renderPicker()">
+          </div>
+          <div class="picker-list" id="mg-picker"></div>
+        </div>
+        <div class="pick-count" id="mg-count"></div>
+      </div>
+
+      <!-- Notes -->
+      <div class="field">
+        <label class="flbl">Нотатки</label>
+        <textarea id="mg-notes" placeholder="Особливості групи, загальні цілі…"></textarea>
+      </div>
+
+      <!-- Files -->
+      <div class="field">
+        <label class="flbl">Файли</label>
+        <div class="fhint">Матеріали, програма, домашні завдання</div>
+        <label class="file-upload" id="file-drop">
+          <svg width="18" height="18" style="display:inline;vertical-align:-4px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round"><use href="#i-paperclip"/></svg>
+          Натисніть або перетягніть файл сюди
+          <input type="file" id="mg-file-input" multiple onchange="handleFiles(event)">
+        </label>
+        <div class="file-list" id="mg-file-list"></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <div class="mfoot-l"><button class="btn btn-d btn-sm" id="mg-del" onclick="deleteGroup()" style="display:none"><svg width="13" height="13"><use href="#i-trash"/></svg> Видалити групу</button></div>
+      <button class="btn btn-g" onclick="document.getElementById('mg-id').value?mgSetView():closeModal('ov-g')">Скасувати</button>
+      <button class="btn btn-p" onclick="saveGroup()">Зберегти</button>
+    </div>
+    </div><!-- end mg-edit -->
+  </div>
+</div>
+
+<!-- Event modal (add/edit event) -->
+<div class="overlay" id="ov-event">
+  <div class="modal">
+    <div class="mhead">
+      <span class="mtitle" id="ev-title">Нова подія</span>
+      <button class="mclose" aria-label="Закрити" onclick="closeModal('ov-event')"><svg width="13" height="13"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="mbody">
+      <input type="hidden" id="ev-id">
+
+      <!-- Type: one-time or recurring -->
+      <div class="field">
+        <label class="flbl">Тип події</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="ev-type-btn on" id="ev-type-once" onclick="setEvType('once')">
+            <div style="font-size:13px;font-weight:600">Разова</div>
+            <div style="font-size:12px;color:inherit;opacity:.7;margin-top:1px">Один раз</div>
+          </div>
+          <div class="ev-type-btn" id="ev-type-recurring" onclick="setEvType('recurring')">
+            <div style="font-size:13px;font-weight:600">Регулярна</div>
+            <div style="font-size:12px;color:inherit;opacity:.7;margin-top:1px">Щотижня</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Student / group search -->
+      <div class="field">
+        <label class="flbl">Учень або група</label>
+        <div style="position:relative">
+          <div style="display:flex;align-items:center;gap:0">
+            <input type="text" id="ev-who-search" placeholder="Почніть вводити ім'я…" autocomplete="off"
+              oninput="filterEvWho()" onfocus="showEvWhoList()" style="border-radius:9px 9px 0 0;border-bottom:none" onblur="setTimeout(hideEvWhoList,150)">
+          </div>
+          <div id="ev-who-selected" style="display:none;padding:7px 12px;background:var(--al);border:1px solid var(--am);border-top:none;border-radius:0 0 9px 9px;font-size:13px;font-weight:500;color:var(--ink);display:flex;align-items:center;justify-content:space-between">
+            <span id="ev-who-selected-lbl"></span>
+            <span onclick="clearEvWho()" style="cursor:pointer;color:var(--ink3);font-size:15px;line-height:1">×</span>
+          </div>
+          <div id="ev-who-list" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 9px 9px;max-height:180px;overflow-y:auto;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.1)"></div>
+        </div>
+        <input type="hidden" id="ev-who">
+      </div>
+
+      <!-- Date (once) / Slots (recurring) -->
+      <div id="ev-date-wrap" class="field">
+        <label class="flbl">Дата</label>
+        <input type="date" id="ev-date" onchange="checkEvConflict()">
+      </div>
+      <div id="ev-time-once-wrap" class="field">
+        <label class="flbl">Час</label>
+        <input type="text" id="ev-time" placeholder="Час" oninput="checkEvConflict()">
+        <div id="ev-conflict-warn" style="display:none;font-size:12px;color:var(--warn);margin-top:6px;align-items:center;gap:5px">
+          <svg width="13" height="13" style="stroke:var(--warn);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:-2px"><use href="#i-warn"/></svg>
+          <span id="ev-conflict-text"></span>
+        </div>
+      </div>
+      <div id="ev-slots-wrap" style="display:none">
+        <div class="field">
+          <label class="flbl">Дні та час занять</label>
+          <div class="fhint">Можна додати кілька слотів якщо дитина ходить кілька разів на тиждень</div>
+          <div id="ev-slots-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+          <button class="sched-add" onclick="addEvSlot()">
+            <svg width="13" height="13"><use href="#i-plus"/></svg> Додати ще день
+          </button>
+        </div>
+      </div>
+
+      <!-- Meet link -->
+      <div class="field">
+        <label class="flbl">Посилання на зустріч</label>
+        <div class="fhint">Zoom, Google Meet або інше. Для регулярних занять вводиться один раз — підтягується в кожен урок автоматично.</div>
+        <input type="text" id="ev-link" placeholder="https://meet.google.com/…">
+      </div>
+
+      <!-- Notes -->
+      <div class="field">
+        <label class="flbl">Нотатка</label>
+        <textarea id="ev-notes" placeholder="Тема уроку, план, що підготувати…" style="min-height:70px"></textarea>
+      </div>
+    </div>
+    <div class="mfoot">
+      <div class="mfoot-l"><button class="btn btn-d btn-sm" id="ev-del" onclick="deleteEvent()" style="display:none"><svg width="13" height="13"><use href="#i-trash"/></svg> Видалити</button></div>
+      <button class="btn btn-g" onclick="closeModal('ov-event')">Скасувати</button>
+      <button class="btn btn-p" onclick="saveEvent()">Зберегти</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lesson detail modal -->
+<div class="overlay" id="ov-lesson">
+  <div class="modal">
+    <div class="mhead">
+      <span class="mtitle" id="ls-title">Урок</span>
+      <button class="mclose" aria-label="Закрити" onclick="closeModal('ov-lesson')"><svg width="13" height="13"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="mbody">
+      <input type="hidden" id="ls-event-id">
+      <input type="hidden" id="ls-date">
+
+      <!-- Who + when + link -->
+      <div style="background:var(--bg3);border-radius:11px;padding:16px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
+          <div id="ls-info-dot" style="width:10px;height:10px;border-radius:50%;flex-shrink:0"></div>
+          <div id="ls-info-when" style="font-size:13px;color:var(--ink);font-weight:600"></div>
+        </div>
+        <!-- Meeting link -->
+        <div style="margin-bottom:10px">
+          <!-- Clickable link when set -->
+          <a id="ls-link-btn" href="#" target="_blank" style="display:none;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink);text-decoration:none;background:var(--bg2);border:1px solid var(--border);padding:9px 12px;border-radius:9px">
+            <svg width="15" height="15" style="stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><use href="#i-link"/></svg>
+            <span id="ls-link-text" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+            <svg width="13" height="13" style="stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;opacity:.6"><use href="#i-chevr"/></svg>
+          </a>
+          <!-- Add-link input when no link -->
+          <div id="ls-link-add" style="display:none;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:7px 10px">
+            <svg width="14" height="14" style="stroke:var(--ink3);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><use href="#i-link"/></svg>
+            <input type="text" id="ls-link-input" placeholder="Додати посилання на зустріч…" oninput="onLsLinkInput()" style="border:none;background:transparent;font-size:13px;font-family:inherit;outline:none;flex:1;color:var(--ink);padding:0">
+          </div>
+        </div>
+        <!-- Змінити час button -->
+        <div style="padding-top:10px;border-top:1px solid var(--border2)">
+          <button class="btn btn-g btn-sm" id="ls-edit-btn" onclick="editLessonEvent()" style="font-size:12px">Змінити час</button>
+        </div>
+      </div>
+
+      <!-- Individual attendance -->
+      <div id="ls-ind-attendance" style="display:none;margin-bottom:16px">
+        <label class="flbl" style="margin-bottom:8px">Відвідуваність</label>
+        <div id="ls-ind-att-list" style="display:flex;flex-direction:column;gap:6px"></div>
+      </div>
+
+      <!-- Group attendance list -->
+      <div id="ls-attendance-section" style="display:none;margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <label class="flbl" style="margin-bottom:0">Відвідуваність</label>
+          <button id="ls-mark-all-btn" class="btn btn-g btn-sm" onclick="markAllPresent()" style="font-size:12px;display:none">Відмітити всіх</button>
+        </div>
+        <div id="ls-attendance-list" style="display:flex;flex-direction:column;gap:6px"></div>
+      </div>
+
+      <!-- Topic -->
+      <div class="field">
+        <label class="flbl">Тема уроку</label>
+        <input type="text" id="ls-topic" placeholder="Напр.: Квадратні рівняння">
+      </div>
+
+      <!-- Homework -->
+      <div class="field" style="margin-top:14px">
+        <label class="flbl">Домашнє завдання</label>
+        <textarea id="ls-homework" placeholder="Напр.: Стор. 45, №3–7" style="min-height:60px"></textarea>
+      </div>
+
+      <!-- Notes -->
+      <div class="field" style="margin-top:14px">
+        <label class="flbl">Нотатки</label>
+        <div class="fhint">Спостереження, прогрес, що повторити наступного разу</div>
+        <textarea id="ls-notes" placeholder="Добре засвоїв тему, але плутає знаки…" style="min-height:70px"></textarea>
+        <button class="btn btn-p btn-sm" onclick="saveLesson()" style="margin-top:8px">Зберегти</button>
+      </div>
+
+      <!-- Files -->
+      <div class="field" style="margin-top:14px">
+        <label class="flbl">Файли</label>
+        <label class="file-upload">
+          <svg width="16" height="16" style="display:inline;vertical-align:-3px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round"><use href="#i-paperclip"/></svg>
+          Прикріпити файл
+          <input type="file" id="ls-file-input" multiple onchange="handleLsFiles(event)" style="display:none">
+        </label>
+        <div class="file-list" id="ls-file-list"></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <div class="mfoot-l">
+        <button class="btn btn-d btn-sm" onclick="cancelLesson()">Скасувати заняття</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add payment modal -->
+<div class="overlay" id="ov-payment">
+  <div class="modal" style="max-width:420px">
+    <div class="mhead">
+      <span class="mtitle" id="pay-modal-title">Додати оплату</span>
+      <button class="mclose" aria-label="Закрити" onclick="closeModal('ov-payment')"><svg width="13" height="13"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="mbody">
+      <input type="hidden" id="pay-sid">
+
+      <!-- Current status -->
+      <div id="pay-status-box" style="background:var(--bg3);border-radius:11px;padding:12px 14px;margin-bottom:18px"></div>
+
+      <!-- Individual section -->
+      <div id="pay-ind-section" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em">Індивідуальні заняття</div>
+          <div id="pay-ind-status" style="font-size:13px"></div>
+        </div>
+        <div class="field">
+          <label class="flbl">Сума (₴)</label>
+          <input type="number" id="pay-ind-amount" placeholder="Сума" oninput="recalcPayPreview()">
+          <div id="pay-ind-preview" style="font-size:12px;color:var(--ink3);margin-top:5px"></div>
+        </div>
+      </div>
+
+      <!-- Divider between blocks -->
+      <div id="pay-divider" style="display:none;border:none;border-top:1px solid var(--border2);margin:16px 0"></div>
+
+      <!-- Group sections -->
+      <div id="pay-grp-sections"></div>
+
+      <!-- Common fields -->
+      <div class="field">
+        <label class="flbl">Дата</label>
+        <input type="date" id="pay-date">
+      </div>
+      <div class="field">
+        <label class="flbl">Коментар</label>
+        <input type="text" id="pay-note" placeholder="Коментар (необов'язково)">
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-g" id="pay-close-btn" onclick="closeModal('ov-payment')">Закрити</button>
+      <button class="btn btn-p" id="pay-save-btn" onclick="savePayment()">Зберегти</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Tour tooltip -->
+<div id="tour-hl" class="tour-hl" style="display:none"></div>
+<div id="tour-tip" class="tour-tip" style="display:none">
+  <div class="tour-tip-title" id="tour-tip-title"></div>
+  <div id="tour-tip-body"></div>
+  <span id="tour-tip-step" style="display:none"></span>
+  <div class="tour-tip-foot" style="display:flex;align-items:center;gap:8px;margin-top:12px">
+    <button class="tour-tip-btn" onclick="tourEnd()" style="opacity:.6">✕ Пропустити</button>
+    <button class="tour-tip-btn" id="tour-prev-btn" onclick="tourPrev()">← Назад</button>
+    <button class="tour-tip-btn primary" id="tour-next-btn" onclick="tourNext()">Далі →</button>
+  </div>
+</div>
+<!-- Cancel recurring event modal -->
+<div class="overlay" id="ov-cancel-recurring" style="z-index:200">
+  <div class="modal" style="max-width:400px">
+    <div class="mhead">
+      <span class="mtitle">Скасувати заняття</span>
+      <button class="mclose" aria-label="Закрити" onclick="closeModal('ov-cancel-recurring')"><svg width="13" height="13"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="mbody">
+      <p style="font-size:15px;color:var(--ink2);line-height:1.6;margin-bottom:18px" id="cancel-rec-msg"></p>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-g" style="justify-content:flex-start;text-align:left" onclick="doCancelLesson('one')">
+          <div>
+            <div style="font-weight:600;font-size:13px">Тільки це заняття</div>
+            <div style="font-size:12px;color:var(--ink3);margin-top:1px">Наступного разу заняття відбудеться як завжди</div>
+          </div>
+        </button>
+        <button class="btn btn-d" style="justify-content:flex-start;text-align:left" onclick="doCancelLesson('following')">
+          <div>
+            <div style="font-weight:600;font-size:13px">Це і всі наступні</div>
+            <div style="font-size:12px;opacity:.8;margin-top:1px">Регулярний розклад зупиняється з цієї дати</div>
+          </div>
+        </button>
+        <button class="btn btn-g" onclick="closeModal('ov-cancel-recurring')">Закрити</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-confirm" style="z-index:200">
+  <div class="modal" style="max-width:380px">
+    <div class="mhead" style="padding-bottom:14px">
+      <span class="mtitle" id="confirm-title">Підтвердження</span>
+    </div>
+    <div class="mbody" style="padding-top:14px">
+      <p id="confirm-msg" style="font-size:15px;color:var(--ink2);line-height:1.6"></p>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-g" onclick="confirmResolve(false)">Скасувати</button>
+      <button class="btn btn-d" id="confirm-ok" onclick="confirmResolve(true)">Видалити</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const COLORS=['#2d5f3f','#5b4a8a','#b84a14','#1f4e78','#7a3b69','#3d6b1a','#7a4a1f','#1a5a6b'];
+const NEUTRAL='#6b6b62'; // single source for 'no group' color (was #8a8a80, low contrast)
+const DAYS=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
+const MONTHS=['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
+
+const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
+
+// student: {id,name,cls,age,phone,parent,notes,individual,individualPrice,schedule:[{day,time}]}
+// group:   {id,name,color,groupPrice,studentIds:[],schedule:[{day,time}],notes,files:[{name,size}]}
+let students=ld('tv2_s',[]);
+let groups=ld('tv2_g',[]);
+let settings=ld('tv2_cfg',{indPrice:0,grpPrice:0,dayStart:8,dayEnd:20});
+
+const uid=()=>(Date.now()+Math.random()).toString(36).replace('.','');
+const ini=n=>(n||'').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+const fmt=n=>Number(n||0).toLocaleString('uk-UA');
+const fmtDate=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return`${y}-${m}-${dd}`};
+const getS=id=>students.find(s=>s.id===id)||null;
+const getG=id=>groups.find(g=>g.id===id)||null;
+const sGroups=sid=>groups.filter(g=>(g.studentIds||[]).includes(sid));
+const sColor=sid=>{const gs=sGroups(sid);return gs.length?gs[0].color:NEUTRAL};
+
+// Settings
+function loadSettings(){
+  document.getElementById('cfg-ind').value=settings.indPrice||'';
+  document.getElementById('cfg-grp').value=settings.grpPrice||'';
+  if(settings.indDur) document.getElementById('cfg-ind-dur').value=settings.indDur;
+  if(settings.grpDur) document.getElementById('cfg-grp-dur').value=settings.grpDur;
+  const ds=document.getElementById('cfg-day-start');
+  const de=document.getElementById('cfg-day-end');
+  if(ds)ds.value=settings.dayStart||8;
+  if(de)de.value=settings.dayEnd||20;
+}
+async function resetDemo(){
+  const ok=await showConfirm('Скинути всі дані і завантажити демо-приклад? Поточні дані буде втрачено.','Скинути');
+  if(!ok)return;
+  // clear all tv2_ keys
+  Object.keys(localStorage).filter(k=>k.startsWith('tv2_')).forEach(k=>localStorage.removeItem(k));
+  location.reload();
+}
+function saveSettings(){
+  settings.indPrice=Number(document.getElementById('cfg-ind').value)||0;
+  settings.grpPrice=Number(document.getElementById('cfg-grp').value)||0;
+  settings.indDur=Number(document.getElementById('cfg-ind-dur').value)||60;
+  settings.grpDur=Number(document.getElementById('cfg-grp-dur').value)||60;
+  const ds=document.getElementById('cfg-day-start');
+  const de=document.getElementById('cfg-day-end');
+  if(ds)settings.dayStart=Number(ds.value)||8;
+  if(de)settings.dayEnd=Number(de.value)||20;
+  sv('tv2_cfg',settings);
+  if(document.getElementById('pg-schedule').classList.contains('on'))renderSchedule();
+}
+
+// Nav
+let currentPage='dash';
+function nav(page){
+  document.querySelectorAll('.nav-i').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('.pg').forEach(el=>el.classList.remove('on'));
+  document.getElementById('n-'+page).classList.add('on');
+  document.getElementById('pg-'+page).classList.add('on');
+  currentPage=page;
+  if(page==='students'){renderStudents()}
+  if(page==='groups'){renderGroups()}
+  if(page==='schedule'){renderSchedule()}
+  if(page==='payments'){renderPayments()}
+  if(page==='journal'){renderJournal()}
+  if(page==='dash'){renderDash()}
+}
+
+// Debt
+function debtFor(sid){
+  const b=getBalance(sid);
+  return b.totalDebtAmt||0;
+}
+
+// Dashboard
+function renderDash(){
+  const todayStr=fmtDate(new Date());
+  const dow=(new Date().getDay()+6)%7;
+  const now=new Date();
+  const monthKey=todayStr.slice(0,7);
+
+  // Tour on first run
+  if(!ld('tv2_tour_done',false)&&!students.length&&!groups.length){sv('tv2_tour_done',true);setTimeout(startTour,300);}
+  // First-run onboarding: zero students AND zero groups
+  if(!students.length&&!groups.length){
+    const now2=new Date();
+    const greeting=now2.getHours()<12?'Доброго ранку':now2.getHours()<17?'Доброго дня':'Доброго вечора';
+    document.getElementById('dash-content').innerHTML=`
+      <div style="max-width:520px">
+        <div style="font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px">${greeting} 👋</div>
+        <div style="font-size:15px;color:var(--ink3);margin-bottom:24px;line-height:1.5">Вітаємо! Це ваш робочий простір для обліку учнів, розкладу та оплат. Почніть з додавання першого учня.</div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:24px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--al);color:var(--ink);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">1</div>
+            <div style="flex:1">
+              <div style="font-weight:600;margin-bottom:2px">Додайте учнів</div>
+              <div style="font-size:13px;color:var(--ink3);margin-bottom:10px">Створіть картки учнів — індивідуальних або для груп</div>
+              <button class="btn btn-p btn-sm" onclick="openStudent()"><svg width="14" height="14"><use href="#i-user-plus"/></svg> Додати першого учня</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;opacity:.55">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--bg3);color:var(--ink3);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">2</div>
+            <div style="flex:1">
+              <div style="font-weight:600;margin-bottom:2px">Складіть розклад</div>
+              <div style="font-size:13px;color:var(--ink3)">Заплануйте заняття у вкладці «Розклад»</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;opacity:.55">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--bg3);color:var(--ink3);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">3</div>
+            <div style="flex:1">
+              <div style="font-weight:600;margin-bottom:2px">Відмічайте відвідуваність і оплати</div>
+              <div style="font-size:13px;color:var(--ink3)">Все автоматично потрапить у журнал та баланс</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  // Collect today's events
+  const todayEvs=getEventsForDate(todayStr);
+
+  // Collect debts
+  const debtList=students.filter(s=>debtFor(s.id)>0).map(s=>({s,debt:debtFor(s.id)})).sort((a,b)=>b.debt-a.debt);
+
+  // Month earnings — count done lessons × price
+  // Simple: count events in this month that have passed and aren't cancelled
+  let monthEarned=0;
+  const allDaysInMonth=[];
+  const y=now.getFullYear(),m=now.getMonth();
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  for(let d=1;d<=Math.min(now.getDate(),daysInMonth);d++){
+    const ds=fmtDate(new Date(y,m,d));
+    getEventsForDate(ds).forEach(ev=>{
+      const ln=ld('tv2_ln_'+ev.id+'_'+ds,{});
+      if(ln.cancelled)return;
+      if(ev.whoType==='student'){const s=getS(ev.whoId);if(s)monthEarned+=Number(s.individualPrice||0)}
+      else if(ev.whoType==='group'){const g=getG(ev.whoId);if(g)monthEarned+=Number(g.groupPrice||0)*(g.studentIds||[]).length}
+    });
+  }
+
+  const section=(title,content,action)=>`
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 12px;border-bottom:1px solid var(--border2)">
+        <div style="font-size:13px;font-weight:700;letter-spacing:-.01em">${title}</div>
+        ${action||''}
+      </div>
+      <div>${content}</div>
+    </div>`;
+
+  const emptyRow=(msg)=>`<div style="padding:16px;font-size:13px;color:var(--ink3)">${msg}</div>`;
+
+  // Today's lessons
+  let todayContent='';
+  if(!todayEvs.length){
+    todayContent=emptyRow('Занять на сьогодні немає');
+  } else {
+    todayContent=todayEvs.map(ev=>{
+      const color=getEvColor(ev);
+      const ln=ld('tv2_ln_'+ev.id+'_'+todayStr,{});
+      const cancelled=ln.cancelled;
+      let whoLine='';
+      if(ev.whoType==='group'){
+        const g=getG(ev.whoId);
+        const members=(g?.studentIds||[]).map(id=>getS(id)).filter(Boolean);
+        whoLine=`<span style="font-weight:600">${g?g.name:'Група'}</span> <span style="font-size:12px;color:var(--ink3)">${members.map(s=>s.name.split(' ')[0]).join(', ')}</span>`;
+      } else {
+        const s=getS(ev.whoId);
+        whoLine=`<span style="font-weight:600">${s?s.name:'Учень'}</span>${s?.cls?` <span style="font-size:12px;color:var(--ink3)">${s.cls}</span>`:''}`;
+      }
+      return`<div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border2);${cancelled?'text-decoration:line-through;color:var(--ink3)':''}" onclick="openLesson('${ev.id}','${todayStr}')" style="cursor:pointer">
+        <div style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0"></div>
+        <div style="min-width:44px;font-size:13px;font-weight:600;color:var(--ink3);font-variant-numeric:tabular-nums">${ev.time}</div>
+        <div style="font-size:13px;flex:1">${whoLine}</div>
+        ${cancelled?`<span style="font-size:12px;color:var(--warn);background:var(--wl);padding:2px 8px;border-radius:99px">Скасовано</span>`:''}
+      </div>`;
+    }).join('');
+  }
+  const todayAction=`<button class="btn btn-g btn-sm" onclick="nav('schedule')" style="font-size:12px">Відкрити розклад</button>`;
+
+  // Debts
+  let debtsContent='';
+  if(!debtList.length){
+    debtsContent=emptyRow('Борги відсутні ✓');
+  } else {
+    debtsContent=debtList.map(({s,debt})=>`
+      <div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border2)" onclick="openStudent('${s.id}')" style="cursor:pointer">
+        <div style="width:30px;height:30px;border-radius:50%;background:var(--wl);color:var(--warn);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${ini(s.name)}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600">${s.name}</div>
+          ${s.cls?`<div style="font-size:12px;color:var(--ink3)">${s.cls}</div>`:''}
+        </div>
+        <div style="font-size:15px;font-weight:700;color:var(--warn)">${fmt(debt)}₴</div>
+      </div>`).join('');
+  }
+
+  // Month stats — two small cards
+  const statsRow=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:none">
+      <div style="padding:16px;border-right:1px solid var(--border2)">
+        <div style="font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Учнів</div>
+        <div style="font-size:28px;font-weight:700;letter-spacing:-.03em">${students.length}</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:2px">${groups.length} груп</div>
+      </div>
+      <div style="padding:16px">
+        <div style="font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Цей місяць</div>
+        <div style="font-size:28px;font-weight:700;letter-spacing:-.03em;color:var(--ink)">${fmt(monthEarned)}₴</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:2px">орієнтовно</div>
+      </div>
+    </div>`;
+
+  const now2=new Date();
+  const greeting=now2.getHours()<12?'Доброго ранку 👋':now2.getHours()<17?'Доброго дня 👋':'Доброго вечора 👋';
+
+  document.getElementById('dash-content').innerHTML=`
+    <div style="margin-bottom:20px">
+      <div style="font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:2px">${greeting}</div>
+      <div style="font-size:13px;color:var(--ink3)">${DAYS[dow]}, ${now2.getDate()} ${MONTHS[now2.getMonth()]} ${now2.getFullYear()}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;max-width:640px">
+      ${section(`Сьогодні <span style="font-size:12px;color:var(--ink3);font-weight:400">${todayEvs.length?todayEvs.length+' занять':''}</span>`,todayContent,todayAction)}
+      ${section('Борги',debtsContent)}
+    </div>`;
+}
+
+// Conflict check
+function checkConflict(day,time,excludeId,excludeType){
+  // check all occupied slots for a given day+time
+  const occupied=[];
+  students.forEach(s=>{
+    if(s.individual)(s.schedule||[]).forEach(sc=>{
+      if(excludeType==='s'&&s.id===excludeId)return;
+      occupied.push({day:Number(sc.day),time:sc.time,label:s.name});
+    });
+  });
+  groups.forEach(g=>{
+    (g.schedule||[]).forEach(sc=>{
+      if(excludeType==='g'&&g.id===excludeId)return;
+      occupied.push({day:Number(sc.day),time:sc.time,label:g.name});
+    });
+  });
+  return occupied.filter(o=>o.day===Number(day)&&o.time===time);
+}
+
+// Schedule widget
+function addSched(cid,type){
+  const el=document.createElement('div');
+  el.className='sched-item';
+  el.dataset.type=type;
+  el.innerHTML=`
+    <select class="sched-day-sel" onchange="validateSchedItem(this)">
+      ${DAYS.map((d,i)=>`<option value="${i}">${d}</option>`).join('')}
+    </select>
+    <input type="text" class="sched-time" placeholder="Час" oninput="validateSchedItem(this)">
+    <span class="sched-conflict-msg"></span>
+    <button class="sched-del" onclick="this.closest('.sched-item').remove()">
+      <svg width="13" height="13"><use href="#i-trash"/></svg>
+    </button>`;
+  document.getElementById(cid).appendChild(el);
+}
+function validateSchedItem(el){
+  const item=el.closest('.sched-item');
+  const day=item.querySelector('.sched-day-sel').value;
+  const time=item.querySelector('.sched-time').value.trim();
+  const msg=item.querySelector('.sched-conflict-msg');
+  if(!time){item.classList.remove('conflict');msg.textContent='';return}
+  const type=item.dataset.type||'s';
+  const excludeId=type==='s'?document.getElementById('ms-id').value:document.getElementById('mg-id').value;
+  const conflicts=checkConflict(day,time,excludeId,type);
+  if(conflicts.length){
+    item.classList.add('conflict');
+    msg.innerHTML=`<svg width="11" height="11" style="vertical-align:-1px;stroke:var(--warn);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><use href="#i-warn"/></svg> Конфлікт: ${conflicts.map(c=>c.label).join(', ')}`;
+  } else {
+    item.classList.remove('conflict');msg.textContent='';
+  }
+}
+function getSchedFrom(cid){
+  return Array.from(document.querySelectorAll(`#${cid} .sched-item`)).map(el=>({
+    day:Number(el.querySelector('.sched-day-sel').value),
+    time:el.querySelector('.sched-time').value.trim()
+  })).filter(sc=>sc.time);
+}
+function fillSched(cid,schedule,type){
+  document.getElementById(cid).innerHTML='';
+  (schedule||[]).forEach(sc=>{
+    const el=document.createElement('div');
+    el.className='sched-item';
+    el.dataset.type=type;
+    el.innerHTML=`
+      <select class="sched-day-sel" onchange="validateSchedItem(this)">
+        ${DAYS.map((d,i)=>`<option value="${i}"${i===sc.day?' selected':''}>${d}</option>`).join('')}
+      </select>
+      <input type="text" class="sched-time" placeholder="Час" value="${sc.time||''}" oninput="validateSchedItem(this)">
+      <span class="sched-conflict-msg"></span>
+      <button class="sched-del" onclick="this.closest('.sched-item').remove()">
+        <svg width="13" height="13"><use href="#i-trash"/></svg>
+      </button>`;
+    document.getElementById(cid).appendChild(el);
+  });
+}
+
+// Student modal state
+let msLtInd=true,msLtGrp=false,msGroupSel=new Set();
+function toggleLt(type){
+  if(type==='ind'){msLtInd=!msLtInd;document.getElementById('lt-ind').classList.toggle('on',msLtInd)}
+  if(type==='grp'){msLtGrp=!msLtGrp;document.getElementById('lt-grp').classList.toggle('on',msLtGrp)}
+}
+function setLt(ind,grp){
+  msLtInd=ind;msLtGrp=grp;
+  document.getElementById('lt-ind').classList.toggle('on',ind);
+  document.getElementById('lt-grp').classList.toggle('on',grp);
+}
+function renderChips(){
+  const wrap=document.getElementById('lt-chips');
+  const hint=document.getElementById('lt-grp-no-groups-hint');
+  if(!groups.length){
+    wrap.innerHTML='';
+    hint.style.display='';
+  } else {
+    hint.style.display='none';
+    wrap.innerHTML=groups.map(g=>{
+      const on=msGroupSel.has(g.id);
+      return`<div class="lt-chip${on?' on':''}" style="${on?`background:${g.color}18;color:${g.color};border-color:${g.color}`:'color:var(--ink2)'}" onclick="toggleChip('${g.id}')">
+        ${on?`<svg width="10" height="10"><use href="#i-check"/></svg>`:''}${g.name}
+      </div>`;
+    }).join('');
+  }
+
+  // show info cards for selected groups
+  const info=document.getElementById('lt-grp-info');
+  const sel=groups.filter(g=>msGroupSel.has(g.id));
+  info.innerHTML=sel.map(g=>{
+    const price=Number(g.groupPrice||0);
+    const sched=(g.schedule||[]);
+    const schedHtml=sched.length
+      ?sched.map(sc=>`<span class="day-chip">${DAYS[sc.day]} ${sc.time}</span>`).join('')
+      :`<span style="font-size:12px;color:var(--ink3)">Розклад не задано</span>`;
+    return`<div class="grp-info-card">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        <span style="width:8px;height:8px;border-radius:50%;background:${g.color};display:inline-block;flex-shrink:0"></span>
+        <span style="font-size:12px;font-weight:700;color:${g.color}">${g.name}</span>
+      </div>
+      <div class="grp-info-row">Ціна: <b>${price?fmt(price)+'₴ / заняття':'не задано'}</b></div>
+      <div class="grp-info-row" style="margin-top:4px">Розклад:</div>
+      <div class="grp-info-sched" style="margin-top:3px">${schedHtml}</div>
+
+    </div>`;
+  }).join('');
+}
+function toggleChip(gid){
+  if(msGroupSel.has(gid))msGroupSel.delete(gid);else msGroupSel.add(gid);
+  renderChips();
+}
+
+function msSetView(){
+  document.getElementById('ms-view').style.display='';
+  document.getElementById('ms-edit').style.display='none';
+}
+function msSetEdit(){
+  document.getElementById('ms-view').style.display='none';
+  document.getElementById('ms-edit').style.display='';
+  setTimeout(()=>document.getElementById('ms-name').focus(),60);
+}
+
+function msRenderView(s){
+  const gs=sGroups(s.id);
+  const color=gs.length?gs[0].color:NEUTRAL;
+  const hasInd=!!s.individual;
+  const hasGrp=gs.length>0;
+
+  // Type badges — just Індивідуальні / Групові, no group names here
+  const typeBadges=[
+    hasInd?`<span style="display:inline-block;padding:3px 10px;background:var(--al);color:var(--ink);border-radius:5px;font-size:12px;font-weight:600">Індивідуальні</span>`:'',
+    hasGrp?`<span style="display:inline-block;padding:3px 10px;background:var(--pl);color:var(--purple);border-radius:5px;font-size:12px;font-weight:600">Групові</span>`:'',
+  ].filter(Boolean).join(' ');
+
+  // Subtitle under name
+  const sub=[s.cls,s.age].filter(Boolean).join(' · ')||'';
+
+  // Contact section
+  const contactRows=[
+    s.phone&&{l:'Телефон учня',v:s.phone},
+    s.parent&&{l:'Контакт батьків',v:s.parent},
+  ].filter(Boolean);
+
+  // Balance data
+  const bal=getBalance(s.id);
+  const indPriceForBal=Number(s.individualPrice||0)||Number(settings.indPrice||0);
+  const indBal=bal.indBalance||0;
+
+  function balChip(n,price){
+    const rounded=Math.round(n*10)/10;
+    if(rounded<0){
+      const amt=price>0?` · ${fmt(Math.round(Math.abs(n)*price))}₴`:'';
+      return`<span style="color:var(--warn);font-weight:700;font-size:13px">Борг: ${Math.abs(rounded)%1===0?Math.abs(rounded):Math.abs(rounded).toFixed(1)} ур.${amt}</span>`;
+    }
+    if(rounded>0) return`<span style="color:var(--ok);font-weight:600;font-size:13px">Передплата: ${rounded%1===0?rounded:rounded.toFixed(1)} ур.</span>`;
+    return`<span style="color:var(--ok);font-size:13px">Без боргу</span>`;
+  }
+
+  // Lessons section — individual block
+  const indRows=hasInd?[
+    (s.individualPrice||settings.indPrice)&&{l:'Ціна',v:fmt(s.individualPrice||settings.indPrice)+'₴ / заняття'},
+    (s.schedule||[]).length&&{l:'Розклад',v:(s.schedule||[]).map(sc=>`${DAYS[sc.day]} ${sc.time}`).join(', ')},
+  ].filter(Boolean):[];
+
+  // Group block
+  const grpRows=hasGrp?gs.map(g=>{
+    const gsched=(g.schedule||[]).map(sc=>`${DAYS[sc.day]} ${sc.time}`).join(', ');
+    const gPrice=g.groupPrice||settings.grpPrice;
+    const gd=(bal.grpData||[]).find(d=>d.g.id===g.id);
+    return{name:g.name,color:g.color,price:gPrice,sched:gsched,balance:gd?gd.balance:0};
+  }):[];
+
+  function section(title,rows){
+    if(!rows.length)return'';
+    return`<div style="margin-top:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">${title}</div>
+      <div style="background:var(--bg3);border-radius:var(--r2);overflow:hidden">
+        ${rows.map(({l,v},i)=>`<div style="display:flex;gap:12px;padding:9px 13px;${i>0?'border-top:1px solid var(--border2)':''}">
+          <div style="font-size:12px;color:var(--ink3);min-width:110px;flex-shrink:0">${l}</div>
+          <div style="font-size:13px;color:var(--ink);font-weight:500;flex:1">${v}</div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  const grpBlocks=grpRows.map(g=>`
+    <div style="margin-top:10px">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px">
+        <span style="width:8px;height:8px;border-radius:50%;background:${g.color};flex-shrink:0"></span>
+        <span style="font-size:12px;font-weight:700;color:${g.color}">${g.name}</span>
+      </div>
+      <div style="background:var(--bg3);border-radius:var(--r2);overflow:hidden">
+        ${g.price?`<div style="display:flex;gap:12px;padding:9px 13px;border-bottom:1px solid var(--border2)">
+          <div style="font-size:12px;color:var(--ink3);min-width:110px">Ціна</div>
+          <div style="font-size:13px;color:var(--ink);font-weight:500">${fmt(g.price)}₴ / заняття</div>
+        </div>`:''}
+        ${g.sched?`<div style="display:flex;gap:12px;padding:9px 13px;border-bottom:1px solid var(--border2)">
+          <div style="font-size:12px;color:var(--ink3);min-width:110px">Розклад</div>
+          <div style="font-size:13px;color:var(--ink);font-weight:500">${g.sched}</div>
+        </div>`:''}
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 13px;gap:8px">
+          ${balChip(g.balance,g.price)}
+          <button class="btn btn-p btn-sm" onclick="closeModal('ov-s');openPayModal('${s.id}')" style="font-size:12px;white-space:nowrap">+ Оплата</button>
+        </div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('ms-view-body').innerHTML=`
+    <div style="text-align:center;padding-bottom:18px;border-bottom:1px solid var(--border2);margin-bottom:4px">
+      <div style="width:64px;height:64px;border-radius:50%;background:${color}18;color:${color};display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;margin:0 auto 12px">${ini(s.name)}</div>
+      <div style="font-size:19px;font-weight:700;color:var(--ink);margin-bottom:3px">${s.name}</div>
+      ${sub?`<div style="font-size:13px;color:var(--ink3);margin-bottom:10px">${sub}</div>`:''}
+      <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">${typeBadges}</div>
+    </div>
+    ${contactRows.length?section('Контакти',contactRows):''}
+    ${hasInd?`<div style="margin-top:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Індивідуальні заняття</div>
+      <div style="background:var(--bg3);border-radius:var(--r2);overflow:hidden">
+        ${indRows.map(({l,v},i)=>`<div style="display:flex;gap:12px;padding:9px 13px;border-bottom:1px solid var(--border2)">
+          <div style="font-size:12px;color:var(--ink3);min-width:110px;flex-shrink:0">${l}</div>
+          <div style="font-size:13px;color:var(--ink);font-weight:500;flex:1">${v}</div>
+        </div>`).join('')}
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 13px;gap:8px">
+          ${balChip(indBal,indPriceForBal)}
+          <button class="btn btn-p btn-sm" onclick="closeModal('ov-s');openPayModal('${s.id}')" style="font-size:12px;white-space:nowrap">+ Оплата</button>
+        </div>
+      </div>
+    </div>`:''}
+    ${hasGrp?`<div style="margin-top:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Групові заняття</div>
+      ${grpBlocks}
+    </div>`:''}
+    ${s.notes?`<div style="margin-top:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Нотатки</div>
+      <div style="font-size:13px;color:var(--ink2);line-height:1.6;background:var(--bg3);border-radius:var(--r2);padding:11px 13px">${s.notes}</div>
+    </div>`:''}`;
+}
+
+function openStudent(id){
+  const s=id?getS(id):null;
+  msGroupSel=new Set(s?sGroups(id).map(g=>g.id):[]);
+  msLtInd=s?!!s.individual:true;
+  msLtGrp=s?(sGroups(id).length>0):false;
+  document.getElementById('ms-title').textContent=s?s.name:'Новий учень';
+  document.getElementById('ms-id').value=id||'';
+  document.getElementById('ms-name').value=s?.name||'';
+  document.getElementById('ms-class').value=s?.cls||'';
+  document.getElementById('ms-age').value=s?.age||'';
+  document.getElementById('ms-phone').value=s?.phone||'';
+  document.getElementById('ms-parent').value=s?.parent||'';
+  document.getElementById('ms-notes').value=s?.notes||'';
+  document.getElementById('ms-ind-price').value=s?.individualPrice||'';
+  const hint=document.getElementById('ms-ind-hint');
+  if(settings.indPrice&&!s?.individualPrice){hint.innerHTML=`Дефолт: <b>${fmt(settings.indPrice)}₴</b>`;hint.style.display=''}
+  else hint.style.display='none';
+  document.getElementById('ms-del').style.display=s?'':'none';
+  const delView=document.getElementById('ms-del-view');
+  if(delView) delView.style.display=s?'':'none';
+  setLt(msLtInd,msLtGrp);
+  renderChips();
+  fillSched('ms-sched',s?.schedule||[],'s');
+
+  // Show view mode for existing students, edit mode for new
+  if(s){
+    msRenderView(s);
+    msSetView();
+  } else {
+    msSetEdit();
+  }
+
+  document.getElementById('ov-s').classList.add('on');
+  if(!s) setTimeout(()=>document.getElementById('ms-name').focus(),60);
+}
+function fieldError(id){
+  const el=document.getElementById(id);if(!el)return;
+  el.style.borderColor='var(--warn)';
+  el.style.animation='shake .3s ease';
+  setTimeout(()=>{el.style.animation='';el.style.borderColor=''},2000);
+}
+function saveStudent(){
+  const id=document.getElementById('ms-id').value||uid();
+  const name=document.getElementById('ms-name').value.trim();
+  const phone=document.getElementById('ms-phone').value.trim();
+  const parent=document.getElementById('ms-parent').value.trim();
+  const rawP=document.getElementById('ms-ind-price').value.trim();
+  const schedCount=document.querySelectorAll('#ms-sched .sched-item').length;
+  let ok=true;
+  if(!name){fieldError('ms-name');ok=false;}
+  if(!phone&&!parent){fieldError('ms-phone');fieldError('ms-parent');ok=false;}
+  if(msLtInd&&!rawP){fieldError('ms-ind-price');ok=false;}
+  if(msLtInd&&schedCount===0){
+    const schedEl=document.getElementById('ms-sched');
+    if(schedEl){schedEl.style.outline='2px solid var(--warn)';schedEl.style.borderRadius='9px';setTimeout(()=>{schedEl.style.outline=''},2000);}
+    ok=false;
+  }
+  if(!msLtInd&&!msLtGrp){ok=false;}
+  if(!ok)return;
+  const obj={id,name,cls:document.getElementById('ms-class').value.trim(),age:document.getElementById('ms-age').value.trim(),phone:document.getElementById('ms-phone').value.trim(),parent:document.getElementById('ms-parent').value.trim(),notes:document.getElementById('ms-notes').value.trim(),individual:msLtInd,individualPrice:rawP?Number(rawP):(settings.indPrice||0),schedule:getSchedFrom('ms-sched')};
+  const idx=students.findIndex(s=>s.id===id);
+  if(idx>=0)students[idx]=obj;else students.push(obj);
+  groups.forEach(g=>{
+    g.studentIds=g.studentIds||[];
+    if(msLtGrp&&msGroupSel.has(g.id)){if(!g.studentIds.includes(id))g.studentIds.push(id)}
+    else g.studentIds=g.studentIds.filter(x=>x!==id);
+  });
+  sv('tv2_s',students);sv('tv2_g',groups);
+  toast(`${name} збережено ✓`);
+  renderStudents();if(currentPage==='groups')renderGroups();if(currentPage==='schedule')renderSchedule();
+  // Return to view mode after saving
+  const saved=getS(id);
+  if(saved){
+    document.getElementById('ms-title').textContent=saved.name;
+    msRenderView(saved);
+    msSetView();
+  } else {
+    closeModal('ov-s');
+  }
+}
+async function deleteStudent(){
+  const id=document.getElementById('ms-id').value;
+  const s=getS(id);
+  const ok=await showConfirm(`Видалити учня «${s?.name}»? Це не можна скасувати.`);
+  if(!ok)return;
+  students=students.filter(s=>s.id!==id);
+  groups.forEach(g=>{g.studentIds=(g.studentIds||[]).filter(x=>x!==id)});
+  sv('tv2_s',students);sv('tv2_g',groups);
+  closeModal('ov-s');toast('Учня видалено');
+  renderStudents();if(currentPage==='groups')renderGroups();
+}
+
+// Students table
+let activeTab='all';
+function setTab(t){
+  activeTab=t;
+  ['all','ind'].forEach(x=>document.getElementById('tab-'+x).classList.toggle('on',x===t));
+  renderStudents();
+}
+function renderStudents(){
+  const q=(document.getElementById('st-search').value||'').toLowerCase();
+  const list=students.filter(s=>{
+    const mQ=!q||s.name.toLowerCase().includes(q)||(s.notes||'').toLowerCase().includes(q);
+    const mT=activeTab==='all'||s.individual;
+    return mQ&&mT;
+  });
+  const body=document.getElementById('st-body');
+  if(!list.length){
+    body.innerHTML=`<div class="empty">
+      <svg width="40" height="40"><use href="#i-user"/></svg>
+      <div class="empty-t">${!students.length?'Учнів ще немає':'Нікого не знайдено'}</div>
+      <div class="empty-s">${!students.length?'Додайте першого учня — введіть ім\'я, тип занять і розклад':'Спробуйте інший запит або очистіть фільтр'}</div>
+      ${!students.length?`<button class="btn btn-p" onclick="openStudent()"><svg width="14" height="14"><use href="#i-user-plus"/></svg> Новий учень</button>`:''}
+    </div>`;
+    return;
+  }
+  body.innerHTML=list.map(s=>{
+    const gs=sGroups(s.id);
+    const color=gs.length?gs[0].color:NEUTRAL;
+    const hasInd=!!s.individual,hasGrp=gs.length>0;
+    const hasSchedule=(s.schedule||[]).length>0||gs.some(g=>(g.schedule||[]).length>0);
+    let badge;
+    if(hasInd&&hasGrp) badge=`<span class="type-badge tb-both">Груп. + Інд.</span>`;
+    else if(hasGrp) badge=`<span class="type-badge tb-grp">Групове</span>`;
+    else if(hasInd) badge=`<span class="type-badge tb-ind">Індивідуальне</span>`;
+    else badge=`<span style="font-size:12px;color:var(--ink3)">—</span>`;
+    const warnBadge=!hasSchedule?`<span class="type-badge tb-warn" title="Немає занять у розкладі"><svg width="11" height="11" style="stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:-1px"><use href="#i-warn"/></svg> Немає занять</span>`:'';
+    return`<div class="st-row" onclick="openStudent('${s.id}')">
+      <div class="st-name-cell">
+        <div class="st-av" style="background:${color}18;color:${color}">${ini(s.name)}</div>
+        <div><div class="st-name">${s.name}</div>${s.notes?`<div class="st-note">${s.notes}</div>`:''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">${badge}${warnBadge}</div>
+      <button class="more-btn" onclick="event.stopPropagation();openStudent('${s.id}')"><svg width="15" height="15"><use href="#i-dots"/></svg></button>
+    </div>`;
+  }).join('');
+}
+
+// Groups
+function renderGroups(){
+  const grid=document.getElementById('groups-grid');
+  if(!groups.length){
+    grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><svg width="40" height="40"><use href="#i-users"/></svg><div class="empty-t">Груп ще немає</div><div class="empty-s">Створіть групу — об'єднайте учнів, що займаються разом</div><button class="btn btn-p" onclick="openGroup()"><svg width="14" height="14"><use href="#i-plus"/></svg> Нова група</button></div>`;
+    return;
+  }
+  let html=groups.map(g=>{
+    const members=(g.studentIds||[]).map(id=>getS(id)).filter(Boolean);
+    const avs=members.slice(0,5).map(s=>`<div class="gc-av" style="background:${g.color}20;color:${g.color}">${ini(s.name)}</div>`).join('');
+    const more=members.length>5?`<div class="gc-av" style="background:var(--bg3);color:var(--ink3)">+${members.length-5}</div>`:'';
+    const schips=(g.schedule||[]).map(sc=>`<span class="day-chip">${DAYS[sc.day]} ${sc.time}</span>`).join('');
+    return`<div class="gc" onclick="openGroup('${g.id}')">
+      <div class="gc-bar" style="background:${g.color}"></div>
+      <div class="gc-body">
+        <div class="gc-name">${g.name}</div>
+        <div class="gc-meta">${members.length} учн${members.length===1?'ень':members.length<5?'ів':'ів'}</div>
+        <div class="gc-avs">${avs}${more}</div>
+        ${schips?`<div class="gc-sched">${schips}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  grid.innerHTML=html;
+}
+
+// Group modal
+let mgColor=COLORS[0],mgPicked=new Set(),mgFiles=[];
+function buildColors(sel){
+  mgColor=sel||COLORS[0];
+  document.getElementById('mg-colors').innerHTML=COLORS.map(c=>`<div class="csw${c===mgColor?' on':''}" style="background:${c}" onclick="pickMgColor('${c}')" data-c="${c}"></div>`).join('');
+}
+function pickMgColor(c){mgColor=c;document.querySelectorAll('#mg-colors .csw').forEach(el=>el.classList.toggle('on',el.dataset.c===c))}
+function renderGrpPreview(){
+  const price=Number(document.getElementById('mg-price').value||0);
+  const hint=document.getElementById('mg-price-hint');
+  if(price&&mgPicked.size) hint.innerHTML=`За всю групу (${mgPicked.size}): <b>${fmt(price*mgPicked.size)}₴</b>`,hint.style.display='';
+  else if(!document.getElementById('mg-price').value&&settings.grpPrice) hint.innerHTML=`Дефолт: <b>${fmt(settings.grpPrice)}₴</b> на учня`,hint.style.display='';
+  else hint.style.display='none';
+}
+function renderPicker(){
+  const q=(document.getElementById('mg-search').value||'').toLowerCase();
+  const gid=document.getElementById('mg-id').value;
+  const list=students.filter(s=>!q||s.name.toLowerCase().includes(q));
+  const pick=document.getElementById('mg-picker');
+  if(!list.length){pick.innerHTML=`<div class="picker-empty">${students.length?'Нікого':'Спочатку додайте учнів'}</div>`;return}
+  pick.innerHTML=list.map(s=>{
+    const sel=mgPicked.has(s.id);
+    const others=sGroups(s.id).filter(g=>g.id!==gid).map(g=>g.name).join(', ');
+    return`<div class="pick-item${sel?' on':''}" onclick="togglePick('${s.id}')">
+      <div class="pick-cb"><svg viewBox="0 0 12 10"><use href="#i-check"/></svg></div>
+      <div class="pick-av" style="background:${mgColor}18;color:${mgColor}">${ini(s.name)}</div>
+      <div class="pick-info">
+        <div class="pick-name">${s.name}</div>
+        ${others?`<div class="pick-sub">Також у: ${others}</div>`:s.cls?`<div class="pick-sub">${s.cls}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  const cnt=mgPicked.size;
+  document.getElementById('mg-count').textContent=cnt?`Обрано: ${cnt} учн${cnt===1?'я':cnt<5?'і':'ів'}`:'';
+  renderGrpPreview();
+}
+function togglePick(sid){if(mgPicked.has(sid))mgPicked.delete(sid);else mgPicked.add(sid);renderPicker()}
+
+function handleFiles(e){
+  const newFiles=Array.from(e.target.files).map(f=>({name:f.name,size:f.size}));
+  mgFiles=[...mgFiles,...newFiles];
+  renderFileList();
+}
+function renderFileList(){
+  document.getElementById('mg-file-list').innerHTML=mgFiles.map((f,i)=>`
+    <div class="file-item">
+      <svg width="13" height="13" style="stroke:var(--ink3);fill:none;stroke-width:1.9;stroke-linecap:round;flex-shrink:0"><use href="#i-paperclip"/></svg>
+      <span class="file-item-name">${f.name}</span>
+      <span style="font-size:12px;color:var(--ink3);flex-shrink:0">${(f.size/1024).toFixed(0)} KB</span>
+      <button class="file-item-del" onclick="removeFile(${i})"><svg width="11" height="11"><use href="#i-x"/></svg></button>
+    </div>`).join('');
+}
+function removeFile(i){mgFiles.splice(i,1);renderFileList()}
+
+function mgSetView(){
+  document.getElementById('mg-view').style.display='';
+  document.getElementById('mg-edit').style.display='none';
+}
+function mgSetEdit(){
+  document.getElementById('mg-view').style.display='none';
+  document.getElementById('mg-edit').style.display='';
+  setTimeout(()=>document.getElementById('mg-name').focus(),60);
+}
+function mgRenderView(g){
+  const sids=g.studentIds||[];
+  const studs=sids.map(id=>getS(id)).filter(Boolean);
+  const price=g.groupPrice||settings.grpPrice;
+  const sched=(g.schedule||[]).map(sc=>`${DAYS[sc.day]} ${sc.time}`).join(', ');
+
+  const rows=[
+    price&&{l:'Ціна на учня',v:fmt(price)+'₴ / заняття'},
+    sched&&{l:'Розклад',v:sched},
+  ].filter(Boolean);
+
+  const studList=studs.length?`
+    <div style="margin-top:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Учні (${studs.length})</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        ${studs.map(s=>`<div style="display:flex;align-items:center;gap:9px;padding:7px 10px;background:var(--bg3);border-radius:var(--r)">
+          <div style="width:26px;height:26px;border-radius:50%;background:${g.color}22;color:${g.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${ini(s.name)}</div>
+          <div style="font-size:13px;font-weight:500">${s.name}</div>
+          ${s.cls?`<div style="font-size:12px;color:var(--ink3);margin-left:auto">${s.cls}</div>`:''}
+        </div>`).join('')}
+      </div>
+    </div>`:'';
+
+  document.getElementById('mg-view-body').innerHTML=`
+    <div style="text-align:center;padding-bottom:18px;border-bottom:1px solid var(--border2);margin-bottom:4px">
+      <div style="width:56px;height:56px;border-radius:50%;background:${g.color}22;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+        <svg width="26" height="26" style="stroke:${g.color};fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><use href="#i-users"/></svg>
+      </div>
+      <div style="font-size:19px;font-weight:700;color:var(--ink);margin-bottom:3px;font-family:'Syne',sans-serif">${g.name}</div>
+      <div style="display:inline-block;padding:3px 10px;background:${g.color}18;color:${g.color};border-radius:5px;font-size:12px;font-weight:700">${studs.length} учн${studs.length===1?'ь':studs.length<5?'і':'ів'}</div>
+    </div>
+    ${rows.length?`<div style="margin-top:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Заняття</div>
+      <div style="background:var(--bg3);border-radius:var(--r2);overflow:hidden">
+        ${rows.map(({l,v},i)=>`<div style="display:flex;gap:12px;padding:9px 13px;${i>0?'border-top:1px solid var(--border2)':''}">
+          <div style="font-size:12px;color:var(--ink3);min-width:110px;flex-shrink:0">${l}</div>
+          <div style="font-size:13px;color:var(--ink);font-weight:500;flex:1">${v}</div>
+        </div>`).join('')}
+      </div>
+    </div>`:'' }
+    ${studList}
+    ${g.notes?`<div style="margin-top:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Нотатки</div>
+      <div style="font-size:13px;color:var(--ink2);line-height:1.6;background:var(--bg3);border-radius:var(--r2);padding:11px 13px">${g.notes}</div>
+    </div>`:''}`;
+}
+
+function openGroup(id){
+  const g=id?getG(id):null;
+  mgColor=g?.color||COLORS[groups.length%COLORS.length];
+  mgPicked=new Set(g?.studentIds||[]);
+  mgFiles=g?.files||[];
+  document.getElementById('mg-title').textContent=g?g.name:'Нова група';
+  document.getElementById('mg-id').value=id||'';
+  document.getElementById('mg-name').value=g?.name||'';
+  document.getElementById('mg-price').value=g?.groupPrice||'';
+  document.getElementById('mg-notes').value=g?.notes||'';
+  document.getElementById('mg-search').value='';
+  document.getElementById('mg-del').style.display=g?'':'none';
+  const delView=document.getElementById('mg-del-view');
+  if(delView) delView.style.display=g?'':'none';
+  buildColors(mgColor);
+  renderPicker();renderGrpPreview();renderFileList();
+  fillSched('mg-sched',g?.schedule||[],'g');
+  if(g){
+    mgRenderView(g);
+    mgSetView();
+  } else {
+    mgSetEdit();
+    setTimeout(()=>document.getElementById('mg-name').focus(),60);
+  }
+  document.getElementById('ov-g').classList.add('on');
+}
+function saveGroup(){
+  const id=document.getElementById('mg-id').value||uid();
+  const name=document.getElementById('mg-name').value.trim();
+  if(!name){alert('Введіть назву');return}
+  const rawP=document.getElementById('mg-price').value;
+  const obj={id,name,color:mgColor,groupPrice:rawP?Number(rawP):(settings.grpPrice||0),studentIds:[...mgPicked],schedule:getSchedFrom('mg-sched'),notes:document.getElementById('mg-notes').value.trim(),files:mgFiles};
+  const idx=groups.findIndex(g=>g.id===id);
+  if(idx>=0)groups[idx]=obj;else groups.push(obj);
+  sv('tv2_g',groups);
+  toast(`Групу «${name}» збережено ✓`);
+  renderGroups();renderStudents();if(currentPage==='schedule')renderSchedule();
+  const saved=getG(id);
+  if(saved){
+    document.getElementById('mg-title').textContent=saved.name;
+    document.getElementById('mg-id').value=saved.id;
+    mgRenderView(saved);
+    mgSetView();
+  } else {
+    closeModal('ov-g');
+  }
+}
+async function deleteGroup(){
+  const id=document.getElementById('mg-id').value;
+  const g=getG(id);
+  const ok=await showConfirm(`Видалити групу «${g?.name}»? Учні залишаться, але будуть відв'язані від групи.`);
+  if(!ok)return;
+  groups=groups.filter(x=>x.id!==id);
+  sv('tv2_g',groups);closeModal('ov-g');toast('Групу видалено');
+  renderGroups();renderStudents();
+}
+
+// ── Events (schedule) ──
+// event: {id, type:'once'|'recurring', whoId, whoType:'student'|'group',
+//         date(once), slots:[{day,time}](recurring), link, notes}
+// lesson notes: tv2_ln_{eventId}_{date} = {notes, files:[]}
+
+let schedView='week'; // 'week' | 'month'
+let weekOff=0;
+let monthOff=0;
+
+function getWeekStart(off){const now=new Date(),dow=(now.getDay()+6)%7,mon=new Date(now);mon.setDate(now.getDate()-dow+off*7);mon.setHours(0,0,0,0);return mon}
+
+function getEvents(){return ld('tv2_events',[])}
+function saveEvents(evs){sv('tv2_events',evs)}
+
+function setSchedView(v){
+  schedView=v;
+  document.getElementById('sched-tab-week').classList.toggle('on',v==='week');
+  document.getElementById('sched-tab-month').classList.toggle('on',v==='month');
+  renderSchedule();
+}
+function schedPrev(){if(schedView==='week')weekOff--;else monthOff--;renderSchedule()}
+function schedNext(){if(schedView==='week')weekOff++;else monthOff++;renderSchedule()}
+function schedToday(){weekOff=0;monthOff=0;renderSchedule()}
+
+// Collect all events for a given date string
+function getEventsForDate(ds){
+  const events=getEvents();
+  const out=[];
+  events.filter(e=>e.type==='once').forEach(e=>{if(e.date===ds)out.push({...e,_date:ds})});
+  events.filter(e=>e.type==='recurring').forEach(e=>{
+    if(e.stopFrom&&ds>=e.stopFrom)return; // stopped
+    const d=new Date(ds+'T00:00:00'),dow=(d.getDay()+6)%7;
+    (e.slots||[]).forEach(sl=>{if(Number(sl.day)===dow)out.push({...e,_date:ds,_slot:sl,time:sl.time})});
+  });
+  // from student/group schedules
+  students.forEach(s=>{
+    if(!s.individual)return;
+    (s.schedule||[]).forEach(sc=>{
+      const d=new Date(ds+'T00:00:00'),dow=(d.getDay()+6)%7;
+      if(Number(sc.day)===dow){
+        const cov=out.some(e=>e.whoId===s.id&&e.time===sc.time);
+        if(!cov)out.push({id:'sched_'+s.id+'_'+sc.day,type:'recurring',whoId:s.id,whoType:'student',time:sc.time,_date:ds,_fromSched:true});
+      }
+    });
+  });
+  groups.forEach(g=>{
+    (g.schedule||[]).forEach(sc=>{
+      const d=new Date(ds+'T00:00:00'),dow=(d.getDay()+6)%7;
+      if(Number(sc.day)===dow){
+        const cov=out.some(e=>e.whoId===g.id&&e.time===sc.time);
+        if(!cov)out.push({id:'sched_'+g.id+'_'+sc.day,type:'recurring',whoId:g.id,whoType:'group',time:sc.time,_date:ds,_fromSched:true});
+      }
+    });
+  });
+  return out.sort((a,b)=>a.time.localeCompare(b.time));
+}
+
+function renderSchedule(){
+  const todayStr=fmtDate(new Date());
+  if(schedView==='week'){
+    const ws=getWeekStart(weekOff),we=new Date(ws);we.setDate(ws.getDate()+6);
+    const sm=ws.getMonth()===we.getMonth();
+    document.getElementById('week-lbl').textContent=
+      ws.getDate()+(sm?'':' '+MONTHS[ws.getMonth()])+' – '+we.getDate()+' '+MONTHS[we.getMonth()]+' '+ws.getFullYear();
+
+    const dayStart=settings.dayStart||8;
+    const dayEnd=settings.dayEnd||20;
+    const hours=[];
+    for(let h=dayStart;h<=dayEnd;h++)hours.push(h);
+    const HOUR_H=52; // px per hour
+
+    // Build day columns data
+    const days=Array.from({length:7},(_,i)=>{
+      const d=new Date(ws);d.setDate(ws.getDate()+i);
+      return{d,ds:fmtDate(d),isToday:fmtDate(d)===todayStr,dow:i};
+    });
+
+    // Header row
+    let headerHtml=`<div class="hg-corner"></div>`;
+    days.forEach(day=>{
+      headerHtml+=`<div class="hg-day-head${day.isToday?' today':''}">
+        <div class="hg-day-name">${DAYS[day.dow]}</div>
+        <div class="hg-day-num">${day.d.getDate()}</div>
+      </div>`;
+    });
+
+    // Time gutter + grid
+    let gutterHtml='';
+    hours.forEach(h=>{
+      gutterHtml+=`<div class="hg-hour-label" style="height:${HOUR_H}px">${h}:00</div>`;
+    });
+
+    // Day columns with events positioned absolutely
+    let colsHtml='';
+    let outOfRangeCount=0;
+    let minEvHour=24,maxEvHour=0;
+    days.forEach(day=>{
+      const evs=getEventsForDate(day.ds);
+      let cells='';
+      // hour cells (clickable to create event)
+      hours.forEach(h=>{
+        cells+=`<div class="hg-cell" style="height:${HOUR_H}px" onclick="quickCreateEvent('${day.ds}',${h})"></div>`;
+      });
+      // events positioned
+      let evHtml='';
+      evs.forEach(ev=>{
+        const [hh,mm]=(ev.time||'0:0').split(':').map(Number);
+        if(hh<dayStart||hh>dayEnd){
+          outOfRangeCount++;
+          minEvHour=Math.min(minEvHour,hh);
+          maxEvHour=Math.max(maxEvHour,hh);
+          return; // outside range
+        }
+        const top=((hh-dayStart)*60+(mm||0))/60*HOUR_H;
+        const dur=(ev.whoType==='group'?(settings.grpDur||60):(settings.indDur||60));
+        const height=Math.max(24,dur/60*HOUR_H-2);
+        evHtml+=hgEvent(ev,top,height);
+      });
+      colsHtml+=`<div class="hg-day-col${day.isToday?' today':''}">${cells}${evHtml}</div>`;
+    });
+
+    // Out-of-range banner (Visibility of system status — Nielsen #1)
+    let rangeBanner='';
+    if(outOfRangeCount>0){
+      const plural=outOfRangeCount===1?'подія':(outOfRangeCount<5?'події':'подій');
+      rangeBanner=`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--wl);border:1px solid rgba(168,66,15,.2);border-radius:var(--r);margin-bottom:12px;font-size:13px;color:var(--warn)">
+        <svg width="15" height="15" style="stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"><use href="#i-warn"/></svg>
+        <span style="flex:1">${outOfRangeCount} ${plural} поза робочими годинами (${dayStart}:00–${dayEnd}:00) не показано в сітці</span>
+        <button class="btn btn-g btn-sm" onclick="expandScheduleRange(${Math.min(minEvHour,dayStart)},${Math.max(maxEvHour,dayEnd)})" style="font-size:12px;white-space:nowrap">Показати всі</button>
+      </div>`;
+    }
+
+    document.getElementById('sched-body').innerHTML=`
+      ${rangeBanner}
+      <div class="hour-grid">
+        <div class="hg-scroll">
+          <div class="hg-header">${headerHtml}</div>
+          <div class="hg-body-grid">
+            <div class="hg-gutter-col">${gutterHtml}</div>
+            ${colsHtml}
+          </div>
+        </div>
+      </div>`;
+  } else {
+    // Month view
+    const now=new Date();
+    const y=now.getFullYear(),baseM=now.getMonth()+monthOff;
+    const firstDay=new Date(y,baseM,1);
+    const lastDay=new Date(y,baseM+1,0);
+    document.getElementById('week-lbl').textContent=
+      ['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'][((baseM%12)+12)%12]+' '+(y+Math.floor(baseM/12));
+    const startDow=(firstDay.getDay()+6)%7;
+    const cells=[];
+    // prev month padding
+    for(let i=startDow-1;i>=0;i--){
+      const d=new Date(firstDay);d.setDate(-i);
+      cells.push({date:fmtDate(d),num:d.getDate(),other:true});
+    }
+    for(let i=1;i<=lastDay.getDate();i++){
+      const d=new Date(y,((baseM%12)+12)%12,i);
+      cells.push({date:fmtDate(d),num:i,other:false});
+    }
+    while(cells.length%7!==0){
+      const last=new Date(lastDay);last.setDate(lastDay.getDate()+(cells.length-lastDay.getDate()-startDow+1));
+      cells.push({date:fmtDate(last),num:last.getDate(),other:true});
+    }
+    let html=`<div class="month-grid"><div class="month-grid" style="grid-column:1/-1;display:grid;grid-template-columns:repeat(7,1fr)">`;
+    DAYS.forEach(d=>html+=`<div class="month-day-head">${d}</div>`);
+    html+=`</div>`;
+    html+=`<div style="display:grid;grid-template-columns:repeat(7,1fr);border-top:1px solid var(--border);width:100%;grid-column:1/-1">`;
+    cells.forEach(cell=>{
+      const isToday=cell.date===todayStr;
+      const evs=getEventsForDate(cell.date);
+      const chips=evs.slice(0,3).map(ev=>`<div class="month-chip" style="background:${getEvColor(ev)}" onclick="openLesson('${ev.id}','${ev._date}')">${ev.time} ${getEvLabel(ev)}</div>`).join('');
+      const more=evs.length>3?`<div style="font-size:12px;color:var(--ink3);padding:1px 4px">+${evs.length-3} ще</div>`:'';
+      html+=`<div class="month-cell${isToday?' today':''}${cell.other?' other-month':''}">
+        <div class="month-num">${cell.num}</div>
+        ${chips}${more}
+      </div>`;
+    });
+    html+=`</div></div>`;
+    document.getElementById('sched-body').innerHTML=html;
+  }
+}
+
+function expandScheduleRange(minH,maxH){
+  // expand the visible hour range to cover out-of-range events, save to settings
+  settings.dayStart=Math.min(settings.dayStart||8,minH);
+  settings.dayEnd=Math.max(settings.dayEnd||20,maxH);
+  sv('tv2_cfg',settings);
+  renderSchedule();
+  toast('Діапазон годин розширено');
+}
+
+function hgEvent(ev,top,height){
+  const ln=ld('tv2_ln_'+ev.id+'_'+ev._date,{});
+  const cancelled=ln.cancelled;
+  const color=getEvColor(ev);
+  let link=ev.link||'';
+  if(!link&&ev.id&&ev.id.startsWith('sched_')){
+    const schedLinks=ld('tv2_sched_links',{});
+    link=schedLinks[ev.id]||'';
+  }
+  const linkIcon=link?`<svg width="9" height="9" style="stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;opacity:.85"><use href="#i-link"/></svg>`:'';
+  const dotNotes=(ln.notes||ln.files?.length)?`<span style="width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.7);flex-shrink:0"></span>`:'';
+  return`<div class="hg-event${cancelled?' cancelled':''}" style="top:${top}px;height:${height}px;background:${cancelled?'var(--cancel-bg)':color}" onclick="event.stopPropagation();openLesson('${ev.id}','${ev._date}')">
+    <div class="hg-event-time">${ev.time}${linkIcon?' ':''}${linkIcon}${dotNotes}</div>
+    <div class="hg-event-name">${getEvLabel(ev)}</div>
+  </div>`;
+}
+
+function quickCreateEvent(ds,hour){
+  // open event modal pre-filled with date and time
+  openEvent();
+  // set as one-time on this date
+  setEvType('once');
+  document.getElementById('ev-date').value=ds;
+  document.getElementById('ev-time').value=String(hour).padStart(2,'0')+':00';
+}
+
+function evChip(ev){
+  const ln=ld('tv2_ln_'+ev.id+'_'+ev._date,{});
+  if(ln.cancelled) return`<div class="lesson-chip" style="background:var(--cancel-bg);text-decoration:line-through" onclick="openLesson('${ev.id}','${ev._date}')">
+    <div class="lc-time" style="color:var(--cancel-ink)">${ev.time}</div>
+    <div class="lc-name" style="color:var(--cancel-ink)">${getEvLabel(ev)}</div>
+  </div>`;
+  const color=getEvColor(ev);
+  const dot=(ln.notes||ln.files?.length)?`<span class="lc-type-dot"></span>`:'';
+  // get link — manual events have ev.link, sched_ events from side map
+  let link=ev.link||'';
+  if(!link&&ev.id&&ev.id.startsWith('sched_')){
+    const schedLinks=ld('tv2_sched_links',{});
+    link=schedLinks[ev.id]||'';
+  }
+  const linkBtn=link?`<a href="${link}" target="_blank" onclick="event.stopPropagation()" style="position:absolute;top:4px;right:4px;display:flex;align-items:center;justify-content:center;width:16px;height:16px;background:rgba(255,255,255,.25);border-radius:4px" title="Приєднатись">
+    <svg width="9" height="9" style="stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"><use href="#i-link"/></svg>
+  </a>`:'';
+  return`<div class="lesson-chip" style="background:${color};position:relative" onclick="openLesson('${ev.id}','${ev._date}')">
+    <div class="lc-time">${ev.time}${dot?'  '+dot:''}</div>
+    <div class="lc-name">${getEvLabel(ev)}</div>
+    ${linkBtn}
+  </div>`;
+}
+
+function getEvColor(ev){
+  if(ev.whoType==='group'){const g=getG(ev.whoId);return g?g.color:NEUTRAL}
+  const s=getS(ev.whoId);return s?sColor(s.id):NEUTRAL;
+}
+function getEvLabel(ev){
+  if(ev.whoType==='group'){const g=getG(ev.whoId);return g?g.name:'Група'}
+  const s=getS(ev.whoId);return s?s.name.split(' ')[0]:'Учень';
+}
+
+// Event modal
+let evType='once';
+let evWhoVal=''; // 's_id' or 'g_id'
+
+function setEvType(t){
+  evType=t;
+  document.getElementById('ev-type-once').classList.toggle('on',t==='once');
+  document.getElementById('ev-type-recurring').classList.toggle('on',t==='recurring');
+  document.getElementById('ev-date-wrap').style.display=t==='once'?'':'none';
+  document.getElementById('ev-time-once-wrap').style.display=t==='once'?'':'none';
+  document.getElementById('ev-slots-wrap').style.display=t==='recurring'?'':'none';
+}
+
+// Who search
+function getWhoItems(){
+  const q=(document.getElementById('ev-who-search').value||'').toLowerCase();
+  const gs=groups.filter(g=>!q||g.name.toLowerCase().includes(q));
+  const ss=students.filter(s=>!q||s.name.toLowerCase().includes(q));
+  // groups first, then students
+  const items=[];
+  if(gs.length){items.push({isHeader:true,label:'Групи'});gs.forEach(g=>items.push({val:'g_'+g.id,label:g.name,sub:'Група'}))}
+  if(ss.length){items.push({isHeader:true,label:'Учні'});ss.forEach(s=>items.push({val:'s_'+s.id,label:s.name,sub:'Учень'}))}
+  return items;
+}
+function showEvWhoList(){
+  const list=document.getElementById('ev-who-list');
+  list.style.display='block';
+  filterEvWho();
+}
+function hideEvWhoList(){document.getElementById('ev-who-list').style.display='none'}
+function filterEvWho(){
+  const items=getWhoItems();
+  const list=document.getElementById('ev-who-list');
+  const selectable=items.filter(it=>!it.isHeader);
+  if(!selectable.length){list.innerHTML=`<div style="padding:10px 14px;font-size:13px;color:var(--ink3)">Нікого не знайдено</div>`;return}
+  list.innerHTML=items.map(it=>{
+    if(it.isHeader) return`<div style="padding:6px 14px 3px;font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;background:var(--bg3)">${it.label}</div>`;
+    return`<div onclick="selectEvWho('${it.val}','${it.label}')" style="display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;font-size:13px;transition:background .12s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">
+      <span style="flex:1;font-weight:500">${it.label}</span>
+    </div>`;
+  }).join('');
+}
+function selectEvWho(val,label){
+  evWhoVal=val;
+  document.getElementById('ev-who').value=val;
+  document.getElementById('ev-who-search').value='';
+  document.getElementById('ev-who-search').style.display='none';
+  const sel=document.getElementById('ev-who-selected');
+  sel.style.display='flex';
+  document.getElementById('ev-who-selected-lbl').textContent=label;
+  hideEvWhoList();
+}
+function clearEvWho(){
+  evWhoVal='';
+  document.getElementById('ev-who').value='';
+  document.getElementById('ev-who-search').style.display='';
+  document.getElementById('ev-who-search').value='';
+  document.getElementById('ev-who-selected').style.display='none';
+}
+
+// Recurring slots
+function addEvSlot(day,time){
+  const list=document.getElementById('ev-slots-list');
+  const el=document.createElement('div');
+  el.style.cssText='display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:9px';
+  el.innerHTML=`<select class="ev-slot-day" style="padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-size:12px;font-family:inherit;outline:none">
+    ${['Пн','Вт','Ср','Чт','Пт','Сб','Нд'].map((d,i)=>`<option value="${i}"${i===(day||0)?' selected':''}>${d}</option>`).join('')}
+  </select>
+  <input type="text" value="${time||''}" placeholder="Час" class="ev-slot-time" style="width:70px;padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-size:12px;font-family:inherit;outline:none">
+  <button onclick="this.closest('div').remove()" style="background:none;border:none;cursor:pointer;color:var(--ink3);padding:3px;border-radius:5px;display:flex;align-items:center;margin-left:auto">
+    <svg width="12" height="12" style="stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><use href="#i-x"/></svg>
+  </button>`;
+  list.appendChild(el);
+}
+function getSlotsFromForm(){
+  return Array.from(document.querySelectorAll('#ev-slots-list > div')).map(el=>({
+    day:Number(el.querySelector('.ev-slot-day').value),
+    time:el.querySelector('.ev-slot-time').value.trim()
+  })).filter(s=>s.time);
+}
+
+function openEvent(id){
+  const ev=id?getEvents().find(e=>e.id===id):null;
+  document.getElementById('ev-title').textContent=ev?'Редагувати подію':'Нова подія';
+  document.getElementById('ev-id').value=id||'';
+
+  // reset who search
+  clearEvWho();
+  if(ev){
+    const label=ev.whoType==='student'?(getS(ev.whoId)?.name||''):(getG(ev.whoId)?.name||'');
+    selectEvWho((ev.whoType==='student'?'s_':'g_')+ev.whoId,label);
+  }
+  if(ev){
+    document.getElementById('ev-date').value=ev.date||'';
+    document.getElementById('ev-time').value=ev.time||'';
+    document.getElementById('ev-link').value=ev.link||'';
+    document.getElementById('ev-notes').value=ev.notes||'';
+    setEvType(ev.type||'once');
+    // fill slots
+    document.getElementById('ev-slots-list').innerHTML='';
+    (ev.slots||[]).forEach(sl=>addEvSlot(sl.day,sl.time));
+    if(ev.type==='recurring'&&!ev.slots?.length) addEvSlot();
+  } else {
+    document.getElementById('ev-date').value=fmtDate(new Date());
+    document.getElementById('ev-time').value='';
+    document.getElementById('ev-link').value='';
+    document.getElementById('ev-notes').value='';
+    document.getElementById('ev-slots-list').innerHTML='';
+    addEvSlot();
+    setEvType('once');
+  }
+  document.getElementById('ev-del').style.display=ev?'':'none';
+  const cw=document.getElementById('ev-conflict-warn');if(cw)cw.style.display='none';
+  document.getElementById('ov-event').classList.add('on');
+}
+function checkEvConflict(){
+  const warn=document.getElementById('ev-conflict-warn');
+  const txt=document.getElementById('ev-conflict-text');
+  const id=document.getElementById('ev-id').value;
+  const date=document.getElementById('ev-date').value;
+  const time=document.getElementById('ev-time').value.trim();
+  if(!date||!time||!/^\d{1,2}:\d{2}$/.test(time)){warn.style.display='none';return false}
+  const conflict=findTimeConflict(date,time,id);
+  if(conflict){
+    txt.textContent='Цей час зайнятий: '+conflict;
+    warn.style.display='flex';
+    return true;
+  }
+  warn.style.display='none';
+  return false;
+}
+function nextDateForWeekday(weekday){
+  const today=new Date();
+  for(let i=0;i<7;i++){
+    const d=new Date(today);d.setDate(today.getDate()+i);
+    if((d.getDay()+6)%7===Number(weekday))return fmtDate(d);
+  }
+  return fmtDate(today);
+}
+function timeToMin(t){const [h,m]=(t||'0:0').split(':').map(Number);return h*60+(m||0)}
+function findTimeConflict(date,time,excludeEventId){
+  const evs=getEventsForDate(date);
+  const newStart=timeToMin(time);
+  const newDur=60; // assume 60 min default for new event
+  const newEnd=newStart+newDur;
+  for(const ev of evs){
+    if(ev.id===excludeEventId)continue;
+    // check if cancelled — cancelled lessons don't block
+    const ln=ld('tv2_ln_'+ev.id+'_'+date,{});
+    if(ln.cancelled)continue;
+    const evStart=timeToMin(ev.time);
+    const evDur=(ev.whoType==='group'?(settings.grpDur||60):(settings.indDur||60));
+    const evEnd=evStart+evDur;
+    // overlap check
+    if(newStart<evEnd&&evStart<newEnd) return getEvLabel(ev)+' ('+ev.time+')';
+  }
+  return null;
+}
+function saveEvent(){
+  const id=document.getElementById('ev-id').value||uid();
+  const whoRaw=document.getElementById('ev-who').value;
+  if(!whoRaw){alert('Оберіть учня або групу');return}
+  const whoType=whoRaw.startsWith('s_')?'student':'group';
+  const whoId=whoRaw.slice(2);
+  const link=document.getElementById('ev-link').value.trim();
+  const notes=document.getElementById('ev-notes').value.trim();
+  let obj;
+  if(evType==='once'){
+    const date=document.getElementById('ev-date').value;
+    const time=document.getElementById('ev-time').value.trim();
+    if(!date||!time){alert('Вкажіть дату та час');return}
+    // conflict check
+    const conflict=findTimeConflict(date,time,id);
+    if(conflict){alert('На цей час вже є подія: '+conflict);return}
+    obj={id,type:'once',whoType,whoId,date,time,link,notes};
+  } else {
+    const slots=getSlotsFromForm();
+    if(!slots.length){alert('Додайте хоча б один слот');return}
+    // conflict check for each slot (check next occurrence)
+    for(const sl of slots){
+      const nextDate=nextDateForWeekday(sl.day);
+      const conflict=findTimeConflict(nextDate,sl.time,id);
+      if(conflict){alert('Конфлікт на '+DAYS[sl.day]+' '+sl.time+': вже є '+conflict);return}
+    }
+    obj={id,type:'recurring',whoType,whoId,slots,link,notes};
+  }
+  const evs=getEvents();
+  const idx=evs.findIndex(e=>e.id===id);
+  if(idx>=0)evs[idx]=obj;else evs.push(obj);
+  saveEvents(evs);
+  closeModal('ov-event');toast('Подію збережено ✓');
+  renderSchedule();
+}
+async function deleteEvent(){
+  const id=document.getElementById('ev-id').value;
+  const ev=getEvents().find(e=>e.id===id);
+  const ok=await showConfirm(`Видалити подію${ev?(' «'+getEvLabel(ev)+'»'):''}?`);
+  if(!ok)return;
+  saveEvents(getEvents().filter(e=>e.id!==id));
+  closeModal('ov-event');toast('Подію видалено');
+  renderSchedule();
+}
+
+// Lesson detail
+let lsFiles=[];
+let lsIndAttended=false;
+function openLesson(eventId,date){
+  let ev;
+  if(eventId.startsWith('sched_')){
+    const parts=eventId.split('_');
+    const whoId=parts[1];
+    const day=Number(parts[2]);
+    const s=getS(whoId);
+    const g=getG(whoId);
+    const who=s||g;
+    if(!who)return;
+    const sc=(who.schedule||[]).find(x=>Number(x.day)===day)||{time:''};
+    const schedLinks=ld('tv2_sched_links',{});
+    ev={id:eventId,type:'recurring',whoType:s?'student':'group',whoId,time:sc.time,link:schedLinks[eventId]||'',notes:'',_fromSched:true};
+  } else {
+    ev=getEvents().find(e=>e.id===eventId);
+    if(!ev)return;
+  }
+
+  const ln=ld('tv2_ln_'+eventId+'_'+date,{notes:'',files:[]});
+  lsFiles=[...(ln.files||[])];
+  lsIndAttended=ln.attended===true;
+  document.getElementById('ls-event-id').value=eventId;
+  document.getElementById('ls-date').value=date;
+  document.getElementById('ls-notes').value=ln.notes||'';
+  document.getElementById('ls-topic').value=ln.topic||'';
+  document.getElementById('ls-homework').value=ln.homework||'';
+
+  // header
+  const color=getEvColor(ev);
+  const dateObj=new Date(date+'T00:00:00');
+  const dow=(dateObj.getDay()+6)%7;
+  document.getElementById('ls-info-dot').style.background=color;
+  document.getElementById('ls-info-when').textContent=
+    DAYS[dow]+', '+dateObj.getDate()+' '+MONTHS[dateObj.getMonth()]+' · '+ev.time+(ev.type==='recurring'?' · щотижня':'');
+
+  const attSection=document.getElementById('ls-attendance-section');
+  const indAtt=document.getElementById('ls-ind-attendance');
+
+  if(ev.whoType==='group'){
+    const g=getG(ev.whoId);
+    const gColor=g?g.color:NEUTRAL;
+    document.getElementById('ls-title').textContent=g?g.name:'Група';
+    // Group attendance
+    attSection.style.display='';
+    indAtt.style.display='none';
+    document.getElementById('ls-mark-all-btn').style.display='';
+    const savedAtt=ln.attendance||{};
+    const members=(g?.studentIds||[]).map(id=>getS(id)).filter(Boolean);
+    document.getElementById('ls-attendance-list').innerHTML=members.map(s=>{
+      const present=savedAtt[s.id]===true; // only present if explicitly marked
+      return`<div class="att-item${present?' present':' absent'}" data-sid="${s.id}" data-present="${present}" onclick="toggleAttItem(this)">
+        <div class="att-av" style="background:${gColor}18;color:${gColor}">${ini(s.name)}</div>
+        <span class="att-name">${s.name}</span>
+        <div class="att-cb"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1" stroke="#fff" stroke-width="2.5" fill="none"/></svg></div>
+      </div>`;
+    }).join('');
+    updateMarkAllBtn();
+  } else {
+    const s=getS(ev.whoId);
+    document.getElementById('ls-title').textContent=s?s.name:'Учень';
+    attSection.style.display='none';
+    // Individual attendance — student name + checkbox
+    indAtt.style.display='';
+    const indColor=getEvColor(ev);
+    const indName=s?s.name:'Учень';
+    document.getElementById('ls-ind-att-list').innerHTML=`<div class="att-item${lsIndAttended?' present':' absent'}" data-sid="${ev.whoId}" data-present="${lsIndAttended}" onclick="toggleAttItemInd(this)">
+      <div class="att-av" style="background:${indColor}18;color:${indColor}">${ini(indName)}</div>
+      <span class="att-name">${indName}</span>
+      <div class="att-cb"><svg viewBox="0 0 12 10"><polyline points="1,5 4,8 11,1" stroke="#fff" stroke-width="2.5" fill="none"/></svg></div>
+    </div>`;
+  }
+
+  const linkBtn=document.getElementById('ls-link-btn');
+  const linkText=document.getElementById('ls-link-text');
+  const linkAdd=document.getElementById('ls-link-add');
+  const linkInput=document.getElementById('ls-link-input');
+  if(ev.link){
+    linkBtn.href=ev.link;
+    linkText.textContent=ev.link.replace(/^https?:\/\//,'');
+    linkBtn.style.display='flex';
+    linkAdd.style.display='none';
+  } else {
+    linkBtn.style.display='none';
+    linkAdd.style.display='flex';
+    linkInput.value='';
+  }
+  document.getElementById('ls-edit-btn').style.display=ev._fromSched?'none':'';
+
+  renderLsFiles();
+  document.getElementById('ov-lesson').classList.add('on');
+}
+
+function toggleAttItemInd(el){
+  const present=el.dataset.present!=='true';
+  el.dataset.present=present;
+  el.classList.toggle('present',present);
+  el.classList.toggle('absent',!present);
+  lsIndAttended=present;
+  saveAttendanceNow();
+}
+function toggleAttItem(el){
+  const present=el.dataset.present!=='true';
+  el.dataset.present=present;
+  el.classList.toggle('present',present);
+  el.classList.toggle('absent',!present);
+  updateMarkAllBtn();
+  saveAttendanceNow();
+}
+function saveLesson(){
+  const eventId=document.getElementById('ls-event-id').value;
+  const date=document.getElementById('ls-date').value;
+  const existing=ld('tv2_ln_'+eventId+'_'+date,{});
+  // collect group attendance
+  const attItems=document.querySelectorAll('#ls-attendance-list .att-item');
+  let attendance=null;
+  if(attItems.length){
+    attendance={};
+    attItems.forEach(el=>{attendance[el.dataset.sid]=el.dataset.present==='true'});
+  }
+  const ln={...existing,
+    notes:document.getElementById('ls-notes').value.trim(),
+    topic:document.getElementById('ls-topic').value.trim(),
+    homework:document.getElementById('ls-homework').value.trim(),
+    files:lsFiles};
+  // individual attendance — read from att-item state
+  const indAtt=document.getElementById('ls-ind-attendance');
+  if(indAtt&&indAtt.style.display!=='none'){
+    const indItem=document.querySelector('#ls-ind-att-list .att-item');
+    if(indItem) ln.attended=indItem.dataset.present==='true';
+  }
+  if(attendance!==null) ln.attendance=attendance;
+  sv('tv2_ln_'+eventId+'_'+date,ln);
+  closeModal('ov-lesson');toast('Збережено ✓');
+  renderSchedule();renderPayments();
+  if(document.getElementById('pg-journal').classList.contains('on'))renderJournal();
+}
+
+function markAllPresent(){
+  const items=document.querySelectorAll('#ls-attendance-list .att-item');
+  // toggle: if all present, clear all; else mark all present
+  const allPresent=[...items].every(el=>el.dataset.present==='true');
+  items.forEach(el=>{
+    if(allPresent){
+      el.classList.remove('present');el.classList.add('absent');
+      el.dataset.present='false';
+    } else {
+      el.classList.add('present');el.classList.remove('absent');
+      el.dataset.present='true';
+    }
+  });
+  updateMarkAllBtn();
+  saveAttendanceNow();
+}
+function updateMarkAllBtn(){
+  const btn=document.getElementById('ls-mark-all-btn');
+  if(!btn)return;
+  const items=document.querySelectorAll('#ls-attendance-list .att-item');
+  if(!items.length){btn.style.display='none';return}
+  const allPresent=[...items].every(el=>el.dataset.present==='true');
+  btn.textContent=allPresent?'Зняти всіх':'Відмітити всіх';
+}
+function onLsLinkInput(){
+  const eventId=document.getElementById('ls-event-id').value;
+  const link=document.getElementById('ls-link-input').value.trim();
+  if(!eventId)return;
+  if(eventId.startsWith('sched_')){
+    const linkMap=ld('tv2_sched_links',{});
+    if(link)linkMap[eventId]=link;else delete linkMap[eventId];
+    sv('tv2_sched_links',linkMap);
+  } else {
+    const evs=getEvents();
+    const ev=evs.find(e=>e.id===eventId);
+    if(ev){ev.link=link;saveEvents(evs);}
+  }
+  renderSchedule();
+}
+
+function saveAttendanceNow(){
+  const eventId=document.getElementById('ls-event-id').value;
+  const date=document.getElementById('ls-date').value;
+  if(!eventId||!date)return;
+  const existing=ld('tv2_ln_'+eventId+'_'+date,{});
+  // group attendance
+  const attItems=document.querySelectorAll('#ls-attendance-list .att-item');
+  if(attItems.length){
+    const attendance={};
+    attItems.forEach(el=>{attendance[el.dataset.sid]=el.dataset.present==='true'});
+    existing.attendance=attendance;
+  }
+  // individual attendance
+  const indAtt=document.getElementById('ls-ind-attendance');
+  if(indAtt&&indAtt.style.display!=='none'){
+    const indItem=document.querySelector('#ls-ind-att-list .att-item');
+    if(indItem) existing.attended=indItem.dataset.present==='true';
+  }
+  sv('tv2_ln_'+eventId+'_'+date,existing);
+  // update journal if open
+  if(document.getElementById('pg-journal').classList.contains('on'))renderJournal();
+  // refresh schedule chip (dot indicator)
+  renderSchedule();
+}
+
+function editLessonEvent(){
+  const id=document.getElementById('ls-event-id').value;
+  closeModal('ov-lesson');
+  openEvent(id);
+}
+function cancelLesson(){
+  const eventId=document.getElementById('ls-event-id').value;
+  const date=document.getElementById('ls-date').value;
+  const ev=eventId.startsWith('sched_')?null:getEvents().find(e=>e.id===eventId);
+  const isRecurring=ev?ev.type==='recurring':true;
+  if(!isRecurring){
+    // one-time event: simple confirm
+    showConfirm('Скасувати це заняття? Його буде відмічено як скасоване.','Скасувати заняття').then(ok=>{
+      if(!ok)return;
+      const ln=ld('tv2_ln_'+eventId+'_'+date,{});
+      sv('tv2_ln_'+eventId+'_'+date,{...ln,cancelled:true});
+      closeModal('ov-lesson');
+      toast('Заняття скасовано');
+      renderSchedule();
+    });
+  } else {
+    // recurring: show options modal
+    const label=ev?getEvLabel(ev):'заняття';
+    const d=new Date(date+'T00:00:00');
+    const dateStr=d.getDate()+' '+MONTHS[d.getMonth()];
+    document.getElementById('cancel-rec-msg').textContent=
+      `Що зробити із заняттям «${label}» ${dateStr}?`;
+    document.getElementById('ov-cancel-recurring').classList.add('on');
+  }
+}
+function doCancelLesson(mode){
+  const eventId=document.getElementById('ls-event-id').value;
+  const date=document.getElementById('ls-date').value;
+  closeModal('ov-cancel-recurring');
+  if(mode==='one'){
+    const ln=ld('tv2_ln_'+eventId+'_'+date,{});
+    sv('tv2_ln_'+eventId+'_'+date,{...ln,cancelled:true});
+    toast('Заняття скасовано');
+  } else if(mode==='following'){
+    // mark all occurrences from this date as cancelled by storing a "stop from" marker on the event
+    const evs=getEvents();
+    const ev=evs.find(e=>e.id===eventId);
+    if(ev){ev.stopFrom=date;saveEvents(evs);}
+    // also cancel this specific occurrence
+    const ln=ld('tv2_ln_'+eventId+'_'+date,{});
+    sv('tv2_ln_'+eventId+'_'+date,{...ln,cancelled:true});
+    toast('Це і всі наступні заняття скасовано');
+  }
+  closeModal('ov-lesson');
+  renderSchedule();
+}
+function handleLsFiles(e){
+  lsFiles=[...lsFiles,...Array.from(e.target.files).map(f=>({name:f.name,size:f.size}))];
+  renderLsFiles();
+}
+function renderLsFiles(){
+  document.getElementById('ls-file-list').innerHTML=lsFiles.map((f,i)=>`
+    <div class="file-item">
+      <svg width="13" height="13" style="stroke:var(--ink3);fill:none;stroke-width:1.9;stroke-linecap:round;flex-shrink:0"><use href="#i-paperclip"/></svg>
+      <span class="file-item-name">${f.name}</span>
+      <span style="font-size:12px;color:var(--ink3);flex-shrink:0">${(f.size/1024).toFixed(0)} KB</span>
+      <button class="file-item-del" onclick="lsFiles.splice(${i},1);renderLsFiles()"><svg width="11" height="11"><use href="#i-x"/></svg></button>
+    </div>`).join('');
+}
+
+
+// Payments
+// ── Payment helpers ──
+// Payments: tv2_pmts_{sid} = [{id,date,amount,type:'payment'|'prepay',note}]
+function getPayments(sid){return ld('tv2_pmts_'+sid,[])}
+function savePaymentList(sid,list){sv('tv2_pmts_'+sid,list)}
+
+// Count attended lessons for a student across all events
+// countAttended (scoped version below)
+
+function getPastDates(ev){
+  const dates=[];
+  const todayStr=fmtDate(new Date());
+  if(ev.type==='once'){if(ev.date&&ev.date<=todayStr)dates.push(ev.date)}
+  else if(ev.type==='recurring'){
+    (ev.slots||[]).forEach(sl=>{
+      getPastSchedDates(sl.day,180).forEach(ds=>{
+        if(ev.stopFrom&&ds>=ev.stopFrom)return;
+        dates.push(ds);
+      });
+    });
+  }
+  return dates;
+}
+
+function getPastSchedDates(weekday,daysBack){
+  const dates=[];
+  const today=new Date();
+  for(let d=daysBack;d>=0;d--){
+    const dt=new Date(today);dt.setDate(today.getDate()-d);
+    if((dt.getDay()+6)%7===weekday) dates.push(fmtDate(dt));
+  }
+  return dates;
+}
+
+// Balance: paid_lessons - attended_lessons
+function getBalance(sid){
+  const s=getS(sid);if(!s)return{paidLessons:0,attended:0,balance:0,totalPaid:0,price:0,groups:[]};
+  const gs=sGroups(sid);
+  const price=Number(s.individualPrice||0);
+
+  // ind payments (scope=ind or legacy no scope)
+  const indPmts=getPayments(sid).filter(p=>p.scope==='ind'||((!p.scope)&&!p.gid));
+  const indPaid=indPmts.reduce((a,p)=>a+Number(p.amount||0),0);
+  const indLessons=indPmts.reduce((a,p)=>a+Number(p.lessons||0),0);
+  const indAttended=countAttended(sid,'ind');
+
+  // group payments per group
+  const grpData=gs.map(g=>{
+    const key=sid+'_'+g.id;
+    const pmts=getPayments(key);
+    const paid=pmts.reduce((a,p)=>a+Number(p.amount||0),0);
+    const lessons=pmts.reduce((a,p)=>a+Number(p.lessons||0),0);
+    const attended=countAttended(sid,'grp',g.id);
+    return{g,paid,lessons,attended,balance:lessons-attended,pmts};
+  });
+
+  // overall balance for display in pay-card header
+  const totalPaid=indPaid+grpData.reduce((a,d)=>a+d.paid,0);
+  const totalPaidLessons=indLessons+grpData.reduce((a,d)=>a+d.lessons,0);
+  const totalAttended=indAttended+grpData.reduce((a,d)=>a+d.attended,0);
+  const balance=totalPaidLessons-totalAttended;
+
+  // Compute actual ₴ debt/prepay per scope
+  const indPriceForBal=Number(s.individualPrice||0)||Number(settings.indPrice||0);
+  const indBal=indLessons-indAttended;
+  let totalDebtAmt=0,totalPreAmt=0;
+  if(indBal<0) totalDebtAmt+=Math.abs(indBal)*indPriceForBal;
+  else if(indBal>0) totalPreAmt+=indBal*indPriceForBal;
+  grpData.forEach(gd=>{
+    const gp=Number(gd.g.groupPrice||0)||Number(settings.grpPrice||0);
+    if(gd.balance<0) totalDebtAmt+=Math.abs(gd.balance)*gp;
+    else if(gd.balance>0) totalPreAmt+=gd.balance*gp;
+  });
+
+  return{paidLessons:totalPaidLessons,attended:totalAttended,balance,totalPaid,price,
+    indPaid,indLessons,indAttended,indBalance:indBal,indPmts,
+    grpData,totalDebtAmt,totalPreAmt};
+}
+
+function countAttended(sid,scope,gid){
+  let count=0;
+  const events=getEvents();
+  events.forEach(ev=>{
+    if(scope==='ind'&&!(ev.whoType==='student'&&ev.whoId===sid))return;
+    if(scope==='grp'&&!(ev.whoType==='group'&&ev.whoId===gid))return;
+    if(!scope){
+      if(ev.whoType!=='student'&&ev.whoType!=='group')return;
+      if(ev.whoType==='student'&&ev.whoId!==sid)return;
+      if(ev.whoType==='group'&&!(getG(ev.whoId)?.studentIds||[]).includes(sid))return;
+    }
+    getPastDates(ev).forEach(ds=>{
+      const ln=ld('tv2_ln_'+ev.id+'_'+ds,{});
+      if(ln.cancelled)return;
+      // only count if lesson has actually happened (past + time elapsed)
+      const evTime=ev.time||(ev.slots&&ev.slots.find(s=>s)?.time)||'00:00';
+      if(!isLessonPast(ds,evTime))return;
+      if(ev.whoType==='student'&&ln.attended===true) count++;
+      if(ev.whoType==='group'&&(ln.attendance||{})[sid]===true) count++;
+    });
+  });
+  // sched_ entries
+  if(!scope||scope==='ind'){
+    const s=getS(sid);
+    (s?.schedule||[]).forEach(sc=>{
+      getPastSchedDates(sc.day,90).forEach(ds=>{
+        const synId='sched_'+sid+'_'+sc.day;
+        const ln=ld('tv2_ln_'+synId+'_'+ds,{});
+        if(!ln.cancelled&&isLessonPast(ds,sc.time||'00:00')&&ln.attended===true) count++;
+      });
+    });
+  }
+  if(!scope||scope==='grp'){
+    const grps=gid?[getG(gid)].filter(Boolean):sGroups(sid);
+    grps.forEach(g=>{
+      if(!g)return;
+      (g.schedule||[]).forEach(sc=>{
+        getPastSchedDates(sc.day,90).forEach(ds=>{
+          const synId='sched_'+g.id+'_'+sc.day;
+          const ln=ld('tv2_ln_'+synId+'_'+ds,{});
+          if(!ln.cancelled&&isLessonPast(ds,sc.time||'00:00')&&(ln.attendance||{})[sid]===true) count++;
+        });
+      });
+    });
+  }
+  return count;
+}
+
+function txnRow(p,key){
+  return`<div class="pay-txn-row">
+    <span class="pay-hist-type ${p.type==='prepay'?'pay-hist-prepay':'pay-hist-pay'}">${p.type==='prepay'?'Передплата':'Погашення боргу'}</span>
+    <span style="color:var(--ink3)">${p.date}</span>
+    <span style="flex:1;color:var(--ink2)">${p.note||''}</span>
+    <span style="font-weight:600">${Math.round(Number(p.lessons)*10)/10} ур.</span>
+    <span style="font-weight:700;color:var(--ok);margin-left:8px">+${fmt(p.amount)}₴</span>
+    <button onclick="deletePayment('${key}','${p.id}')" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:16px;padding:0 2px 0 8px;line-height:1" title="Видалити транзакцію">×</button>
+  </div>`;
+}
+function buildTxnHtml(sid,hasInd,hasGrp,indPmts,grpData){
+  let html='';
+  if(hasInd){
+    html+=`<div style="padding:8px 16px 4px;font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em">Індивідуальні</div>`;
+    if(indPmts.length) html+=indPmts.slice().reverse().map(p=>txnRow(p,sid)).join('');
+    else html+=`<div style="padding:8px 16px 10px;font-size:12px;color:var(--ink3)">Оплат ще немає</div>`;
+  }
+  (grpData||[]).forEach(d=>{
+    const key=sid+'_'+d.g.id;
+    html+=`<div style="padding:8px 16px 4px;font-size:12px;font-weight:700;color:${d.g.color};text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:${d.g.color};display:inline-block"></span>${d.g.name}</div>`;
+    if(d.pmts.length) html+=d.pmts.slice().reverse().map(p=>txnRow(p,key)).join('');
+    else html+=`<div style="padding:8px 16px 10px;font-size:12px;color:var(--ink3)">Оплат ще немає</div>`;
+  });
+  if(!html) html=`<div style="padding:16px;font-size:13px;color:var(--ink3)">Оплат ще немає</div>`;
+  return html;
+}
+async function deletePayment(key,payId){
+  const ok=await showConfirm('Видалити цю транзакцію? Баланс буде перераховано.');
+  if(!ok)return;
+  const pmts=getPayments(key).filter(p=>p.id!==payId);
+  savePaymentList(key,pmts);
+  toast('Транзакцію видалено');
+  renderPayments();
+  if(document.getElementById('pg-dash').classList.contains('on'))renderDash();
+}
+
+let payFilter='all'; // 'all'|'debt'|'prepay'|'ok'
+function setPayFilter(f){
+  payFilter=f;
+  ['all','debt','prepay','ok'].forEach(x=>{
+    const el=document.getElementById('pay-filter-'+x);
+    if(el)el.classList.toggle('on',x===f);
+  });
+  renderPayments();
+}
+function renderPayments(){
+  const body=document.getElementById('pay-body');
+  const summary=document.getElementById('pay-summary');
+  if(!students.length){
+    body.innerHTML=`<div class="empty"><svg width="36" height="36"><use href="#i-coin"/></svg><div class="empty-t">Учнів ще немає</div></div>`;
+    summary.innerHTML='';return;
+  }
+  // Summary bar
+  let totalDebt=0,totalPre=0,totalStudents=students.length;
+  students.forEach(s=>{
+    const b=getBalance(s.id);
+    totalDebt+=b.totalDebtAmt||0;
+    totalPre+=b.totalPreAmt||0;
+  });
+  summary.innerHTML=`
+    <div class="pay-summary-card"><div class="pay-summary-lbl">Учнів</div><div class="pay-summary-val">${totalStudents}</div></div>
+    <div class="pay-summary-card"><div class="pay-summary-lbl">Загальний борг</div><div class="pay-summary-val" style="color:${totalDebt>0?'var(--warn)':'var(--ink)'}">${totalDebt>0?fmt(totalDebt)+'₴':'—'}</div></div>
+    <div class="pay-summary-card"><div class="pay-summary-lbl">Передплата</div><div class="pay-summary-val" style="color:var(--ok)">${totalPre>0?fmt(totalPre)+'₴':'—'}</div></div>`;
+
+  // Student cards — filtered
+  const filteredStudents=students.filter(s=>{
+    if(payFilter==='all')return true;
+    const b=getBalance(s.id);
+    const balN=Math.round((b.paidLessons-b.attended)*10)/10;
+    if(payFilter==='debt')return balN<0;
+    if(payFilter==='prepay')return balN>0;
+    if(payFilter==='ok')return balN===0;
+    return true;
+  });
+  if(!filteredStudents.length){
+    body.innerHTML=`<div class="empty" style="max-width:640px"><div class="empty-t">Немає учнів з таким статусом</div></div>`;
+    return;
+  }
+  body.innerHTML=filteredStudents.map(s=>{
+    const bal=getBalance(s.id);
+    const {paidLessons,attended,balance,totalPaid,price,indPaid,indLessons,indAttended,indBalance,indPmts,grpData}=bal;
+    const gs=sGroups(s.id);
+    const color=gs.length?gs[0].color:NEUTRAL;
+    const balN=Math.round(balance*10)/10;
+    // Per-scope breakdown — two-column grid (name | status)
+    const gridCells=[];
+    if(s.individual){
+      const iP=Number(s.individualPrice||0)||Number(settings.indPrice||0);
+      const iN=Math.round((bal.indBalance||0)*10)/10;
+      let iStatus;
+      if(iN<0) iStatus=`<span style="color:var(--warn);font-weight:700">Борг ${Math.abs(iN)%1===0?Math.abs(iN):Math.abs(iN).toFixed(1)} ур.${iP?' · '+fmt(Math.round(Math.abs(bal.indBalance)*iP))+'₴':''}</span>`;
+      else if(iN>0) iStatus=`<span style="color:var(--ok);font-weight:600">Передплата ${iN%1===0?iN:iN.toFixed(1)} ур.</span>`;
+      else iStatus=`<span style="color:var(--ok)">Без боргу</span>`;
+      gridCells.push(`<span style="color:var(--ink2)">Індивідуальне</span>${iStatus}`);
+    }
+    (bal.grpData||[]).forEach(gd=>{
+      const gP=Number(gd.g.groupPrice||0)||Number(settings.grpPrice||0);
+      const gN=Math.round(gd.balance*10)/10;
+      let gStatus;
+      if(gN<0) gStatus=`<span style="color:var(--warn);font-weight:700">Борг ${Math.abs(gN)%1===0?Math.abs(gN):Math.abs(gN).toFixed(1)} ур.${gP?' · '+fmt(Math.round(Math.abs(gd.balance)*gP))+'₴':''}</span>`;
+      else if(gN>0) gStatus=`<span style="color:var(--ok);font-weight:600">Передплата ${gN%1===0?gN:gN.toFixed(1)} ур.</span>`;
+      else gStatus=`<span style="color:var(--ok)">Без боргу</span>`;
+      gridCells.push(`<span style="color:${gd.g.color}">${gd.g.name}</span>${gStatus}`);
+    });
+    const balanceCls='';
+    const balanceHtml=`<div style="display:grid;grid-template-columns:max-content 1fr;gap:3px 12px;align-items:center;font-size:12px;text-align:right">${gridCells.join('')}</div>`;
+
+    const pmts=getPayments(s.id);
+    const histHtml=pmts.length?`
+      <div class="pay-history" id="ph_${s.id}" style="display:none">
+        ${[...pmts].reverse().map(p=>`<div class="pay-hist-row">
+          <span style="color:var(--ink3)">${p.date}</span>
+          <span class="pay-hist-type ${p.type==='prepay'?'pay-hist-prepay':'pay-hist-pay'}">${p.type==='prepay'?'Передплата':'Погашення боргу'}</span>
+          ${p.note?`<span style="color:var(--ink3)">${p.note}</span>`:''}
+          <span class="pay-hist-amount ${p.type==='prepay'?'':''}">+${fmt(p.amount)}₴</span>
+        </div>`).join('')}
+      </div>`:'';
+
+    // lesson type badge
+    const hasInd=!!s.individual,hasGrp=gs.length>0;
+    const typeBadge=hasInd&&hasGrp?'Груп. + Інд.':hasGrp?'Групове':hasInd?'Індивідуальне':'—';
+
+    return`<div class="pay-card">
+      <div class="pay-card-head" style="cursor:pointer" onclick="togglePayCard('${s.id}')">
+        <div class="pay-card-av" style="background:${color}18;color:${color}">${ini(s.name)}</div>
+        <div style="flex:1;min-width:0">
+          <div class="pay-card-name">${s.name}</div>
+          <div style="display:flex;gap:6px;margin-top:2px;flex-wrap:wrap">
+            ${gs.length?`<span style="font-size:12px;color:${gs[0].color}">${gs.map(g=>g.name).join(', ')}</span>`:''}
+            <span style="font-size:12px;color:var(--ink3)">${typeBadge}</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0">
+          <div style="display:flex;flex-direction:column;gap:3px;align-items:flex-end">${balanceHtml}</div>
+        </div>
+      </div>
+      <div id="paycard_${s.id}" class="pay-card-expanded" style="display:none">
+        <div style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border2)">
+          <span style="font-size:12px;color:var(--ink3);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Транзакції</span>
+          <button class="btn btn-g btn-sm" onclick="event.stopPropagation();openPayModal('${s.id}')" style="font-size:12px">+ Додати оплату</button>
+        </div>
+        ${buildTxnHtml(s.id,hasInd,hasGrp,indPmts,grpData)}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function togglePayCard(sid){
+  const el=document.getElementById('paycard_'+sid);
+  if(!el)return;
+  el.style.display=el.style.display==='none'?'':'none';
+}
+function togglePayHistory(sid){
+  const el=document.getElementById('ph_'+sid);
+  if(!el)return;
+  const open=el.style.display==='none';
+  el.style.display=open?'':'none';
+  // update toggle text
+  el.closest('.pay-card').querySelector('.pay-history-toggle').textContent=open?'Історія ▴':'Історія ▾';
+}
+
+// Payment modal — split ind/group, lessons auto-calculated from price
+
+function balanceLine(lessons,price){
+  // lessons: positive = prepay, negative = debt
+  const n=Math.round(lessons*10)/10;
+  if(n>0) return `<span style="color:var(--ok);font-weight:700">Передплата: ${n%1===0?n:n.toFixed(1)} ур.</span>`;
+  if(n<0){
+    const amt=price>0?fmt(Math.round(Math.abs(lessons)*price))+'₴':'';
+    return `<span style="color:var(--warn);font-weight:700">Борг: ${Math.abs(n)%1===0?Math.abs(n):Math.abs(n).toFixed(1)} ур.${amt?' · '+amt:''}</span>`;
+  }
+  return `<span style="color:var(--ok);font-weight:600">Без боргу</span>`;
+}
+
+function renderPayStatus(){
+  const sid=document.getElementById('pay-sid').value;
+  const s=getS(sid);if(!s)return;
+  const gs=sGroups(sid);
+  const bal=getBalance(sid);
+  const box=document.getElementById('pay-status-box');
+
+  // Projected balances (with any amounts already entered)
+  const indPrice=Number(s.individualPrice||0)||Number(settings.indPrice||0);
+  const indAmt=Number((document.getElementById('pay-ind-amount')||{}).value||0);
+  const indProjected=(bal.indBalance||0)+(indPrice>0?indAmt/indPrice:0);
+
+  const grpProjected=gs.map(g=>{
+    const gd=(bal.grpData||[]).find(d=>d.g.id===g.id);
+    const gPrice=Number(g.groupPrice||0)||Number(settings.grpPrice||0);
+    const gAmt=Number((document.getElementById('pay-grp-amount-'+g.id)||{}).value||0);
+    return{g,price:gPrice,proj:(gd?gd.balance:0)+(gPrice>0?gAmt/gPrice:0)};
+  });
+
+  // Per-section status chips
+  const indStatus=document.getElementById('pay-ind-status');
+  if(indStatus&&s.individual) indStatus.innerHTML=balanceLine(indProjected,indPrice);
+  grpProjected.forEach(({g,proj,price})=>{
+    const el=document.getElementById('pay-grp-status-'+g.id);
+    if(el) el.innerHTML=balanceLine(proj,price);
+  });
+
+  // Overall box: just whether debt exists (no breakdown)
+  const hasDebt=(s.individual&&indProjected<0)||grpProjected.some(x=>x.proj<0);
+  const hasPre=(s.individual&&indProjected>0)||grpProjected.some(x=>x.proj>0);
+  if(hasDebt) box.innerHTML=`<span style="color:var(--warn);font-weight:600">⚠ Є борг</span>`;
+  else if(hasPre) box.innerHTML=`<span style="color:var(--ok);font-weight:600">Є передплата</span>`;
+  else box.innerHTML=`<span style="color:var(--ok)">Без боргу</span>`;
+}
+
+function recalcPayPreview(){
+  const sid=document.getElementById('pay-sid').value;
+  const s=getS(sid);if(!s)return;
+  // ind preview
+  const indPrice=Number(s.individualPrice||0)||Number(settings.indPrice||0);
+  const indAmt=Number((document.getElementById('pay-ind-amount')||{}).value||0);
+  const indPrev=document.getElementById('pay-ind-preview');
+  if(indPrev){
+    if(indAmt&&indPrice){
+      const l=indAmt/indPrice;
+      indPrev.textContent=`= ${l%1===0?l:l.toFixed(1)} занять по ${fmt(indPrice)}₴`;
+    } else if(indAmt&&!indPrice){
+      indPrev.textContent='Вкажіть ціну заняття в Налаштуваннях';
+    } else indPrev.textContent='';
+  }
+  // group previews
+  sGroups(sid).forEach(g=>{
+    const gPrice=Number(g.groupPrice||0)||Number(settings.grpPrice||0);
+    const gAmt=Number((document.getElementById('pay-grp-amount-'+g.id)||{}).value||0);
+    const prev=document.getElementById('pay-grp-preview-'+g.id);
+    if(prev){
+      if(gAmt&&gPrice){
+        const l=gAmt/gPrice;
+        prev.textContent=`= ${l%1===0?l:l.toFixed(1)} занять по ${fmt(gPrice)}₴`;
+      } else if(gAmt&&!gPrice){
+        prev.textContent='Вкажіть ціну в Налаштуваннях';
+      } else prev.textContent='';
+    }
+  });
+  renderPayStatus();
+}
+
+function openPayModal(sid){
+  const s=getS(sid);if(!s)return;
+  const gs=sGroups(sid);
+  const hasInd=!!s.individual,hasGrp=gs.length>0;
+  document.getElementById('pay-modal-title').textContent='Додати оплату';
+  document.getElementById('pay-sid').value=sid;
+  document.getElementById('pay-date').value=fmtDate(new Date());
+  document.getElementById('pay-note').value='';
+
+  const indSec=document.getElementById('pay-ind-section');
+  indSec.style.display=hasInd?'':'none';
+  if(hasInd) document.getElementById('pay-ind-amount').value='';
+
+  document.getElementById('pay-divider').style.display=(hasInd&&hasGrp)?'':'none';
+
+  const grpSec=document.getElementById('pay-grp-sections');
+  grpSec.innerHTML=gs.map(g=>{
+    return`<div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-size:12px;font-weight:700;color:${g.color};text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:6px">
+          <span style="width:8px;height:8px;border-radius:50%;background:${g.color};display:inline-block"></span>${g.name}
+        </div>
+        <div id="pay-grp-status-${g.id}" style="font-size:13px"></div>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label class="flbl">Сума (₴)</label>
+        <input type="number" id="pay-grp-amount-${g.id}" placeholder="Сума" oninput="recalcPayPreview()">
+        <div id="pay-grp-preview-${g.id}" style="font-size:12px;color:var(--ink3);margin-top:5px"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  renderPayStatus();
+  // reset button states
+  const closeBtn=document.getElementById('pay-close-btn');
+  const saveBtn=document.getElementById('pay-save-btn');
+  if(closeBtn&&saveBtn){closeBtn.className='btn btn-g';saveBtn.className='btn btn-p';saveBtn.textContent='Зберегти';}
+  document.getElementById('ov-payment').classList.add('on');
+  setTimeout(()=>{
+    const first=hasInd?document.getElementById('pay-ind-amount'):document.getElementById('pay-grp-amount-'+gs[0]?.id);
+    if(first)first.focus();
+  },60);
+}
+
+function savePayment(){
+  const sid=document.getElementById('pay-sid').value;
+  const s=getS(sid);if(!s)return;
+  const gs=sGroups(sid);
+  const hasInd=!!s.individual;
+  const date=document.getElementById('pay-date').value||fmtDate(new Date());
+  const note=document.getElementById('pay-note').value.trim();
+  let saved=0;
+
+  if(hasInd){
+    const amount=Number(document.getElementById('pay-ind-amount').value||0);
+    const price=Number(s.individualPrice||0)||Number(settings.indPrice||0);
+    if(amount){
+      if(!price){alert('Вкажіть ціну індивідуального заняття в Налаштуваннях або в картці учня');return}
+      const lessons=amount/price;
+      const bal=getBalance(sid);
+      const type=bal.indBalance<0?'payment':'prepay';
+      const pmts=getPayments(sid);
+      pmts.push({id:uid(),date,amount,lessons,type,note,scope:'ind'});
+      savePaymentList(sid,pmts);
+      saved++;
+    }
+  }
+  gs.forEach(g=>{
+    const amount=Number((document.getElementById('pay-grp-amount-'+g.id)||{}).value||0);
+    const price=Number(g.groupPrice||0)||Number(settings.grpPrice||0);
+    if(amount){
+      if(!price){alert('Вкажіть ціну групового заняття в Налаштуваннях або в картці групи');return}
+      const lessons=amount/price;
+      const key=sid+'_'+g.id;
+      const bal=getBalance(sid);
+      const gd=(bal.grpData||[]).find(d=>d.g.id===g.id);
+      const type=(gd&&gd.balance<0)?'payment':'prepay';
+      const pmts=getPayments(key);
+      pmts.push({id:uid(),date,amount,lessons,type,note,scope:'grp',gid:g.id,gname:g.name});
+      savePaymentList(key,pmts);
+      saved++;
+    }
+  });
+
+  if(!saved){alert('Введіть суму');return}
+  // refresh status in modal, keep open so user sees updated balance, then they close
+  renderPayStatus();
+  // clear amount inputs
+  if(hasInd)document.getElementById('pay-ind-amount').value='';
+  gs.forEach(g=>{const el=document.getElementById('pay-grp-amount-'+g.id);if(el)el.value=''});
+  recalcPayPreview();
+  toast('Оплату додано ✓');
+  renderPayments();
+  if(document.getElementById('pg-dash').classList.contains('on'))renderDash();
+}
+
+
+
+
+function shakeField(id){
+  const el=document.getElementById(id);if(!el)return;
+  el.style.borderColor='var(--warn)';
+  el.style.animation='shake .3s ease';
+  setTimeout(()=>{el.style.animation='';el.style.borderColor=''},1200);
+}
+
+// ── Tour ─────────────────────────────────────────────────
+let tourIdx=0;
+// ── Tour — rich interactive walkthrough ──────────────────────
+// Each step: {nav, sel, title, body, action?, actionLabel?, tip_pos?}
+// action: function to call AFTER showing tooltip (opens modal etc)
+// beforeShow: function to call before showing this step (setup state)
+// highlight: 'none' to skip highlight box
+
+const TOUR_STEPS=[
+  {nav:'settings', sel:'#n-settings',
+   title:'Крок 1: Налаштування',
+   body:'Починаємо звідси. Задайте діапазон робочих годин і ціни занять.'},
+
+  {nav:'students', sel:'#n-students',
+   title:'Крок 2: Учні',
+   body:'Тут будуть всі ваші учні.'},
+
+  {nav:'students', sel:'#btn-new-student',
+   title:'Додати учня',
+   body:'Клікніть «+ Новий учень» щоб додати учня.',
+   beforeShow: ()=>{ closeAllModals(); }},
+
+  {nav:'groups', sel:'#n-groups',
+   title:'Крок 3: Групи',
+   body:'Якщо викладаєте групи — спочатку додайте всіх учнів групи у вкладці Учні, потім створіть групу тут і додайте їх.'},
+
+  {nav:'groups', sel:'#btn-new-group',
+   title:'Додати групу',
+   body:'Клікніть «+ Нова група» щоб створити групу і додати до неї учнів.',
+   beforeShow: ()=>{ closeAllModals(); }},
+
+  {nav:'schedule', sel:'#n-schedule',
+   title:'Крок 4: Розклад',
+   body:'Тижнева сітка як у Google Calendar.',
+   beforeShow: ()=>{ setSchedView('week'); }},
+
+  {nav:'schedule', sel:'.hg-cell',
+   title:'Клік на слот — нова подія',
+   body:'Клікніть на будь-який вільний час у сітці щоб запланувати нову подію.'},
+
+  {nav:'payments', sel:'#n-payments',
+   title:'Крок 5: Оплати',
+   body:'Перевіряйте хто оплатив заняття наперед, а хто заборгував. Відкрийте картку учня щоб додати оплату або переглянути транзакції.'},
+
+  {nav:'journal', sel:'#n-journal',
+   title:'Крок 6: Журнал',
+   body:'Переглядайте відвідуваність груп і окремих учнів.',
+   beforeShow: ()=>{ closeAllModals(); }},
+
+  {nav:'dash', sel:'#n-dash',
+   title:'Готово!',
+   body:'Щоранку відкривайте Головну: тут сьогоднішні заняття і список боржників.',
+   beforeShow: ()=>{ renderDash(); }},
+];
+
+function closeAllModals(){
+  document.querySelectorAll('.overlay.on').forEach(o=>o.classList.remove('on'));
+}
+
+function startTour(){
+  tourIdx=0;
+  closeAllModals();
+  setTimeout(tourRender, 100);
+}
+function tourNext(){
+  if(tourIdx<TOUR_STEPS.length-1){tourIdx++;tourRender();}
+  else tourEnd();
+}
+function tourPrev(){if(tourIdx>0){tourIdx--;tourRender();}}
+function tourEnd(){
+  sv('tv2_tour_done',true);
+  document.getElementById('tour-hl').style.display='none';
+  document.getElementById('tour-tip').style.display='none';
+  closeAllModals();
+  nav('dash');
+}
+
+function tourRender(){
+  const step=TOUR_STEPS[tourIdx];
+
+  // Run beforeShow setup if defined
+  if(step.beforeShow) step.beforeShow();
+
+  // Navigate to page
+  nav(step.nav);
+
+  // Small delay to let page render before measuring elements
+  setTimeout(()=>{
+    const hl=document.getElementById('tour-hl');
+    const tip=document.getElementById('tour-tip');
+
+    // Find highlight target
+    const el=step.sel?document.querySelector(step.sel):null;
+
+    if(el&&step.highlight!=='none'){
+      const rect=el.getBoundingClientRect();
+      hl.style.display='block';
+      hl.style.top=(rect.top-4)+'px';
+      hl.style.left=(rect.left-4)+'px';
+      hl.style.width=(rect.width+8)+'px';
+      hl.style.height=(rect.height+8)+'px';
+    } else {
+      hl.style.display='none';
+    }
+
+    // Tooltip content
+    tip.style.display='block';
+    document.getElementById('tour-tip-title').textContent=step.title;
+    document.getElementById('tour-tip-body').textContent=step.body;
+    const stepEl=document.getElementById('tour-tip-step');
+    if(stepEl) stepEl.textContent=(tourIdx+1)+' / '+TOUR_STEPS.length;
+    document.getElementById('tour-prev-btn').style.display=tourIdx>0?'':'none';
+    document.getElementById('tour-next-btn').textContent=tourIdx===TOUR_STEPS.length-1?'Завершити ✓':'Далі →';
+
+    // Position tooltip
+    const SB_W=224;
+    const tipW=300;
+    const margin=16;
+    const viewW=window.innerWidth;
+    const viewH=window.innerHeight;
+
+    // Default: right of sidebar
+    let tipLeft=SB_W+margin;
+    let tipTop=margin;
+
+    if(el){
+      const rect=el.getBoundingClientRect();
+      const midY=rect.top+rect.height/2;
+      const tipH=tip.offsetHeight||160;
+      tipTop=Math.max(margin,Math.min(midY-tipH/2,viewH-tipH-margin));
+      // if element is in main content area, position near it
+      if(rect.left>SB_W){
+        // try below element first
+        if(rect.bottom+margin+tipH<viewH){
+          tipTop=rect.bottom+margin;
+          tipLeft=Math.min(rect.left,viewW-tipW-margin);
+        } else {
+          tipTop=Math.max(margin,rect.top-tipH-margin);
+          tipLeft=Math.min(rect.left,viewW-tipW-margin);
+        }
+      }
+    }
+
+    tip.style.left=tipLeft+'px';
+    tip.style.top=tipTop+'px';
+    tip.style.maxWidth=tipW+'px';
+  }, 80);
+}
+
+
+// ── Journal ──
+let journalSelectedSid=null;
+let journalSelectedGid=null;
+let journalTab='ind'; // 'ind'|'grp'
+
+function setJournalTab(t){
+  journalTab=t;
+  ['ind','grp'].forEach(x=>{const el=document.getElementById('j-tab-'+x);if(el)el.classList.toggle('on',x===t)});
+  journalSelectedSid=null;
+  journalSelectedGid=null;
+  renderJournal();
+  document.getElementById('journal-detail').innerHTML=`<div class="empty"><svg width="40" height="40"><use href="#i-journal"/></svg><div class="empty-t">Оберіть учня або групу</div><div class="empty-s">Виберіть зліва щоб побачити журнал</div></div>`;
+}
+
+
+// Check if a lesson has already happened (date+time <= now)
+function isLessonPast(ds, time){
+  const now=new Date();
+  const lessonDate=new Date(ds+'T'+(time||'00:00')+':00');
+  return lessonDate<=now;
+}
+
+function buildStudentJournal(sid){
+  const entries=[];
+  const todayStrJ=fmtDate(new Date());
+  const events=getEvents();
+
+  // manual events
+  events.forEach(ev=>{
+    const isForStudent=ev.whoType==='student'&&ev.whoId===sid;
+    const g=ev.whoType==='group'?getG(ev.whoId):null;
+    const isInGroup=g&&(g.studentIds||[]).includes(sid);
+    if(!isForStudent&&!isInGroup)return;
+    getPastDates(ev).forEach(ds=>{
+      if(ds>todayStrJ)return;
+      const ln=ld('tv2_ln_'+ev.id+'_'+ds,{});
+      if(ln.cancelled)return;
+      const evTime=ev.time||(ev.slots&&ev.slots[0]?.time)||'00:00';
+      if(!isLessonPast(ds,evTime))return;
+      const present=isForStudent?(ln.attended===true):((ln.attendance||{})[sid]===true);
+      const absent=!present;
+      const d=new Date(ds+'T00:00:00');
+      entries.push({date:d.getDate()+' '+MONTHS[d.getMonth()],label:getEvLabel(ev),present,absent,_ds:ds,type:ev.whoType,topic:ln.topic||'',homework:ln.homework||'',eventId:ev.id});
+    });
+  });
+
+  // sched_ student
+  const todayStr=fmtDate(new Date());
+  const s=getS(sid);
+  (s?.schedule||[]).forEach(sc=>{
+    getPastSchedDates(sc.day,90).forEach(ds=>{
+      if(ds>todayStr)return;
+      const synId='sched_'+sid+'_'+sc.day;
+      const ln=ld('tv2_ln_'+synId+'_'+ds,{});
+      if(ln.cancelled)return;
+      if(!isLessonPast(ds,sc.time))return;
+      const present=ln.attended===true;
+      const d=new Date(ds+'T00:00:00');
+      entries.push({date:d.getDate()+' '+MONTHS[d.getMonth()],label:'Індивід. заняття',present,absent:!present,_ds:ds,type:'student',topic:ln.topic||'',homework:ln.homework||'',eventId:synId});
+    });
+  });
+
+  // sched_ groups
+  groups.forEach(g=>{
+    if(!(g.studentIds||[]).includes(sid))return;
+    (g.schedule||[]).forEach(sc=>{
+      getPastSchedDates(sc.day,90).forEach(ds=>{
+        if(ds>todayStr)return;
+        const synId='sched_'+g.id+'_'+sc.day;
+        const ln=ld('tv2_ln_'+synId+'_'+ds,{});
+        if(ln.cancelled)return;
+        if(!isLessonPast(ds,sc.time))return;
+        const present=(ln.attendance||{})[sid]===true;
+        const d=new Date(ds+'T00:00:00');
+        entries.push({date:d.getDate()+' '+MONTHS[d.getMonth()],label:g.name,present,absent:!present,_ds:ds,type:'group',topic:ln.topic||'',homework:ln.homework||'',eventId:synId});
+      });
+    });
+  });
+
+  return entries.sort((a,b)=>b._ds.localeCompare(a._ds)).slice(0,30);
+}
+
+function renderJournal(){
+  const list=document.getElementById('journal-student-list');
+  let html='';
+
+  // Students section
+  if(journalTab==='ind'){
+    const ss=students;
+    if(ss.length){
+
+      html+=ss.map(s=>{
+        const journal=buildStudentJournal(s.id);
+        const presentCount=journal.filter(j=>j.present).length;
+        const total=journal.length;
+        const gs=sGroups(s.id);
+        const color=gs.length?gs[0].color:NEUTRAL;
+        const isActive=journalSelectedSid===s.id;
+        return`<div class="journal-student-item${isActive?' active':''}" onclick="selectJournalStudent('${s.id}')">
+          <div style="width:28px;height:28px;border-radius:50%;background:${color}18;color:${color};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${ini(s.name)}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.name}</div>
+    
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  // Groups section
+  if(journalTab==='grp'){
+    if(groups.length){
+
+      html+=groups.map(g=>{
+        const journal=buildGroupJournal(g.id);
+        const lessonCount=journal.length;
+        const isActive=journalSelectedGid===g.id;
+        return`<div class="journal-student-item${isActive?' active':''}" onclick="selectJournalGroup('${g.id}')">
+          <div style="width:28px;height:28px;border-radius:var(--r);background:${g.color}18;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <div style="width:10px;height:10px;border-radius:50%;background:${g.color}"></div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${g.name}</div>
+
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  if(!html){
+    if(journalTab==='ind')
+      html=`<div style="padding:20px 16px;font-size:13px;color:var(--ink3);line-height:1.6">Учнів ще немає.<br>Додайте учня у вкладці <b style="color:var(--ink2);cursor:pointer" onclick="nav('students')">Учні</b>.</div>`;
+    else
+      html=`<div style="padding:20px 16px;font-size:13px;color:var(--ink3);line-height:1.6">Груп ще немає.<br>Додайте групу у вкладці <b style="color:var(--ink2);cursor:pointer" onclick="nav('groups')">Групи</b>.</div>`;
+  }
+  list.innerHTML=html;
+
+  // Re-render detail if something selected
+  if(journalSelectedSid) renderJournalDetail(journalSelectedSid);
+  if(journalSelectedGid) renderJournalGroupDetail(journalSelectedGid);
+}
+
+function selectJournalStudent(sid){
+  journalSelectedSid=sid;
+  journalSelectedGid=null;
+  renderJournal();
+  renderJournalDetail(sid);
+}
+
+function selectJournalGroup(gid){
+  journalSelectedGid=gid;
+  journalSelectedSid=null;
+  renderJournal();
+  renderJournalGroupDetail(gid);
+}
+
+// Build group journal: list of past lesson dates with attendance per student
+function buildGroupJournal(gid){
+  const g=getG(gid);if(!g)return[];
+  const members=(g.studentIds||[]).map(id=>getS(id)).filter(Boolean);
+  const todayStr=fmtDate(new Date());
+  const entries=[];
+
+  // from sched_ entries
+  (g.schedule||[]).forEach(sc=>{
+    getPastSchedDates(sc.day,90).forEach(ds=>{
+      if(ds>todayStr)return;
+      const synId='sched_'+gid+'_'+sc.day;
+      const ln=ld('tv2_ln_'+synId+'_'+ds,{});
+      if(ln.cancelled)return;
+      if(!isLessonPast(ds,sc.time))return;
+      const attendance=ln.attendance||{};
+      entries.push({ds,time:sc.time,attendance,members,topic:ln.topic||'',homework:ln.homework||'',eventId:synId});
+    });
+  });
+
+  // from getEvents()
+  getEvents().filter(ev=>ev.whoType==='group'&&ev.whoId===gid).forEach(ev=>{
+    getPastDates(ev).forEach(ds=>{
+      if(ds>todayStr)return;
+      const evTime=ev.time||(ev.slots&&ev.slots[0]?.time)||'00:00';
+      if(!isLessonPast(ds,evTime))return;
+      const ln=ld('tv2_ln_'+ev.id+'_'+ds,{});
+      if(ln.cancelled)return;
+      entries.push({ds,time:evTime,attendance:ln.attendance||{},members,topic:ln.topic||'',homework:ln.homework||'',eventId:ev.id});
+    });
+  });
+
+  return entries.sort((a,b)=>b.ds.localeCompare(a.ds));
+}
+
+function renderJournalGroupDetail(gid){
+  const g=getG(gid);if(!g)return;
+  const members=(g.studentIds||[]).map(id=>getS(id)).filter(Boolean);
+  const journal=buildGroupJournal(gid);
+  const detail=document.getElementById('journal-detail');
+
+  if(!journal.length){
+    detail.innerHTML=`<div class="empty"><svg width="36" height="36"><use href="#i-journal"/></svg><div class="empty-t">Занять ще немає</div><div class="empty-s">Заняття з'являться як тільки пройде перший урок за розкладом</div></div>`;
+    return;
+  }
+
+  // Summary stats
+  let totalPresent=0, totalSlots=0;
+  journal.forEach(entry=>{
+    members.forEach(s=>{
+      totalSlots++;
+      if(entry.attendance[s.id]===true) totalPresent++;
+    });
+  });
+  const pct=totalSlots>0?Math.round(totalPresent/totalSlots*100):0;
+
+  // Build table header (member names)
+  const headerCells=members.map(s=>`
+    <th style="padding:7px 8px;font-size:12px;font-weight:600;color:var(--ink2);border-bottom:2px solid var(--border);border-left:1px solid var(--border2);white-space:nowrap;min-width:80px;text-align:center">
+      <div style="width:24px;height:24px;border-radius:50%;background:${g.color}18;color:${g.color};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin:0 auto 3px">${ini(s.name)}</div>
+      ${s.name.split(' ')[0]}
+    </th>`).join('');
+
+  // Build rows
+  const rows=journal.map(entry=>{
+    const d=new Date(entry.ds+'T00:00:00');
+    const dow=DAYS[(d.getDay()+6)%7];
+    const dateStr=dow+', '+d.getDate()+' '+MONTHS[d.getMonth()];
+    const cells=members.map(s=>{
+      const present=entry.attendance[s.id]===true;
+      const absent=!present;
+      return`<td style="padding:8px;text-align:center;border-left:1px solid var(--border2)">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:${present?'var(--al)':'var(--wl)'};color:${present?'var(--accent)':'var(--warn)'};font-size:12px;font-weight:700">
+          ${present?'✓':'✗'}
+        </span>
+      </td>`;
+    }).join('');
+    const topicLine=entry.topic?`<div style="font-size:12px;color:var(--ink2);margin-top:2px;font-weight:500">${entry.topic}</div>`:`<div style="font-size:12px;color:var(--ink3);margin-top:2px;font-style:italic">Тему не вказано</div>`;
+    return`<tr style="border-bottom:1px solid var(--border2);cursor:pointer" onclick="openLesson('${entry.eventId}','${entry.ds}')" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">
+      <td style="padding:9px 12px;white-space:nowrap;vertical-align:top">
+        <div style="font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums">${dateStr} · ${entry.time}</div>
+        ${topicLine}
+      </td>
+      ${cells}
+    </tr>`;
+  }).join('');
+
+  detail.innerHTML=`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+      <div style="width:10px;height:10px;border-radius:50%;background:${g.color};flex-shrink:0"></div>
+      <div style="font-size:15px;font-weight:700">${g.name}</div>
+      <div style="margin-left:auto;text-align:right">
+        <div style="font-size:22px;font-weight:700;color:${pct>=80?'var(--accent)':'var(--warn)'}">${pct}%</div>
+        <div style="font-size:12px;color:var(--ink3)">загальна відвідуваність</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
+      <div style="background:var(--ok-l);border-radius:var(--r);padding:12px;text-align:center">
+        <div style="font-size:22px;font-weight:700;color:var(--ok)">${totalPresent}</div>
+        <div style="font-size:12px;color:var(--ok)">Присутність</div>
+      </div>
+      <div style="background:var(--wl);border-radius:var(--r);padding:12px;text-align:center">
+        <div style="font-size:22px;font-weight:700;color:var(--warn)">${totalSlots-totalPresent}</div>
+        <div style="font-size:12px;color:var(--warn)">Відсутність</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center">
+        <div style="font-size:22px;font-weight:700">${journal.length}</div>
+        <div style="font-size:12px;color:var(--ink3)">Занять</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--ink3);margin-bottom:8px">Натисніть на заняття щоб переглянути тему, домашнє завдання і деталі</div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:auto">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="background:var(--bg3)">
+            <th style="padding:7px 12px;font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;text-align:left;border-bottom:2px solid var(--border)">Заняття</th>
+            ${headerCells}
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+function renderJournalDetail(sid){
+  const s=getS(sid);if(!s)return;
+  const gs=sGroups(sid);
+  const color=gs.length?gs[0].color:NEUTRAL;
+  const journal=buildStudentJournal(sid); // sorted desc by _ds
+  const presentCount=journal.filter(j=>j.present).length;
+  const absentCount=journal.filter(j=>j.absent).length;
+  const total=journal.length;
+  const pct=total>0?Math.round(presentCount/total*100):null;
+  const detail=document.getElementById('journal-detail');
+  if(!journal.length){
+    detail.innerHTML=`<div class="empty"><svg width="36" height="36"><use href="#i-journal"/></svg><div class="empty-t">Занять ще немає</div><div class="empty-s">Заняття з'являться як тільки пройде перший урок за розкладом</div></div>`;
+    return;
+  }
+
+  // Lesson rows — one per lesson, newest first
+  const rows=journal.map(j=>{
+    const badge=j.present
+      ? `<span class="journal-badge j-present">Присутній</span>`
+      : `<span class="journal-badge j-absent">Відсутній</span>`;
+    const topic=j.topic?`<span style="color:var(--ink)">${j.topic}</span>`:`<span style="color:var(--ink3);font-style:italic">Тему не вказано</span>`;
+    const hw=j.homework?`<div style="font-size:12px;color:var(--ink3);margin-top:3px"><span style="font-weight:600">Д/З:</span> ${j.homework}</div>`:'';
+    return`<tr style="border-bottom:1px solid var(--border2);cursor:pointer" onclick="openLesson('${j.eventId}','${j._ds}')" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">
+      <td style="padding:11px 14px;font-size:13px;color:var(--ink3);white-space:nowrap;vertical-align:top">${j.date}</td>
+      <td style="padding:11px 14px;font-size:13px;vertical-align:top">
+        ${topic}
+        ${hw}
+      </td>
+      <td style="padding:11px 14px;text-align:right;vertical-align:top">${badge}</td>
+    </tr>`;
+  }).join('');
+
+  detail.innerHTML=`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+      <div style="width:40px;height:40px;border-radius:50%;background:${color}18;color:${color};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700">${ini(s.name)}</div>
+      <div>
+        <div style="font-size:15px;font-weight:700">${s.name}</div>
+        ${gs.length?`<div style="font-size:12px;color:var(--ink3)">${gs.map(g=>g.name).join(', ')}</div>`:''}
+      </div>
+      ${pct!==null?`<div style="margin-left:auto;text-align:right">
+        <div style="font-size:22px;font-weight:700;color:${pct>=80?'var(--accent)':'var(--warn)'}">${pct}%</div>
+        <div style="font-size:12px;color:var(--ink3)">відвідуваність</div>
+      </div>`:''}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
+      <div style="background:var(--ok-l);border-radius:var(--r);padding:12px;text-align:center">
+        <div style="font-size:22px;font-weight:700;color:var(--ok)">${presentCount}</div>
+        <div style="font-size:12px;color:var(--ok)">Присутній</div>
+      </div>
+      <div style="background:var(--wl);border-radius:var(--r);padding:12px;text-align:center">
+        <div style="font-size:22px;font-weight:700;color:var(--warn)">${absentCount}</div>
+        <div style="font-size:12px;color:var(--warn)">Відсутній</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center">
+        <div style="font-size:22px;font-weight:700">${total}</div>
+        <div style="font-size:12px;color:var(--ink3)">Всього</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--ink3);margin-bottom:8px">Натисніть на урок щоб переглянути або редагувати деталі</div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden">
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="background:var(--bg3)">
+          <th style="padding:8px 14px;font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;text-align:left;border-bottom:1px solid var(--border)">Дата</th>
+          <th style="padding:8px 14px;font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;text-align:left;border-bottom:1px solid var(--border)">Тема та домашнє завдання</th>
+          <th style="padding:8px 14px;font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;text-align:right;border-bottom:1px solid var(--border)">Статус</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+function showConfirm(msg,okLabel='Видалити'){
+  return new Promise(resolve=>{
+    _confirmResolve=resolve;
+    document.getElementById('confirm-msg').textContent=msg;
+    document.getElementById('confirm-ok').textContent=okLabel;
+    document.getElementById('ov-confirm').classList.add('on');
+  });
+}
+function confirmResolve(val){
+  document.getElementById('ov-confirm').classList.remove('on');
+  if(_confirmResolve){_confirmResolve(val);_confirmResolve=null;}
+}
+
+// Modal utils
+function closeModal(id){document.getElementById(id).classList.remove('on')}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on')}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.overlay.on').forEach(o=>o.classList.remove('on'))});
+// Keyboard activation for role=button elements (nav items)
+document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ')&&e.target.getAttribute('role')==='button'){
+    e.preventDefault();e.target.click();
+  }
+});
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2600)}
+
+loadSettings();
+renderStudents();
+renderGroups();
+renderSchedule();
+renderDash();
+</script>
+</body>
+</html>
