@@ -220,7 +220,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
 .sched-del{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--ink3);padding:3px;border-radius:5px;display:flex;align-items:center;transition:all .14s;flex-shrink:0}
 .sched-del svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
 .sched-del:hover{background:var(--wl);color:var(--warn)}
-.sched-add{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--ink3);cursor:pointer;border:none;background:none;font-family:inherit;padding:4px 0;margin-top:6px;transition:color .14s}
+.sched-add{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--ink2);cursor:pointer;border:1px solid var(--border);background:var(--bg2);border-radius:8px;font-family:inherit;padding:6px 12px;margin-top:6px;transition:all .14s}
 .sched-add svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
 .sched-add:hover{color:var(--ink)}
 
@@ -715,9 +715,10 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
               <label class="flbl">Розклад індивідуальних занять</label>
               <div class="fhint">Можна задати кілька слотів на тиждень</div>
               <div class="sched-list" id="ms-sched"></div>
-              <button class="sched-add" onclick="addSched('ms-sched','s')">
+              <button class="sched-add" id="ms-sched-add" onclick="addSched('ms-sched','s')">
                 <svg width="13" height="13"><use href="#i-plus"/></svg> Додати час
               </button>
+              <div id="ms-sched-err" style="display:none;font-size:12px;color:var(--warn);margin-top:5px">Вкажіть час занять</div>
             </div>
           </div>
 
@@ -738,7 +739,6 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
                   Груп ще немає — спочатку створіть групу у вкладці <b>Групи</b>
                 </div>
               </div>
-              iv>
             </div>
           </div>
 
@@ -890,6 +890,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
             <input type="text" id="ev-who-search" placeholder="Почніть вводити ім'я…" autocomplete="off"
               oninput="filterEvWho()" onfocus="showEvWhoList()" style="border-radius:9px 9px 0 0;border-bottom:none" onblur="setTimeout(hideEvWhoList,150)">
           </div>
+          <div id="ev-who-err" style="display:none;font-size:12px;color:var(--warn);margin-top:5px">Оберіть учня або групу</div>
           <div id="ev-who-selected" style="display:none;padding:7px 12px;background:var(--al);border:1px solid var(--am);border-top:none;border-radius:0 0 9px 9px;font-size:13px;font-weight:500;color:var(--ink);display:flex;align-items:center;justify-content:space-between">
             <span id="ev-who-selected-lbl"></span>
             <span onclick="clearEvWho()" style="cursor:pointer;color:var(--ink3);font-size:15px;line-height:1">×</span>
@@ -899,14 +900,14 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
         <input type="hidden" id="ev-who">
       </div>
 
-      <!-- Date (once) / Slots (recurring) -->
-      <div id="ev-date-wrap" class="field">
-        <label class="flbl">Дата</label>
-        <input type="date" id="ev-date" onchange="checkEvConflict()">
-      </div>
-      <div id="ev-time-once-wrap" class="field">
-        <label class="flbl">Час</label>
-        <input type="text" id="ev-time" placeholder="Час" oninput="checkEvConflict()">
+      <!-- Date + Time (once) on same line -->
+      <div id="ev-date-time-wrap" class="field">
+        <label class="flbl">Дата і час</label>
+        <div style="display:grid;grid-template-columns:1fr 100px;gap:8px">
+          <input type="date" id="ev-date" onchange="checkEvConflict()">
+          <input type="text" id="ev-time" placeholder="14:00" oninput="checkEvConflict()">
+        </div>
+        <div id="ev-datetime-err" style="display:none;font-size:12px;color:var(--warn);margin-top:5px">Вкажіть дату і час</div>
         <div id="ev-conflict-warn" style="display:none;font-size:12px;color:var(--warn);margin-top:6px;align-items:center;gap:5px">
           <svg width="13" height="13" style="stroke:var(--warn);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:-2px"><use href="#i-warn"/></svg>
           <span id="ev-conflict-text"></span>
@@ -1097,6 +1098,96 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
     <button class="tour-tip-btn primary" id="tour-next-btn" onclick="tourNext()">Далі →</button>
   </div>
 </div>
+<!-- Onboarding overlay -->
+<div id="ov-onboard" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;align-items:center;justify-content:center;padding:16px">
+  <div style="background:var(--bg2);border-radius:18px;width:100%;max-width:460px;box-shadow:0 24px 80px rgba(0,0,0,.2);overflow:hidden;animation:wz-in .22s ease">
+
+    <!-- Step 0: welcome -->
+    <div id="ob-s0">
+      <div style="padding:40px 32px 32px;text-align:center">
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:16px;background:var(--accent);margin-bottom:20px">
+          <svg width="28" height="28" fill="none" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-journal"/></svg>
+        </div>
+        <div style="font-size:24px;font-weight:800;font-family:'Syne',sans-serif;margin-bottom:10px;letter-spacing:-.02em">Репетитор</div>
+        <div style="font-size:14px;color:var(--ink3);line-height:1.7;margin-bottom:28px">Простий облік учнів, розкладу та оплат.<br>Більше не треба таблиці — все в одному місці.</div>
+        <div style="display:flex;flex-direction:column;gap:8px;text-align:left;margin-bottom:28px">
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg3);border-radius:10px;font-size:13px">
+            <svg width="18" height="18" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><use href="#i-user"/></svg>
+            <span><b>Учні</b> — картки, контакти, тип занять</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg3);border-radius:10px;font-size:13px">
+            <svg width="18" height="18" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><use href="#i-cal"/></svg>
+            <span><b>Розклад</b> — тижнева сітка занять</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--bg3);border-radius:10px;font-size:13px">
+            <svg width="18" height="18" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><use href="#i-coin"/></svg>
+            <span><b>Оплати</b> — борги та передплати автоматично</span>
+          </div>
+        </div>
+        <button class="btn btn-p" style="width:100%;font-size:15px;padding:12px" onclick="obGoStep(1)">Почати налаштування →</button>
+      </div>
+    </div>
+
+    <!-- Step 1: working hours -->
+    <div id="ob-s1" style="display:none">
+      <div style="padding:28px 32px 20px;border-bottom:1px solid var(--border2)">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink2);margin-bottom:12px">Крок 1 з 2</div>
+        <div style="font-size:19px;font-weight:700;font-family:'Syne',sans-serif;margin-bottom:4px">Коли ти працюєш?</div>
+        <div style="font-size:13px;color:var(--ink3);margin-bottom:20px">Це визначає сітку у вкладці Розклад</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+          <div class="field" style="margin:0">
+            <label class="flbl">Початок дня</label>
+            <input type="time" id="ob-start" value="08:00" oninput="obPreview()">
+          </div>
+          <div class="field" style="margin:0">
+            <label class="flbl">Кінець дня</label>
+            <input type="time" id="ob-end" value="20:00" oninput="obPreview()">
+          </div>
+        </div>
+        <div style="background:var(--bg3);border-radius:9px;padding:10px 14px;font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:8px">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><use href="#i-clock"/></svg>
+          <span id="ob-preview">8:00 — 20:00 · 12 годин</span>
+        </div>
+      </div>
+      <div style="padding:20px 32px;display:flex;gap:10px">
+        <button class="btn btn-g" onclick="obGoStep(0)">← Назад</button>
+        <button class="btn btn-p" style="flex:1" onclick="obGoStep(2)">Далі →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: prices -->
+    <div id="ob-s2" style="display:none">
+      <div style="padding:28px 32px 20px;border-bottom:1px solid var(--border2)">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink2);margin-bottom:12px">Крок 2 з 2</div>
+        <div style="font-size:19px;font-weight:700;font-family:'Syne',sans-serif;margin-bottom:4px">Скільки коштує заняття?</div>
+        <div style="font-size:13px;color:var(--ink3);margin-bottom:20px">Дефолтна ціна — можна змінити окремо для кожного учня</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px">
+          <div class="field" style="margin:0">
+            <label class="flbl">Індивідуальне</label>
+            <div style="position:relative">
+              <input type="number" id="ob-ind" placeholder="Сума" style="width:100%;box-sizing:border-box;padding-right:26px">
+              <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--ink3)">₴</span>
+            </div>
+          </div>
+          <div class="field" style="margin:0">
+            <label class="flbl">Групове (на учня)</label>
+            <div style="position:relative">
+              <input type="number" id="ob-grp" placeholder="Сума" style="width:100%;box-sizing:border-box;padding-right:26px">
+              <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--ink3)">₴</span>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:8px">Можна пропустити — введеш пізніше в Налаштуваннях</div>
+      </div>
+      <div style="padding:20px 32px;display:flex;gap:10px">
+        <button class="btn btn-g" onclick="obGoStep(1)">← Назад</button>
+        <button class="btn btn-p" style="flex:1" onclick="obFinish()">Почати роботу ✓</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- Cancel recurring event modal -->
 <div class="overlay" id="ov-cancel-recurring" style="z-index:200">
   <div class="modal" style="max-width:400px">
@@ -1226,8 +1317,8 @@ function renderDash(){
   const now=new Date();
   const monthKey=todayStr.slice(0,7);
 
-  // Tour on first run
-  if(!ld('tv2_tour_done',false)&&!students.length&&!groups.length){sv('tv2_tour_done',true);setTimeout(startTour,300);}
+  // Onboarding on first run
+  if(obShouldShow()){setTimeout(obShow,200);return;}
   // First-run onboarding: zero students AND zero groups
   if(!students.length&&!groups.length){
     const now2=new Date();
@@ -1409,8 +1500,16 @@ function validateSchedItem(el){
   const item=el.closest('.sched-item');
   const day=item.querySelector('.sched-day-sel').value;
   const time=item.querySelector('.sched-time').value.trim();
+  const timeInput=item.querySelector('.sched-time');
   const msg=item.querySelector('.sched-conflict-msg');
-  if(!time){item.classList.remove('conflict');msg.textContent='';return}
+  if(!time){item.classList.remove('conflict');msg.textContent='';timeInput.style.borderColor='';return}
+  const validTime=/^\d{2}:\d{2}$/.test(time);
+  if(!validTime){
+    timeInput.style.borderColor='var(--warn)';
+    msg.innerHTML=`<svg width="11" height="11" style="vertical-align:-1px;stroke:var(--warn);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><use href="#i-warn"/></svg> Формат: 14:00`;
+    return;
+  }
+  timeInput.style.borderColor='';
   const type=item.dataset.type||'s';
   const excludeId=type==='s'?document.getElementById('ms-id').value:document.getElementById('mg-id').value;
   const conflicts=checkConflict(day,time,excludeId,type);
@@ -1628,8 +1727,9 @@ function msRenderView(s){
 function openStudent(id){
   const s=id?getS(id):null;
   msGroupSel=new Set(s?sGroups(id).map(g=>g.id):[]);
-  msLtInd=s?!!s.individual:true;
-  msLtGrp=s?(sGroups(id).length>0):false;
+  const _ind=s?!!s.individual:true;
+  const _grp=s?(sGroups(id).length>0):false;
+  setLt(_ind,_grp);
   document.getElementById('ms-title').textContent=s?s.name:'Новий учень';
   document.getElementById('ms-id').value=id||'';
   document.getElementById('ms-name').value=s?.name||'';
@@ -1638,10 +1738,9 @@ function openStudent(id){
   document.getElementById('ms-phone').value=s?.phone||'';
   document.getElementById('ms-parent').value=s?.parent||'';
   document.getElementById('ms-notes').value=s?.notes||'';
-  document.getElementById('ms-ind-price').value=s?.individualPrice||'';
+  document.getElementById('ms-ind-price').value=s?.individualPrice||(s?'':(settings.indPrice||''));
   const hint=document.getElementById('ms-ind-hint');
-  if(settings.indPrice&&!s?.individualPrice){hint.innerHTML=`Дефолт: <b>${fmt(settings.indPrice)}₴</b>`;hint.style.display=''}
-  else hint.style.display='none';
+  hint.style.display='none';
   document.getElementById('ms-del').style.display=s?'':'none';
   const delView=document.getElementById('ms-del-view');
   if(delView) delView.style.display=s?'':'none';
@@ -1678,8 +1777,10 @@ function saveStudent(){
   if(!phone&&!parent){fieldError('ms-phone');fieldError('ms-parent');ok=false;}
   if(msLtInd&&!rawP){fieldError('ms-ind-price');ok=false;}
   if(msLtInd&&schedCount===0){
-    const schedEl=document.getElementById('ms-sched');
-    if(schedEl){schedEl.style.outline='2px solid var(--warn)';schedEl.style.borderRadius='9px';setTimeout(()=>{schedEl.style.outline=''},2000);}
+    const addBtn=document.getElementById('ms-sched-add');
+    const errMsg=document.getElementById('ms-sched-err');
+    if(addBtn){addBtn.style.borderColor='var(--warn)';addBtn.style.color='var(--warn)';setTimeout(()=>{addBtn.style.borderColor='';addBtn.style.color='';},2000);}
+    if(errMsg){errMsg.style.display='';setTimeout(()=>{errMsg.style.display='none';},2000);}
     ok=false;
   }
   if(!msLtInd&&!msLtGrp){ok=false;}
@@ -2216,8 +2317,7 @@ function setEvType(t){
   evType=t;
   document.getElementById('ev-type-once').classList.toggle('on',t==='once');
   document.getElementById('ev-type-recurring').classList.toggle('on',t==='recurring');
-  document.getElementById('ev-date-wrap').style.display=t==='once'?'':'none';
-  document.getElementById('ev-time-once-wrap').style.display=t==='once'?'':'none';
+  document.getElementById('ev-date-time-wrap').style.display=t==='once'?'':'none';
   document.getElementById('ev-slots-wrap').style.display=t==='recurring'?'':'none';
 }
 
@@ -2369,7 +2469,13 @@ function findTimeConflict(date,time,excludeEventId){
 function saveEvent(){
   const id=document.getElementById('ev-id').value||uid();
   const whoRaw=document.getElementById('ev-who').value;
-  if(!whoRaw){alert('Оберіть учня або групу');return}
+  if(!whoRaw){
+    const ws=document.getElementById('ev-who-search');
+    const we=document.getElementById('ev-who-err');
+    if(ws){ws.style.borderColor='var(--warn)';ws.style.animation='shake .3s ease';setTimeout(()=>{ws.style.borderColor='';ws.style.animation='';},2000);}
+    if(we){we.style.display='';setTimeout(()=>{we.style.display='none';},2000);}
+    return;
+  }
   const whoType=whoRaw.startsWith('s_')?'student':'group';
   const whoId=whoRaw.slice(2);
   const link=document.getElementById('ev-link').value.trim();
@@ -2378,7 +2484,15 @@ function saveEvent(){
   if(evType==='once'){
     const date=document.getElementById('ev-date').value;
     const time=document.getElementById('ev-time').value.trim();
-    if(!date||!time){alert('Вкажіть дату та час');return}
+    if(!date||!time){
+      const de=document.getElementById('ev-date');
+      const te=document.getElementById('ev-time');
+      const err=document.getElementById('ev-datetime-err');
+      if(!date&&de){de.style.outline='2px solid var(--warn)';setTimeout(()=>{de.style.outline='';},2000);}
+      if(!time&&te){te.style.borderColor='var(--warn)';te.style.animation='shake .3s ease';setTimeout(()=>{te.style.borderColor='';te.style.animation='';},2000);}
+      if(err){err.style.display='';setTimeout(()=>{err.style.display='none';},2000);}
+      return;
+    }
     // conflict check
     const conflict=findTimeConflict(date,time,id);
     if(conflict){alert('На цей час вже є подія: '+conflict);return}
@@ -3148,6 +3262,39 @@ function savePayment(){
 
 
 
+
+// ── Onboarding ───────────────────────────────────────────
+const OB_KEY='tv2_onboard_done';
+function obShouldShow(){return !ld(OB_KEY,false);}
+function obShow(){document.getElementById('ov-onboard').style.display='flex';}
+function obGoStep(n){
+  [0,1,2].forEach(i=>document.getElementById('ob-s'+i).style.display=i===n?'block':'none');
+}
+function obPreview(){
+  const s=document.getElementById('ob-start').value||'08:00';
+  const e=document.getElementById('ob-end').value||'20:00';
+  const sh=parseInt(s),eh=parseInt(e);
+  const hrs=eh>sh?eh-sh:'—';
+  const fmtH=t=>t.replace(/^0/,'');
+  const hrWord=hrs===1?'година':hrs<5?'години':'годин';
+  document.getElementById('ob-preview').textContent=`${fmtH(s)} — ${fmtH(e)} · ${hrs} ${hrWord}`;
+}
+function obFinish(){
+  const ind=Number(document.getElementById('ob-ind').value)||0;
+  const grp=Number(document.getElementById('ob-grp').value)||0;
+  const start=document.getElementById('ob-start').value||'08:00';
+  const end=document.getElementById('ob-end').value||'20:00';
+  if(ind) settings.indPrice=ind;
+  if(grp) settings.grpPrice=grp;
+  settings.dayStart=start;
+  settings.dayEnd=end;
+  sv('tv2_settings',settings);
+  if(document.getElementById('cfg-ind')) document.getElementById('cfg-ind').value=ind||'';
+  if(document.getElementById('cfg-grp')) document.getElementById('cfg-grp').value=grp||'';
+  sv(OB_KEY,true);
+  document.getElementById('ov-onboard').style.display='none';
+  renderDash();
+}
 
 function shakeField(id){
   const el=document.getElementById(id);if(!el)return;

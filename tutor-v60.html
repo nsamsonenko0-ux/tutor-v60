@@ -730,9 +730,10 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
               <label class="flbl">Розклад індивідуальних занять</label>
               <div class="fhint">Можна задати кілька слотів на тиждень</div>
               <div class="sched-list" id="ms-sched"></div>
-              <button class="sched-add" onclick="addSched('ms-sched','s')">
+              <button class="sched-add" id="ms-sched-add" onclick="addSched('ms-sched','s')">
                 <svg width="13" height="13"><use href="#i-plus"/></svg> Додати час
               </button>
+              <div id="ms-sched-err" style="display:none;font-size:12px;color:var(--warn);margin-top:5px">Вкажіть час занять</div>
             </div>
           </div>
 
@@ -905,6 +906,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
             <input type="text" id="ev-who-search" placeholder="Почніть вводити ім'я…" autocomplete="off"
               oninput="filterEvWho()" onfocus="showEvWhoList()" style="border-radius:9px 9px 0 0;border-bottom:none" onblur="setTimeout(hideEvWhoList,150)">
           </div>
+          <div id="ev-who-err" style="display:none;font-size:12px;color:var(--warn);margin-top:5px">Оберіть учня або групу</div>
           <div id="ev-who-selected" style="display:none;padding:7px 12px;background:var(--al);border:1px solid var(--am);border-top:none;border-radius:0 0 9px 9px;font-size:13px;font-weight:500;color:var(--ink);display:flex;align-items:center;justify-content:space-between">
             <span id="ev-who-selected-lbl"></span>
             <span onclick="clearEvWho()" style="cursor:pointer;color:var(--ink3);font-size:15px;line-height:1">×</span>
@@ -914,14 +916,14 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
         <input type="hidden" id="ev-who">
       </div>
 
-      <!-- Date (once) / Slots (recurring) -->
-      <div id="ev-date-wrap" class="field">
-        <label class="flbl">Дата</label>
-        <input type="date" id="ev-date" onchange="checkEvConflict()">
-      </div>
-      <div id="ev-time-once-wrap" class="field">
-        <label class="flbl">Час</label>
-        <input type="text" id="ev-time" placeholder="Час" oninput="checkEvConflict()">
+      <!-- Date + Time (once) on same line -->
+      <div id="ev-date-time-wrap" class="field">
+        <label class="flbl">Дата і час</label>
+        <div style="display:grid;grid-template-columns:1fr 100px;gap:8px">
+          <input type="date" id="ev-date" onchange="checkEvConflict()">
+          <input type="text" id="ev-time" placeholder="14:00" oninput="checkEvConflict()">
+        </div>
+        <div id="ev-datetime-err" style="display:none;font-size:12px;color:var(--warn);margin-top:5px">Вкажіть дату і час</div>
         <div id="ev-conflict-warn" style="display:none;font-size:12px;color:var(--warn);margin-top:6px;align-items:center;gap:5px">
           <svg width="13" height="13" style="stroke:var(--warn);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:-2px"><use href="#i-warn"/></svg>
           <span id="ev-conflict-text"></span>
@@ -1439,8 +1441,16 @@ function validateSchedItem(el){
   const item=el.closest('.sched-item');
   const day=item.querySelector('.sched-day-sel').value;
   const time=item.querySelector('.sched-time').value.trim();
+  const timeInput=item.querySelector('.sched-time');
   const msg=item.querySelector('.sched-conflict-msg');
-  if(!time){item.classList.remove('conflict');msg.textContent='';return}
+  if(!time){item.classList.remove('conflict');msg.textContent='';timeInput.style.borderColor='';return}
+  const validTime=/^\d{2}:\d{2}$/.test(time);
+  if(!validTime){
+    timeInput.style.borderColor='var(--warn)';
+    msg.innerHTML=`<svg width="11" height="11" style="vertical-align:-1px;stroke:var(--warn);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><use href="#i-warn"/></svg> Формат: 14:00`;
+    return;
+  }
+  timeInput.style.borderColor='';
   const type=item.dataset.type||'s';
   const excludeId=type==='s'?document.getElementById('ms-id').value:document.getElementById('mg-id').value;
   const conflicts=checkConflict(day,time,excludeId,type);
@@ -1708,8 +1718,10 @@ function saveStudent(){
   if(!phone&&!parent){fieldError('ms-phone');fieldError('ms-parent');ok=false;}
   if(msLtInd&&!rawP){fieldError('ms-ind-price');ok=false;}
   if(msLtInd&&schedCount===0){
-    const schedEl=document.getElementById('ms-sched');
-    if(schedEl){schedEl.style.outline='2px solid var(--warn)';schedEl.style.borderRadius='9px';setTimeout(()=>{schedEl.style.outline=''},2000);}
+    const addBtn=document.getElementById('ms-sched-add');
+    const errMsg=document.getElementById('ms-sched-err');
+    if(addBtn){addBtn.style.borderColor='var(--warn)';addBtn.style.color='var(--warn)';setTimeout(()=>{addBtn.style.borderColor='';addBtn.style.color='';},2000);}
+    if(errMsg){errMsg.style.display='';setTimeout(()=>{errMsg.style.display='none';},2000);}
     ok=false;
   }
   if(!msLtInd&&!msLtGrp){ok=false;}
@@ -2246,8 +2258,7 @@ function setEvType(t){
   evType=t;
   document.getElementById('ev-type-once').classList.toggle('on',t==='once');
   document.getElementById('ev-type-recurring').classList.toggle('on',t==='recurring');
-  document.getElementById('ev-date-wrap').style.display=t==='once'?'':'none';
-  document.getElementById('ev-time-once-wrap').style.display=t==='once'?'':'none';
+  document.getElementById('ev-date-time-wrap').style.display=t==='once'?'':'none';
   document.getElementById('ev-slots-wrap').style.display=t==='recurring'?'':'none';
 }
 
@@ -2399,7 +2410,13 @@ function findTimeConflict(date,time,excludeEventId){
 function saveEvent(){
   const id=document.getElementById('ev-id').value||uid();
   const whoRaw=document.getElementById('ev-who').value;
-  if(!whoRaw){alert('Оберіть учня або групу');return}
+  if(!whoRaw){
+    const ws=document.getElementById('ev-who-search');
+    const we=document.getElementById('ev-who-err');
+    if(ws){ws.style.borderColor='var(--warn)';ws.style.animation='shake .3s ease';setTimeout(()=>{ws.style.borderColor='';ws.style.animation='';},2000);}
+    if(we){we.style.display='';setTimeout(()=>{we.style.display='none';},2000);}
+    return;
+  }
   const whoType=whoRaw.startsWith('s_')?'student':'group';
   const whoId=whoRaw.slice(2);
   const link=document.getElementById('ev-link').value.trim();
@@ -2408,7 +2425,15 @@ function saveEvent(){
   if(evType==='once'){
     const date=document.getElementById('ev-date').value;
     const time=document.getElementById('ev-time').value.trim();
-    if(!date||!time){alert('Вкажіть дату та час');return}
+    if(!date||!time){
+      const de=document.getElementById('ev-date');
+      const te=document.getElementById('ev-time');
+      const err=document.getElementById('ev-datetime-err');
+      if(!date&&de){de.style.outline='2px solid var(--warn)';setTimeout(()=>{de.style.outline='';},2000);}
+      if(!time&&te){te.style.borderColor='var(--warn)';te.style.animation='shake .3s ease';setTimeout(()=>{te.style.borderColor='';te.style.animation='';},2000);}
+      if(err){err.style.display='';setTimeout(()=>{err.style.display='none';},2000);}
+      return;
+    }
     // conflict check
     const conflict=findTimeConflict(date,time,id);
     if(conflict){alert('На цей час вже є подія: '+conflict);return}
