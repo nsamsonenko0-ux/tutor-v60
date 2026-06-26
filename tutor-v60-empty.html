@@ -3879,7 +3879,8 @@ renderDash();
     <textarea class="fb-textarea" id="fb-text" placeholder="Опиши що незручно або чого не вистачає..."></textarea>
     <div class="fb-label">Ваш нік в Телеграмі</div>
     <input class="fb-input" id="fb-tg">
-    <div style="font-size:12px;color:#888;margin-top:-8px;margin-bottom:16px">Форму можна надсилати скільки завгодно разів — якщо з'являться нові думки, просто відкрий знову.</div>
+    <div id="fb-tg-err" style="display:none;font-size:12px;color:#ef4444;margin-top:-8px;margin-bottom:8px">Введи нікнейм у форматі @username</div>
+    <div style="font-size:12px;color:#888;margin-bottom:16px">Форму можна надсилати скільки завгодно разів — якщо з'являться нові думки, просто відкрий знову.</div>
     <div class="fb-sent" id="fb-sent">✅ Дякуємо! Фідбек отримано.</div>
     <div class="fb-actions" id="fb-actions">
       <button class="fb-cancel" onclick="closeFeedback()">Скасувати</button>
@@ -3905,6 +3906,7 @@ function closeFeedback(){
   document.getElementById('fb-tg').value='@';
   document.getElementById('fb-text').classList.remove('err');
   document.getElementById('fb-tg').classList.remove('err');
+  document.getElementById('fb-tg-err').style.display='none';
   document.getElementById('fb-sent').style.display='none';
   document.getElementById('fb-actions').style.display='flex';
 }
@@ -3916,8 +3918,8 @@ function sendFeedback(){
   let ok=true;
   if(!text){document.getElementById('fb-text').classList.add('err');ok=false;}
   else document.getElementById('fb-text').classList.remove('err');
-  if(!tgValid){tgEl.classList.add('err');ok=false;}
-  else tgEl.classList.remove('err');
+  if(!tgValid){tgEl.classList.add('err');document.getElementById('fb-tg-err').style.display='block';ok=false;}
+  else{tgEl.classList.remove('err');document.getElementById('fb-tg-err').style.display='none';}
   if(!ok)return;
   tgEl.classList.remove('err');
   const SCRIPT_URL='https://script.google.com/macros/s/AKfycbw0arH_8mclg1NlEXgXMFdry0FeWQR6i5A15WVCUQTmeByWVd4K7bPGW5eczQyMdsjwBg/exec';
