@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Репетитор — додаток для обліку учнів</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ink:#1a1a1a;--ink2:#444;--ink3:#888;
+    --bg:#fff;--bg2:#f7f7f5;--bg3:#f0f0ec;
+    --accent:#FFE500;--border:#e8e8e4;
+    --radius:14px;
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;font-size:16px}
+
+  /* NAV */
+  nav{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);z-index:10}
+  .nav-logo{font-size:15px;font-weight:700;letter-spacing:-.3px}
+  .nav-cta{background:var(--accent);color:var(--ink);border:none;padding:9px 20px;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;transition:transform .14s,box-shadow .14s}
+  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.12)}
+
+  /* HERO */
+  .hero{max-width:680px;margin:0 auto;padding:72px 24px 60px;text-align:center}
+  .badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:var(--ink);font-size:12px;font-weight:700;padding:5px 14px;border-radius:50px;margin-bottom:28px;letter-spacing:.3px}
+  h1{font-size:clamp(32px,6vw,52px);font-weight:800;line-height:1.12;letter-spacing:-.5px;margin-bottom:20px}
+  h1 span{position:relative;display:inline-block}
+  h1 span::after{content:'';position:absolute;left:0;bottom:-2px;width:100%;height:6px;background:var(--accent);border-radius:3px;z-index:-1}
+  .hero-sub{font-size:18px;color:var(--ink2);margin-bottom:40px;max-width:480px;margin-left:auto;margin-right:auto}
+  .hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn-primary{background:var(--ink);color:#fff;padding:14px 32px;border-radius:50px;font-size:15px;font-weight:700;text-decoration:none;transition:transform .14s,box-shadow .14s}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.18)}
+  .btn-secondary{background:var(--bg2);color:var(--ink);padding:14px 32px;border-radius:50px;font-size:15px;font-weight:600;text-decoration:none;border:1px solid var(--border);transition:background .14s}
+  .btn-secondary:hover{background:var(--bg3)}
+
+  /* PREVIEW */
+  .preview{max-width:800px;margin:0 auto;padding:0 24px 80px}
+  .preview-frame{background:var(--bg2);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.08)}
+  .preview-bar{background:var(--bg3);padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+  .preview-dot{width:10px;height:10px;border-radius:50%}
+  .preview-url{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-size:12px;color:var(--ink3);margin:0 8px}
+  .preview-inner{padding:24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .mini-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px}
+  .mini-card-label{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+  .mini-card-val{font-size:22px;font-weight:800;color:var(--ink)}
+  .mini-card-sub{font-size:12px;color:var(--ink3);margin-top:2px}
+  .mini-bar{height:4px;background:var(--bg3);border-radius:2px;margin-top:10px}
+  .mini-fill{height:100%;border-radius:2px}
+
+  /* FEATURES */
+  .features{background:var(--bg2);padding:80px 24px}
+  .features-inner{max-width:800px;margin:0 auto}
+  .section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);margin-bottom:12px}
+  h2{font-size:clamp(26px,4vw,36px);font-weight:800;letter-spacing:-.3px;margin-bottom:48px}
+  .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+  .feat{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+  .feat-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:22px}
+  .feat h3{font-size:15px;font-weight:700;margin-bottom:8px}
+  .feat p{font-size:14px;color:var(--ink2);line-height:1.5}
+
+  /* HOW */
+  .how{max-width:800px;margin:0 auto;padding:80px 24px}
+  .steps{display:flex;flex-direction:column;gap:0}
+  .step{display:grid;grid-template-columns:48px 1fr;gap:20px;padding:28px 0;border-bottom:1px solid var(--border)}
+  .step:last-child{border-bottom:none}
+  .step-num{width:48px;height:48px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;flex-shrink:0;margin-top:2px}
+  .step h3{font-size:16px;font-weight:700;margin-bottom:6px}
+  .step p{font-size:14px;color:var(--ink2);line-height:1.5}
+
+  /* OFFER */
+  .offer{background:var(--ink);color:#fff;padding:80px 24px}
+  .offer-inner{max-width:640px;margin:0 auto;text-align:center}
+  .offer h2{color:#fff;margin-bottom:16px}
+  .offer p{color:rgba(255,255,255,.7);font-size:16px;margin-bottom:40px}
+  .offer-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:40px;text-align:left}
+  .offer-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:18px}
+  .offer-card-icon{font-size:20px;margin-bottom:10px}
+  .offer-card h4{font-size:14px;font-weight:700;color:#fff;margin-bottom:4px}
+  .offer-card p{font-size:13px;color:rgba(255,255,255,.6);line-height:1.4}
+  .offer-cta{background:var(--accent);color:var(--ink);padding:16px 40px;border-radius:50px;font-size:16px;font-weight:800;text-decoration:none;display:inline-block;transition:transform .14s}
+  .offer-cta:hover{transform:translateY(-2px)}
+
+  /* CONTACT */
+  .contact{max-width:640px;margin:0 auto;padding:80px 24px;text-align:center}
+  .contact h2{margin-bottom:12px}
+  .contact p{color:var(--ink2);margin-bottom:32px}
+  .contact-link{display:inline-flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:50px;padding:14px 28px;text-decoration:none;color:var(--ink);font-weight:700;font-size:15px;transition:background .14s}
+  .contact-link:hover{background:var(--bg3)}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--border);padding:24px;text-align:center;font-size:13px;color:var(--ink3)}
+
+  @media(max-width:540px){
+    .offer-cards{grid-template-columns:1fr}
+    .preview-inner{grid-template-columns:1fr 1fr}
+    .preview-inner .mini-card:last-child{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">📚 Репетитор</div>
+  <a href="tutor-v60-empty.html" class="nav-cta">Спробувати безкоштовно →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">🧪 Шукаємо тестувальників</div>
+  <h1>Менше таблиць —<br>більше <span>уроків</span></h1>
+  <p class="hero-sub">Простий додаток для репетиторів: учні, розклад і оплати в одному місці. Жодних Excel і паперових зошитів.</p>
+  <div class="hero-btns">
+    <a href="tutor-v60-empty.html" class="btn-primary">Відкрити додаток</a>
+    <a href="#offer" class="btn-secondary">Дізнатись більше</a>
+  </div>
+</section>
+
+<!-- PREVIEW mockup -->
+<div class="preview">
+  <div class="preview-frame">
+    <div class="preview-bar">
+      <div class="preview-dot" style="background:#ff5f56"></div>
+      <div class="preview-dot" style="background:#ffbd2e"></div>
+      <div class="preview-dot" style="background:#27c93f"></div>
+      <div class="preview-url">tutor-v60.vercel.app</div>
+    </div>
+    <div class="preview-inner">
+      <div class="mini-card">
+        <div class="mini-card-label">Учні</div>
+        <div class="mini-card-val">12</div>
+        <div class="mini-card-sub">8 інд · 4 групи</div>
+        <div class="mini-bar"><div class="mini-fill" style="width:75%;background:#FFE500"></div></div>
+      </div>
+      <div class="mini-card">
+        <div class="mini-card-label">Сьогодні</div>
+        <div class="mini-card-val">4</div>
+        <div class="mini-card-sub">уроки · пн 26 черв</div>
+        <div class="mini-bar"><div class="mini-fill" style="width:50%;background:#a78bfa"></div></div>
+      </div>
+      <div class="mini-card">
+        <div class="mini-card-label">Борги</div>
+        <div class="mini-card-val">2</div>
+        <div class="mini-card-sub">учні не сплатили</div>
+        <div class="mini-bar"><div class="mini-fill" style="width:20%;background:#f87171"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="features-inner">
+    <div class="section-label">Можливості</div>
+    <h2>Все що потрібно<br>репетитору</h2>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="feat-icon" style="background:#FFF9CC">👤</div>
+        <h3>Картки учнів</h3>
+        <p>Контакти, розклад, тип занять (індивідуальні чи групові) — все в одному місці.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon" style="background:#ede9fe">📅</div>
+        <h3>Розклад</h3>
+        <p>Тижневий вигляд по годинах. Відразу видно де є вікна і де перетини.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon" style="background:#dcfce7">💳</div>
+        <h3>Оплати</h3>
+        <p>Хто заплатив, хто боргує, скільки нараховано за місяць — без Excel і ручних підрахунків.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon" style="background:#fce7f3">📓</div>
+        <h3>Журнал</h3>
+        <p>Відмітки про проведені уроки, пропуски і заміни. Завжди знаєш скільки занять пройшло.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon" style="background:#ffedd5">👥</div>
+        <h3>Групи</h3>
+        <p>Кілька учнів в одній групі — один розклад і одна ціна за заняття.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon" style="background:#e0f2fe">📱</div>
+        <h3>З будь-якого пристрою</h3>
+        <p>Працює у браузері — відкривай з телефону, планшету або комп'ютера.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="section-label">Як це працює</div>
+  <h2>Починаєш за 3 хвилини</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>
+        <h3>Відкриваєш додаток</h3>
+        <p>Ніякої реєстрації і паролів. Вказуєш свої робочі години і ціни — і все, готово до роботи.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>
+        <h3>Додаєш учнів</h3>
+        <p>Ім'я, телефон, розклад, ціна. Якщо є групи — об'єднуєш учнів в одну картку.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>
+        <h3>Ведеш облік</h3>
+        <p>Після кожного уроку відмічаєш заняття і оплату. Додаток сам рахує що кому нараховано і хто боргує.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OFFER -->
+<section class="offer" id="offer">
+  <div class="offer-inner">
+    <div class="section-label" style="color:rgba(255,255,255,.5)">Тестування</div>
+    <h2>Шукаємо 10 репетиторів<br>на безкоштовне тестування</h2>
+    <p>Ми тільки починаємо і хочемо зробити продукт зручним саме для репетиторів — тому нам потрібен живий фідбек від людей, які реально ведуть уроки.</p>
+    <div class="offer-cards">
+      <div class="offer-card">
+        <div class="offer-card-icon">✅</div>
+        <h4>Безкоштовно назавжди</h4>
+        <p>Для тестувальників — безплатний доступ без обмежень.</p>
+      </div>
+      <div class="offer-card">
+        <div class="offer-card-icon">💬</div>
+        <h4>Ми слухаємо</h4>
+        <p>Твій фідбек напряму впливає на те, що з'явиться в наступній версії.</p>
+      </div>
+      <div class="offer-card">
+        <div class="offer-card-icon">⏱️</div>
+        <h4>Займає 2 тижні</h4>
+        <p>Спробувати у роботі і відповісти на кілька запитань — більше нічого не потрібно.</p>
+      </div>
+      <div class="offer-card">
+        <div class="offer-card-icon">🔒</div>
+        <h4>Дані залишаються в тебе</h4>
+        <p>Все зберігається локально в браузері — нікуди не передається.</p>
+      </div>
+    </div>
+    <a href="tutor-v60-empty.html" class="offer-cta">Спробувати зараз →</a>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact">
+  <h2>Є питання?</h2>
+  <p>Напиши нам — відповімо швидко і допоможемо розібратись з додатком.</p>
+  <a href="https://t.me/YOUR_TELEGRAM" class="contact-link">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></svg>
+    Написати в Telegram
+  </a>
+</section>
+
+<footer>
+  Зроблено в Україні · 2026
+</footer>
+
+</body>
+</html>
