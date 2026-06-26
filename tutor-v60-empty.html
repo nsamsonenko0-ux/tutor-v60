@@ -217,7 +217,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
 .sched-list{display:flex;flex-direction:column;gap:6px}
 .sched-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:9px}
 .sched-item.conflict{border-color:var(--warn);background:var(--wl)}
-.sched-day-sel,.sched-time{padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-size:12px;font-family:inherit;outline:none}
+.sched-day-sel,.sched-time{padding:0 8px;height:32px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-size:12px;font-family:inherit;outline:none;box-sizing:border-box}
 .sched-time{width:76px}
 .sched-conflict-msg{font-size:12px;color:var(--warn);margin-left:4px;flex:1}
 .sched-del{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--ink3);padding:3px;border-radius:5px;display:flex;align-items:center;transition:all .14s;flex-shrink:0}
@@ -1087,6 +1087,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
       </div>
     </div>
     <div class="mfoot">
+      <div class="save-notice" id="pay-notice"><svg width="14" height="14" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Збережено</div>
       <button class="btn btn-g" id="pay-close-btn" onclick="closeModal('ov-payment')">Закрити</button>
       <button class="btn btn-p" id="pay-save-btn" onclick="savePayment()">Зберегти</button>
     </div>
@@ -1495,6 +1496,7 @@ function addSched(cid,type){
   el.dataset.type=type;
   el.innerHTML=`
     <select class="sched-day-sel" onchange="validateSchedItem(this)">
+      <option value="" disabled selected>День</option>
       ${DAYS.map((d,i)=>`<option value="${i}">${d}</option>`).join('')}
     </select>
     <input type="text" class="sched-time" placeholder="Час" oninput="validateSchedItem(this)">
@@ -1542,6 +1544,7 @@ function fillSched(cid,schedule,type){
     el.dataset.type=type;
     el.innerHTML=`
       <select class="sched-day-sel" onchange="validateSchedItem(this)">
+        <option value="" disabled>День</option>
         ${DAYS.map((d,i)=>`<option value="${i}"${i===sc.day?' selected':''}>${d}</option>`).join('')}
       </select>
       <input type="text" class="sched-time" placeholder="Час" value="${sc.time||''}" oninput="validateSchedItem(this)">
@@ -2379,14 +2382,20 @@ function clearEvWho(){
 }
 
 // Recurring slots
+function validateEvSlotTime(inp){
+  const v=inp.value.trim();
+  if(!v){inp.style.borderColor='';return;}
+  inp.style.borderColor=/^\d{2}:\d{2}$/.test(v)?'':'var(--warn)';
+}
 function addEvSlot(day,time){
   const list=document.getElementById('ev-slots-list');
   const el=document.createElement('div');
   el.style.cssText='display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:9px';
-  el.innerHTML=`<select class="ev-slot-day" style="padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-size:12px;font-family:inherit;outline:none">
-    ${['Пн','Вт','Ср','Чт','Пт','Сб','Нд'].map((d,i)=>`<option value="${i}"${i===(day||0)?' selected':''}>${d}</option>`).join('')}
+  el.innerHTML=`<select class="ev-slot-day" style="height:32px;padding:0 8px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-size:12px;font-family:inherit;outline:none;box-sizing:border-box">
+    <option value="" disabled${day==null?' selected':''}>День</option>
+    ${DAYS.map((d,i)=>`<option value="${i}"${i===day?' selected':''}>${d}</option>`).join('')}
   </select>
-  <input type="text" value="${time||''}" placeholder="Час" class="ev-slot-time" style="width:70px;padding:5px 8px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-size:12px;font-family:inherit;outline:none">
+  <input type="text" value="${time||''}" placeholder="Час" class="ev-slot-time" oninput="validateEvSlotTime(this)" style="width:70px;height:32px;padding:0 8px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-size:12px;font-family:inherit;outline:none;box-sizing:border-box">
   <button onclick="this.closest('div').remove()" style="background:none;border:none;cursor:pointer;color:var(--ink3);padding:3px;border-radius:5px;display:flex;align-items:center;margin-left:auto">
     <svg width="12" height="12" style="stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><use href="#i-x"/></svg>
   </button>`;
@@ -3266,7 +3275,7 @@ function savePayment(){
   if(hasInd)document.getElementById('pay-ind-amount').value='';
   gs.forEach(g=>{const el=document.getElementById('pay-grp-amount-'+g.id);if(el)el.value=''});
   recalcPayPreview();
-  toast('Оплату додано ✓');
+  showNotice('pay-notice');
   renderPayments();
   if(document.getElementById('pg-dash').classList.contains('on'))renderDash();
 }
