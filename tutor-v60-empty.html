@@ -2535,11 +2535,12 @@ function openLesson(eventId,date){
     const parts=eventId.split('_');
     const whoId=parts[1];
     const day=Number(parts[2]);
+    const time=parts[3]||'';
     const s=getS(whoId);
     const g=getG(whoId);
     const who=s||g;
     if(!who)return;
-    const sc=(who.schedule||[]).find(x=>Number(x.day)===day)||{time:''};
+    const sc=(who.schedule||[]).find(x=>Number(x.day)===day&&(!time||x.time===time))||{time};
     const schedLinks=ld('tv2_sched_links',{});
     ev={id:eventId,type:'recurring',whoType:s?'student':'group',whoId,time:sc.time,link:schedLinks[eventId]||'',notes:'',_fromSched:true};
   } else {
@@ -2901,7 +2902,7 @@ function countAttended(sid,scope,gid){
     const s=getS(sid);
     (s?.schedule||[]).forEach(sc=>{
       getPastSchedDates(sc.day,90).forEach(ds=>{
-        const synId='sched_'+sid+'_'+sc.day;
+        const synId='sched_'+sid+'_'+sc.day+'_'+sc.time;
         const ln=ld('tv2_ln_'+synId+'_'+ds,{});
         if(!ln.cancelled&&isLessonPast(ds,sc.time||'00:00')&&ln.attended===true) count++;
       });
@@ -2913,7 +2914,7 @@ function countAttended(sid,scope,gid){
       if(!g)return;
       (g.schedule||[]).forEach(sc=>{
         getPastSchedDates(sc.day,90).forEach(ds=>{
-          const synId='sched_'+g.id+'_'+sc.day;
+          const synId='sched_'+g.id+'_'+sc.day+'_'+sc.time;
           const ln=ld('tv2_ln_'+synId+'_'+ds,{});
           if(!ln.cancelled&&isLessonPast(ds,sc.time||'00:00')&&(ln.attendance||{})[sid]===true) count++;
         });
