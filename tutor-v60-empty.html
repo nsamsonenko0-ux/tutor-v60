@@ -1014,7 +1014,6 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
         <label class="flbl">Нотатки</label>
         <div class="fhint">Спостереження, прогрес, що повторити наступного разу</div>
         <textarea id="ls-notes" placeholder="Добре засвоїв тему, але плутає знаки…" style="min-height:70px"></textarea>
-        <button class="btn btn-p btn-sm" onclick="saveLesson()" style="margin-top:8px">Зберегти</button>
       </div>
 
       <!-- Files -->
@@ -1032,6 +1031,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
       <div class="mfoot-l">
         <button class="btn btn-d btn-sm" onclick="cancelLesson()">Скасувати заняття</button>
       </div>
+      <button class="btn btn-p" onclick="saveLesson()">Зберегти</button>
     </div>
   </div>
 </div>
@@ -2725,10 +2725,9 @@ function saveAttendanceNow(){
     if(indItem) existing.attended=indItem.dataset.present==='true';
   }
   sv('tv2_ln_'+eventId+'_'+date,existing);
-  // update journal if open
   if(document.getElementById('pg-journal').classList.contains('on'))renderJournal();
-  // refresh schedule chip (dot indicator)
   renderSchedule();
+  renderPayments();
 }
 
 function editLessonEvent(){
@@ -3287,8 +3286,8 @@ function obFinish(){
   const end=document.getElementById('ob-end').value||'20:00';
   if(ind) settings.indPrice=ind;
   if(grp) settings.grpPrice=grp;
-  settings.dayStart=start;
-  settings.dayEnd=end;
+  settings.dayStart=Number((start||'08:00').split(':')[0])||8;
+  settings.dayEnd=Number((end||'20:00').split(':')[0])||20;
   sv('tv2_settings',settings);
   if(document.getElementById('cfg-ind')) document.getElementById('cfg-ind').value=ind||'';
   if(document.getElementById('cfg-grp')) document.getElementById('cfg-grp').value=grp||'';
@@ -3875,7 +3874,7 @@ renderDash();
 .fb-cancel{background:#f0f0ec;color:#444;border:none;border-radius:50px;padding:12px 20px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer}
 </style>
 
-<div class="fab-tooltip" id="fab-tooltip">Додайте учнів, попрацюйте з розкладом — і поділіться враженнями, коли будете готові 💬</div>
+<div class="fab-tooltip" id="fab-tooltip">Після того як покористуєтесь — натисніть цю кнопку і надайте фідбек 💬</div>
 <button class="fab-feedback" onclick="openFeedback()">
   <svg width="14" height="14" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
   Надати фідбек
