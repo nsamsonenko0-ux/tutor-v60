@@ -26,13 +26,18 @@
   h1{font-size:clamp(30px,6vw,48px);font-weight:800;line-height:1.12;letter-spacing:-.5px;margin-bottom:16px}
   h1 span{position:relative;display:inline-block}
   h1 span::after{content:'';position:absolute;left:0;bottom:-2px;width:100%;height:6px;background:var(--accent);border-radius:3px;z-index:-1}
-  .hero-sub{font-size:17px;color:var(--ink2);margin-bottom:12px;max-width:500px;margin-left:auto;margin-right:auto}
-  .hero-note{font-size:14px;color:var(--ink3);margin-bottom:32px}
-  .hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-  .btn-primary{background:var(--ink);color:#fff;padding:13px 30px;border-radius:50px;font-size:15px;font-weight:700;text-decoration:none;transition:transform .14s,box-shadow .14s}
-  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.18)}
-  .btn-secondary{background:var(--bg2);color:var(--ink);padding:13px 30px;border-radius:50px;font-size:15px;font-weight:600;text-decoration:none;border:1px solid var(--border);transition:background .14s}
-  .btn-secondary:hover{background:var(--bg3)}
+  .hero-sub{font-size:17px;color:var(--ink2);margin-bottom:28px;max-width:500px;margin-left:auto;margin-right:auto}
+  .hero-form{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:24px;max-width:480px;margin:0 auto;text-align:left}
+  .hero-form-note{font-size:13px;color:var(--ink3);margin-bottom:16px;text-align:center;line-height:1.5}
+  .hero-form-note b{color:var(--ink2)}
+  .form-field{margin-bottom:12px}
+  .form-field label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+  .form-field input{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;background:#fff;color:var(--ink);outline:none;transition:border-color .14s}
+  .form-field input:focus{border-color:var(--ink)}
+  .btn-start{width:100%;padding:13px;border-radius:50px;font-size:15px;font-weight:800;border:none;cursor:pointer;font-family:inherit;transition:all .14s;margin-top:4px}
+  .btn-start:not(:disabled){background:var(--ink);color:#fff}
+  .btn-start:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+  .btn-start:disabled{background:var(--bg3);color:var(--ink3);cursor:not-allowed}
 
   /* ROLE BLOCK */
   .role{background:var(--accent);padding:36px 24px}
@@ -101,9 +106,17 @@
   <div class="badge">🧪 Бета-тестування · 10 місць</div>
   <h1>Допоможи створити<br>додаток для <span>репетиторів</span></h1>
   <p class="hero-sub">Ми будуємо інструмент для обліку учнів, розкладу і оплат — і шукаємо репетиторів, які допоможуть нам зробити його справді зручним.</p>
-  <div class="hero-btns">
-    <a href="tutor-v60-empty.html" class="btn-primary">Спробувати додаток</a>
-    <a href="#offer" class="btn-secondary">Що це таке?</a>
+  <div class="hero-form">
+    <p class="hero-form-note">Залиш контакт — після релізу повної версії ти отримаєш <b>6 місяців безкоштовно</b>. Нам це потрібно щоб не загубити тебе серед перших.</p>
+    <div class="form-field">
+      <label>Твоє ім'я</label>
+      <input type="text" id="f-name" placeholder="Наприклад, Марія" oninput="checkForm()">
+    </div>
+    <div class="form-field">
+      <label>Telegram</label>
+      <input type="text" id="f-tg" placeholder="@username" oninput="checkForm()">
+    </div>
+    <button id="btn-start" class="btn-start" disabled onclick="submitForm()">Почати тестування →</button>
   </div>
 </section>
 
@@ -220,12 +233,32 @@
 <section class="contact">
   <h2>Є питання?</h2>
   <p>Напиши нам — відповімо швидко і допоможемо розібратись з додатком.</p>
-  <a href="https://t.me/YOUR_TELEGRAM" class="contact-link">
+  <a href="https://t.me/nassams" class="contact-link">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></svg>
     Написати в Telegram
   </a>
 </section>
 
+<script>
+function checkForm(){
+  const name=document.getElementById('f-name').value.trim();
+  const tg=document.getElementById('f-tg').value.trim();
+  document.getElementById('btn-start').disabled=!name||!tg;
+}
+function submitForm(){
+  const name=document.getElementById('f-name').value.trim();
+  const tg=document.getElementById('f-tg').value.trim();
+  // Зберігаємо локально
+  localStorage.setItem('tv2_tester',JSON.stringify({name,tg,date:new Date().toISOString()}));
+  // TODO: замінити GOOGLE_FORM_URL на справжнє посилання після створення форми
+  const GOOGLE_FORM_URL='REPLACE_WITH_GOOGLE_FORM_URL';
+  if(GOOGLE_FORM_URL!=='REPLACE_WITH_GOOGLE_FORM_URL'){
+    // Відправляємо в Google Form у фоні
+    fetch(GOOGLE_FORM_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams({'entry.NAME_ID':name,'entry.TG_ID':tg})});
+  }
+  window.location.href='tutor-v60-empty.html';
+}
+</script>
 <footer>
   Зроблено в Україні · 2026
 </footer>
