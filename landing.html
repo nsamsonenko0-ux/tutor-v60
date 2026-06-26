@@ -34,6 +34,11 @@
   .form-field label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
   .form-field input{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;background:#fff;color:var(--ink);outline:none;transition:border-color .14s}
   .form-field input:focus{border-color:var(--ink)}
+  .form-field input.err{border-color:#ef4444}
+  .field-err{font-size:12px;color:#ef4444;margin-top:4px;display:none}
+  .phone-wrap{position:relative;display:flex;align-items:center}
+  .phone-wrap .phone-prefix{position:absolute;left:14px;font-size:14px;color:var(--ink);pointer-events:none;z-index:1;user-select:none}
+  .phone-wrap input{padding-left:60px}
   .btn-start{width:100%;padding:13px;border-radius:50px;font-size:15px;font-weight:800;border:none;cursor:pointer;font-family:inherit;transition:all .14s;margin-top:4px}
   .btn-start:not(:disabled){background:var(--ink);color:#fff}
   .btn-start:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.2)}
@@ -114,11 +119,16 @@
     </div>
     <div class="form-field">
       <label>Telegram</label>
-      <input type="text" id="f-tg" placeholder="@username" oninput="checkForm()">
+      <input type="text" id="f-tg" oninput="checkForm()" onfocus="ensureTgAt()" onblur="ensureTgAt()">
+      <div class="field-err" id="err-tg">Введи нікнейм у форматі @username</div>
     </div>
     <div class="form-field">
       <label>Номер телефону</label>
-      <input type="tel" id="f-phone" placeholder="+380 XX XXX XX XX" oninput="checkForm()">
+      <div class="phone-wrap">
+        <span class="phone-prefix">+380</span>
+        <input type="tel" id="f-phone" placeholder="XX XXX XX XX" oninput="checkForm()" onblur="validatePhone()">
+      </div>
+      <div class="field-err" id="err-phone">Введи коректний номер: +380 XX XXX XX XX</div>
     </div>
     <button id="btn-start" class="btn-start" disabled onclick="submitForm()">Почати тестування →</button>
   </div>
@@ -244,16 +254,64 @@
 </section>
 
 <script>
+// Telegram: завжди тримати @ спереду
+function ensureTgAt(){
+  const inp=document.getElementById('f-tg');
+  if(!inp.value.startsWith('@')) inp.value='@'+inp.value.replace(/^@*/,'');
+  if(inp.value==='@') inp.value='@';
+}
+// Валідація телефону: тільки цифри після +380, 9 цифр (формат оператора 0XX та номер)
+function validatePhone(){
+  const digits=document.getElementById('f-phone').value.replace(/\D/g,'');
+  const ok=digits.length===9;
+  document.getElementById('err-phone').style.display=ok?'none':'block';
+  document.getElementById('f-phone').classList.toggle('err',!ok&&digits.length>0);
+  return ok||digits.length===0;
+}
+function isPhoneValid(){
+  const digits=document.getElementById('f-phone').value.replace(/\D/g,'');
+  return digits.length===9;
+}
+function isTgValid(){
+  const v=document.getElementById('f-tg').value.trim();
+  return v.length>1&&v.startsWith('@')&&/^@[a-zA-Z0-9_]{3,}$/.test(v);
+}
 function checkForm(){
   const name=document.getElementById('f-name').value.trim();
-  const tg=document.getElementById('f-tg').value.trim();
-  const phone=document.getElementById('f-phone').value.trim();
-  document.getElementById('btn-start').disabled=!name||!tg||!phone;
+  document.getElementById('btn-start').disabled=!name||!isTgValid()||!isPhoneValid();
 }
+// Ініціалізація поля Telegram
+window.addEventListener('DOMContentLoaded',()=>{
+  const tg=document.getElementById('f-tg');
+  tg.value='@';
+  tg.addEventListener('keydown',e=>{
+    // Не дати стерти @
+    if((e.key==='Backspace'||e.key==='Delete')&&tg.value==='@') e.preventDefault();
+  });
+  tg.addEventListener('input',()=>{
+    if(!tg.value.startsWith('@')) tg.value='@'+tg.value.replace(/^@*/,'');
+    if(tg.value==='@'){document.getElementById('err-tg').style.display='none';}
+    else{
+      const ok=/^@[a-zA-Z0-9_]{3,}$/.test(tg.value);
+      document.getElementById('err-tg').style.display=ok?'none':'block';
+    }
+    checkForm();
+  });
+  // Телефон — тільки цифри і пробіли
+  const ph=document.getElementById('f-phone');
+  ph.addEventListener('input',()=>{
+    const pos=ph.selectionStart;
+    const clean=ph.value.replace(/[^\d\s]/g,'');
+    if(ph.value!==clean){ph.value=clean;ph.setSelectionRange(pos-1,pos-1);}
+    checkForm();
+  });
+});
 function submitForm(){
+  if(!isTgValid()){document.getElementById('err-tg').style.display='block';return;}
+  if(!isPhoneValid()){validatePhone();return;}
   const name=document.getElementById('f-name').value.trim();
   const tg=document.getElementById('f-tg').value.trim();
-  const phone=document.getElementById('f-phone').value.trim();
+  const phone='+380'+document.getElementById('f-phone').value.replace(/\D/g,'');
   // Зберігаємо локально
   localStorage.setItem('tv2_tester',JSON.stringify({name,tg,phone,date:new Date().toISOString()}));
   // TODO: замінити GOOGLE_FORM_URL на справжнє посилання після створення форми
