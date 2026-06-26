@@ -2513,7 +2513,7 @@ function saveEvent(){
   const idx=evs.findIndex(e=>e.id===id);
   if(idx>=0)evs[idx]=obj;else evs.push(obj);
   saveEvents(evs);
-  closeModal('ov-event');toast('Подію збережено ✓');
+  toast('Подію збережено ✓');
   renderSchedule();
 }
 async function deleteEvent(){
@@ -2662,7 +2662,7 @@ function saveLesson(){
   }
   if(attendance!==null) ln.attendance=attendance;
   sv('tv2_ln_'+eventId+'_'+date,ln);
-  closeModal('ov-lesson');toast('Збережено ✓');
+  toast('Збережено ✓');
   renderSchedule();renderPayments();
   if(document.getElementById('pg-journal').classList.contains('on'))renderJournal();
 }
