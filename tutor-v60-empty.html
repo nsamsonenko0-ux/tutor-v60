@@ -175,7 +175,10 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
 .mclose:hover{background:var(--bg4);color:var(--ink)}
 .mclose svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
 .mbody{padding:20px 22px}
-.mfoot{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid var(--border2);position:sticky;bottom:0;background:var(--bg2)}
+.mfoot{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid var(--border2);position:sticky;bottom:0;background:var(--bg2);flex-wrap:wrap}
+.save-notice{display:none;width:100%;order:-1;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:600;color:#166534;align-items:center;gap:7px}
+.save-notice svg{flex-shrink:0;stroke:#16a34a;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.save-notice.on{display:flex}
 .mfoot-l{margin-right:auto}
 
 /* Form */
@@ -766,6 +769,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
       </div>
     </div>
     <div class="mfoot">
+      <div class="save-notice" id="ms-notice"><svg width="14" height="14" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Збережено</div>
       <div class="mfoot-l"><button class="btn btn-d btn-sm" id="ms-del" onclick="deleteStudent()" style="display:none"><svg width="13" height="13"><use href="#i-trash"/></svg> Видалити</button></div>
       <button class="btn btn-g" onclick="document.getElementById('ms-id').value?msSetView():closeModal('ov-s')">Скасувати</button>
       <button class="btn btn-p" onclick="saveStudent()">Зберегти</button>
@@ -849,6 +853,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
       </div>
     </div>
     <div class="mfoot">
+      <div class="save-notice" id="mg-notice"><svg width="14" height="14" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Збережено</div>
       <div class="mfoot-l"><button class="btn btn-d btn-sm" id="mg-del" onclick="deleteGroup()" style="display:none"><svg width="13" height="13"><use href="#i-trash"/></svg> Видалити групу</button></div>
       <button class="btn btn-g" onclick="document.getElementById('mg-id').value?mgSetView():closeModal('ov-g')">Скасувати</button>
       <button class="btn btn-p" onclick="saveGroup()">Зберегти</button>
@@ -938,6 +943,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
       </div>
     </div>
     <div class="mfoot">
+      <div class="save-notice" id="ev-notice"><svg width="14" height="14" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Збережено</div>
       <div class="mfoot-l"><button class="btn btn-d btn-sm" id="ev-del" onclick="deleteEvent()" style="display:none"><svg width="13" height="13"><use href="#i-trash"/></svg> Видалити</button></div>
       <button class="btn btn-g" onclick="closeModal('ov-event')">Скасувати</button>
       <button class="btn btn-p" onclick="saveEvent()">Зберегти</button>
@@ -1028,6 +1034,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
       </div>
     </div>
     <div class="mfoot">
+      <div class="save-notice" id="ls-notice"><svg width="14" height="14" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Збережено</div>
       <div class="mfoot-l">
         <button class="btn btn-d btn-sm" onclick="cancelLesson()">Скасувати заняття</button>
       </div>
@@ -1794,7 +1801,7 @@ function saveStudent(){
     else g.studentIds=g.studentIds.filter(x=>x!==id);
   });
   sv('tv2_s',students);sv('tv2_g',groups);
-  toast(`${name} збережено ✓`);
+  showNotice('ms-notice');
   renderStudents();if(currentPage==='groups')renderGroups();if(currentPage==='schedule')renderSchedule();
   // Return to view mode after saving
   const saved=getS(id);
@@ -2035,7 +2042,7 @@ function saveGroup(){
   const idx=groups.findIndex(g=>g.id===id);
   if(idx>=0)groups[idx]=obj;else groups.push(obj);
   sv('tv2_g',groups);
-  toast(`Групу «${name}» збережено ✓`);
+  showNotice('mg-notice');
   renderGroups();renderStudents();if(currentPage==='schedule')renderSchedule();
   const saved=getG(id);
   if(saved){
@@ -2513,7 +2520,7 @@ function saveEvent(){
   const idx=evs.findIndex(e=>e.id===id);
   if(idx>=0)evs[idx]=obj;else evs.push(obj);
   saveEvents(evs);
-  toast('Подію збережено ✓');
+  showNotice('ev-notice');
   renderSchedule();
 }
 async function deleteEvent(){
@@ -2662,7 +2669,7 @@ function saveLesson(){
   }
   if(attendance!==null) ln.attendance=attendance;
   sv('tv2_ln_'+eventId+'_'+date,ln);
-  toast('Збережено ✓');
+  showNotice('ls-notice');
   renderSchedule();renderPayments();
   if(document.getElementById('pg-journal').classList.contains('on'))renderJournal();
 }
@@ -3840,6 +3847,7 @@ document.addEventListener('keydown',e=>{
   }
 });
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2600)}
+function showNotice(id){const n=document.getElementById(id);if(!n)return;n.classList.add('on');clearTimeout(n._t);n._t=setTimeout(()=>n.classList.remove('on'),5000);}
 
 loadSettings();
 renderStudents();
