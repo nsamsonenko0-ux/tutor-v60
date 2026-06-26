@@ -664,6 +664,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
     <div id="ms-view" style="display:none">
       <div class="mbody" id="ms-view-body"></div>
       <div class="mfoot">
+        <div class="save-notice" id="ms-notice-view"><svg width="14" height="14" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Збережено</div>
         <div class="mfoot-l"><button class="btn btn-d btn-sm" id="ms-del-view" onclick="deleteStudent()" style="display:none"><svg width="13" height="13"><use href="#i-trash"/></svg> Видалити</button></div>
         <button class="btn btn-g" onclick="closeModal('ov-s')">Закрити</button>
         <button class="btn btn-p" onclick="msSetEdit()">Редагувати</button>
@@ -910,7 +911,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
         <label class="flbl">Дата і час</label>
         <div style="display:grid;grid-template-columns:1fr 100px;gap:8px">
           <input type="date" id="ev-date" onchange="checkEvConflict()">
-          <input type="text" id="ev-time" placeholder="14:00" oninput="checkEvConflict()">
+          <input type="text" id="ev-time" placeholder="Час" oninput="checkEvConflict()">
         </div>
         <div id="ev-datetime-err" style="display:none;font-size:12px;color:var(--warn);margin-top:5px">Вкажіть дату і час</div>
         <div id="ev-conflict-warn" style="display:none;font-size:12px;color:var(--warn);margin-top:6px;align-items:center;gap:5px">
@@ -1612,6 +1613,7 @@ function msSetView(){
 function msSetEdit(){
   document.getElementById('ms-view').style.display='none';
   document.getElementById('ms-edit').style.display='';
+  const n=document.getElementById('ms-notice-view');if(n){n.classList.remove('on');clearTimeout(n._t);}
   setTimeout(()=>document.getElementById('ms-name').focus(),60);
 }
 
@@ -1801,7 +1803,6 @@ function saveStudent(){
     else g.studentIds=g.studentIds.filter(x=>x!==id);
   });
   sv('tv2_s',students);sv('tv2_g',groups);
-  showNotice('ms-notice');
   renderStudents();if(currentPage==='groups')renderGroups();if(currentPage==='schedule')renderSchedule();
   // Return to view mode after saving
   const saved=getS(id);
@@ -1810,6 +1811,7 @@ function saveStudent(){
     document.getElementById('ms-title').textContent=saved.name;
     msRenderView(saved);
     msSetView();
+    showNotice('ms-notice-view');
   } else {
     closeModal('ov-s');
   }
@@ -2492,13 +2494,14 @@ function saveEvent(){
   if(evType==='once'){
     const date=document.getElementById('ev-date').value;
     const time=document.getElementById('ev-time').value.trim();
-    if(!date||!time){
+    const validTime=/^\d{2}:\d{2}$/.test(time);
+    if(!date||!time||!validTime){
       const de=document.getElementById('ev-date');
       const te=document.getElementById('ev-time');
       const err=document.getElementById('ev-datetime-err');
       if(!date&&de){de.style.outline='2px solid var(--warn)';setTimeout(()=>{de.style.outline='';},2000);}
-      if(!time&&te){te.style.borderColor='var(--warn)';te.style.animation='shake .3s ease';setTimeout(()=>{te.style.borderColor='';te.style.animation='';},2000);}
-      if(err){err.style.display='';setTimeout(()=>{err.style.display='none';},2000);}
+      if((!time||!validTime)&&te){te.style.borderColor='var(--warn)';te.style.animation='shake .3s ease';setTimeout(()=>{te.style.borderColor='';te.style.animation='';},2000);}
+      if(err){err.style.display='';err.textContent=(!time)?'Вкажіть дату і час':'Формат часу: 14:00';setTimeout(()=>{err.style.display='none';},2000);}
       return;
     }
     // conflict check
@@ -3837,7 +3840,10 @@ function confirmResolve(val){
 }
 
 // Modal utils
-function closeModal(id){document.getElementById(id).classList.remove('on')}
+function closeModal(id){
+  document.getElementById(id).classList.remove('on');
+  document.getElementById(id).querySelectorAll('.save-notice').forEach(n=>{n.classList.remove('on');clearTimeout(n._t);});
+}
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on')}));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.overlay.on').forEach(o=>o.classList.remove('on'))});
 // Keyboard activation for role=button elements (nav items)
