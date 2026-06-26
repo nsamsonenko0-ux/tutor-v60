@@ -1799,6 +1799,7 @@ function saveStudent(){
   // Return to view mode after saving
   const saved=getS(id);
   if(saved){
+    document.getElementById('ms-id').value=id;
     document.getElementById('ms-title').textContent=saved.name;
     msRenderView(saved);
     msSetView();
@@ -2097,7 +2098,7 @@ function getEventsForDate(ds){
       const d=new Date(ds+'T00:00:00'),dow=(d.getDay()+6)%7;
       if(Number(sc.day)===dow){
         const cov=out.some(e=>e.whoId===s.id&&e.time===sc.time);
-        if(!cov)out.push({id:'sched_'+s.id+'_'+sc.day,type:'recurring',whoId:s.id,whoType:'student',time:sc.time,_date:ds,_fromSched:true});
+        if(!cov)out.push({id:'sched_'+s.id+'_'+sc.day+'_'+sc.time,type:'recurring',whoId:s.id,whoType:'student',time:sc.time,_date:ds,_fromSched:true});
       }
     });
   });
@@ -2106,7 +2107,7 @@ function getEventsForDate(ds){
       const d=new Date(ds+'T00:00:00'),dow=(d.getDay()+6)%7;
       if(Number(sc.day)===dow){
         const cov=out.some(e=>e.whoId===g.id&&e.time===sc.time);
-        if(!cov)out.push({id:'sched_'+g.id+'_'+sc.day,type:'recurring',whoId:g.id,whoType:'group',time:sc.time,_date:ds,_fromSched:true});
+        if(!cov)out.push({id:'sched_'+g.id+'_'+sc.day+'_'+sc.time,type:'recurring',whoId:g.id,whoType:'group',time:sc.time,_date:ds,_fromSched:true});
       }
     });
   });
@@ -3297,7 +3298,11 @@ function obFinish(){
   if(!ld('tv2_tooltip_shown')){
     setTimeout(()=>{
       const t=document.getElementById('fab-tooltip');
-      if(t){t.style.display='block';sv('tv2_tooltip_shown',true);setTimeout(()=>{t.style.display='none';},6000);}
+      if(!t)return;
+      t.style.display='block';
+      sv('tv2_tooltip_shown',true);
+      const hide=()=>{t.style.display='none';document.removeEventListener('click',hide);};
+      document.addEventListener('click',hide);
     },1500);
   }
 }
@@ -3870,7 +3875,7 @@ renderDash();
 .fb-cancel{background:#f0f0ec;color:#444;border:none;border-radius:50px;padding:12px 20px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer}
 </style>
 
-<div class="fab-tooltip" id="fab-tooltip">Трошки покористуйтесь додатком — і надішліть фідбек, як будете готові 🙌</div>
+<div class="fab-tooltip" id="fab-tooltip">Додайте учнів, попрацюйте з розкладом — і поділіться враженнями, коли будете готові 💬</div>
 <button class="fab-feedback" onclick="openFeedback()">
   <svg width="14" height="14" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
   Надати фідбек
