@@ -3888,31 +3888,29 @@ renderDash();
 
     <div class="fb-actions">
       <button class="fb-cancel" onclick="document.getElementById('ov-feedback').classList.remove('on')">Скасувати</button>
-      <button class="fb-send" onclick="sendFeedback()">Скопіювати і написати →</button>
+      <button class="fb-send" onclick="sendFeedback()">Надіслати фідбек →</button>
     </div>
   </div>
 </div>
 
 <script>
+const FB_FORM_URL='https://docs.google.com/forms/d/e/1FAIpQLSeSU8k6U9DLOqdmUejgPbXoPUGNrLh3SJlPsZxHhO0itTBJiA/viewform';
 function sendFeedback(){
   const inc=document.getElementById('fb-inconvenient').value.trim();
   const mis=document.getElementById('fb-missing').value.trim();
   const good=document.getElementById('fb-good').value.trim();
   const parts=[];
-  if(inc) parts.push('❌ Незручно: '+inc);
-  if(mis) parts.push('💡 Треба: '+mis);
-  if(good) parts.push('✅ Сподобалось: '+good);
+  if(inc) parts.push('Мені незручно: '+inc);
+  if(mis) parts.push('Мені треба: '+mis);
+  if(good) parts.push('Сподобалось: '+good);
   if(!parts.length){alert('Заповни хоча б одне поле');return;}
   const text=parts.join('\n\n');
-  navigator.clipboard.writeText(text).then(()=>{
-    window.open('https://t.me/nassams','_blank');
-    document.getElementById('ov-feedback').classList.remove('on');
-    document.getElementById('fb-inconvenient').value='';
-    document.getElementById('fb-missing').value='';
-    document.getElementById('fb-good').value='';
-  }).catch(()=>{
-    prompt('Скопіюй і надішли в Telegram @nassams:',text);
-  });
+  navigator.clipboard.writeText(text).catch(()=>{});
+  window.open(FB_FORM_URL,'_blank');
+  document.getElementById('ov-feedback').classList.remove('on');
+  document.getElementById('fb-inconvenient').value='';
+  document.getElementById('fb-missing').value='';
+  document.getElementById('fb-good').value='';
 }
 </script>
 </body>
