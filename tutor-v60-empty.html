@@ -3842,9 +3842,9 @@ renderDash();
 .fab-feedback{position:fixed;right:20px;bottom:20px;z-index:300;background:#1a1a1a;color:#fff;border:none;border-radius:50px;padding:11px 18px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:0 4px 16px rgba(0,0,0,.25);transition:transform .14s,box-shadow .14s}
 .fab-feedback:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3)}
 .fab-feedback svg{stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-#ov-feedback{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;align-items:flex-end;justify-content:center;padding:0 0 80px}
+#ov-feedback{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;align-items:center;justify-content:center;padding:24px}
 #ov-feedback.on{display:flex}
-.fb-modal{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:520px;padding:24px;box-shadow:0 -8px 32px rgba(0,0,0,.12);max-height:90vh;overflow-y:auto}
+.fb-modal{background:#fff;border-radius:20px;width:100%;max-width:440px;padding:24px;box-shadow:0 8px 40px rgba(0,0,0,.18);max-height:90vh;overflow-y:auto}
 .fb-title{font-size:16px;font-weight:800;margin-bottom:4px}
 .fb-sub{font-size:13px;color:#888;margin-bottom:18px}
 .fb-tmpl{background:#f7f7f5;border-radius:10px;padding:12px 14px;margin-bottom:14px}
@@ -3867,14 +3867,6 @@ renderDash();
   <div class="fb-modal">
     <div class="fb-title">Надати фідбек</div>
     <div class="fb-sub">Форма відкриється в новій вкладці — заповни там</div>
-
-    <div class="fb-tmpl">
-      <div class="fb-tmpl-label">Підказка — як писати щоб було корисно</div>
-      <div style="font-size:13px;color:#444;line-height:1.6;padding:2px 0">
-        <b>Мені незручно</b> __________, <b>тому що</b> __________<br>
-        <b>Мені треба</b> __________, <b>щоб</b> __________
-      </div>
-    </div>
 
     <a href="https://t.me/nassams" target="_blank" class="fb-tg">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></svg>
