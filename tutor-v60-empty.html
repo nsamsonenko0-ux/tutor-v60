@@ -2448,7 +2448,17 @@ function checkEvConflict(){
   const id=document.getElementById('ev-id').value;
   const date=document.getElementById('ev-date').value;
   const time=document.getElementById('ev-time').value.trim();
-  if(!date||!time||!/^\d{1,2}:\d{2}$/.test(time)){warn.style.display='none';return false}
+  const te=document.getElementById('ev-time');
+  const err=document.getElementById('ev-datetime-err');
+  const validFmt=/^\d{2}:\d{2}$/.test(time);
+  if(time&&!validFmt){
+    te.style.borderColor='var(--warn)';
+    if(err){err.style.display='';err.textContent='Формат часу: 14:00';}
+    warn.style.display='none';return false;
+  }
+  te.style.borderColor='';
+  if(err&&err.textContent==='Формат часу: 14:00')err.style.display='none';
+  if(!date||!time||!validFmt){warn.style.display='none';return false}
   const conflict=findTimeConflict(date,time,id);
   if(conflict){
     txt.textContent='Цей час зайнятий: '+conflict;
@@ -2520,6 +2530,16 @@ function saveEvent(){
   } else {
     const slots=getSlotsFromForm();
     if(!slots.length){alert('Додайте хоча б один слот');return}
+    // validate time format for each slot
+    for(const sl of slots){
+      if(!/^\d{2}:\d{2}$/.test(sl.time)){
+        // highlight the bad input
+        document.querySelectorAll('#ev-slots-list .ev-slot-time').forEach(inp=>{
+          if(inp.value.trim()===sl.time){inp.style.borderColor='var(--warn)';}
+        });
+        alert('Формат часу: 14:00');return;
+      }
+    }
     // conflict check for each slot (check next occurrence)
     for(const sl of slots){
       const nextDate=nextDateForWeekday(sl.day);
