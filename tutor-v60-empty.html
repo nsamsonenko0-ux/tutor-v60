@@ -2281,12 +2281,11 @@ function hgEvent(ev,top,height){
 }
 
 function quickCreateEvent(ds,hour){
-  // open event modal pre-filled with date and time
   openEvent();
-  // set as one-time on this date
   setEvType('once');
   document.getElementById('ev-date').value=ds;
-  document.getElementById('ev-time').value=String(hour).padStart(2,'0')+':00';
+  document.getElementById('ev-time').value='';
+  checkEvConflict();
 }
 
 function evChip(ev){
