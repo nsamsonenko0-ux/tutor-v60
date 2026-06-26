@@ -312,14 +312,12 @@ function submitForm(){
   const name=document.getElementById('f-name').value.trim();
   const tg=document.getElementById('f-tg').value.trim();
   const phone='+380'+document.getElementById('f-phone').value.replace(/\D/g,'');
-  // Зберігаємо локально
   localStorage.setItem('tv2_tester',JSON.stringify({name,tg,phone,date:new Date().toISOString()}));
-  // TODO: замінити GOOGLE_FORM_URL на справжнє посилання після створення форми
-  const GOOGLE_FORM_URL='REPLACE_WITH_GOOGLE_FORM_URL';
-  if(GOOGLE_FORM_URL!=='REPLACE_WITH_GOOGLE_FORM_URL'){
-    // Відправляємо в Google Form у фоні
-    fetch(GOOGLE_FORM_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams({'entry.NAME_ID':name,'entry.TG_ID':tg,'entry.PHONE_ID':phone})});
-  }
+  fetch('https://script.google.com/macros/s/AKfycbx--Cnj5GdISRE_2S5yVSdNNCgITv5-n-lWk5fxUB-3sGR5TaFzQVATl4GXhMScUfe65Q/exec',{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name,tg,phone})
+  });
   window.location.href='tutor-v60-empty.html';
 }
 </script>
