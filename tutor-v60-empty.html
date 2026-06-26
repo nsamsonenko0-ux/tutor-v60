@@ -3845,13 +3845,16 @@ renderDash();
 #ov-feedback{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;align-items:center;justify-content:center;padding:24px}
 #ov-feedback.on{display:flex}
 .fb-modal{background:#fff;border-radius:20px;width:100%;max-width:440px;padding:24px;box-shadow:0 8px 40px rgba(0,0,0,.18);max-height:90vh;overflow-y:auto}
-.fb-title{font-size:16px;font-weight:800;margin-bottom:4px}
-.fb-sub{font-size:13px;color:#888;margin-bottom:18px}
-.fb-tmpl{background:#f7f7f5;border-radius:10px;padding:12px 14px;margin-bottom:14px}
-.fb-tmpl-label{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.fb-tmpl textarea{width:100%;border:none;background:transparent;font-size:13px;font-family:inherit;color:#1a1a1a;resize:none;outline:none;line-height:1.5;min-height:54px}
-.fb-tg{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#f7f7f5;border-radius:10px;font-size:13px;color:#444;margin-bottom:16px;text-decoration:none}
-.fb-tg b{color:#1a1a1a}
+.fb-title{font-size:16px;font-weight:800;margin-bottom:8px}
+.fb-instr{font-size:13px;color:#444;line-height:1.55;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #e8e8e4}
+.fb-instr b{color:#1a1a1a}
+.fb-label{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.fb-textarea{width:100%;border:1px solid #e8e8e4;border-radius:10px;padding:11px 14px;font-size:14px;font-family:inherit;color:#1a1a1a;resize:none;outline:none;line-height:1.5;min-height:100px;transition:border-color .14s;margin-bottom:12px}
+.fb-textarea:focus{border-color:#1a1a1a}
+.fb-textarea.err{border-color:#ef4444}
+.fb-input{width:100%;border:1px solid #e8e8e4;border-radius:10px;padding:11px 14px;font-size:14px;font-family:inherit;color:#1a1a1a;outline:none;transition:border-color .14s;margin-bottom:16px}
+.fb-input:focus{border-color:#1a1a1a}
+.fb-sent{text-align:center;padding:24px 0;font-size:15px;font-weight:700;display:none}
 .fb-actions{display:flex;gap:10px}
 .fb-send{flex:1;background:#FFE500;color:#1a1a1a;border:none;border-radius:50px;padding:12px;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;transition:transform .14s}
 .fb-send:hover{transform:translateY(-1px)}
@@ -3866,18 +3869,45 @@ renderDash();
 <div id="ov-feedback" onclick="if(event.target===this)this.classList.remove('on')">
   <div class="fb-modal">
     <div class="fb-title">Надати фідбек</div>
-    <div class="fb-sub">Форма відкриється в новій вкладці — заповни там</div>
-
-    <a href="https://t.me/nassams" target="_blank" class="fb-tg">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></svg>
-      Або напиши напряму: <b>@nassams</b>
-    </a>
-
-    <div class="fb-actions">
-      <button class="fb-cancel" onclick="document.getElementById('ov-feedback').classList.remove('on')">Скасувати</button>
-      <button class="fb-send" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSeSU8k6U9DLOqdmUejgPbXoPUGNrLh3SJlPsZxHhO0itTBJiA/viewform','_blank');document.getElementById('ov-feedback').classList.remove('on')">Заповнити форму →</button>
+    <div class="fb-instr">
+      Дякуємо що тестуєш! Твій фідбек напряму впливає на те, яким стане додаток.<br><br>
+      Щоб нам було простіше зрозуміти що покращити — спробуй описувати не просто "незручно", а <b>чому і яку задачу ти намагаєшся виконати</b>:<br><br>
+      — Коли я хочу <b>[яку задачу]</b>, мені незручно <b>[що саме]</b>, тому що <b>[чому заважає]</b>.<br>
+      — Мені треба <b>[що]</b>, щоб <b>[яку задачу виконати]</b>.
+    </div>
+    <div class="fb-label">Ваш відгук</div>
+    <textarea class="fb-textarea" id="fb-text" placeholder="Опиши що незручно або чого не вистачає..."></textarea>
+    <div class="fb-label">Ваш нік в Телеграмі</div>
+    <input class="fb-input" id="fb-tg" placeholder="@username">
+    <div class="fb-sent" id="fb-sent">✅ Дякуємо! Фідбек отримано.</div>
+    <div class="fb-actions" id="fb-actions">
+      <button class="fb-cancel" onclick="closeFeedback()">Скасувати</button>
+      <button class="fb-send" onclick="sendFeedback()">Надіслати →</button>
     </div>
   </div>
 </div>
+<script>
+function closeFeedback(){
+  document.getElementById('ov-feedback').classList.remove('on');
+  document.getElementById('fb-text').value='';
+  document.getElementById('fb-tg').value='';
+  document.getElementById('fb-text').classList.remove('err');
+  document.getElementById('fb-sent').style.display='none';
+  document.getElementById('fb-actions').style.display='flex';
+}
+function sendFeedback(){
+  const text=document.getElementById('fb-text').value.trim();
+  const tg=document.getElementById('fb-tg').value.trim();
+  if(!text){document.getElementById('fb-text').classList.add('err');return;}
+  document.getElementById('fb-text').classList.remove('err');
+  const SCRIPT_URL='https://script.google.com/macros/s/AKfycbw0arH_8mclg1NlEXgXMFdry0FeWQR6i5A15WVCUQTmeByWVd4K7bPGW5eczQyMdsjwBg/exec';
+  if(SCRIPT_URL!=='REPLACE_WITH_FEEDBACK_SCRIPT_URL'){
+    fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({feedback:text,tg:tg||'—'})});
+  }
+  document.getElementById('fb-actions').style.display='none';
+  document.getElementById('fb-sent').style.display='block';
+  setTimeout(()=>closeFeedback(),2000);
+}
+</script>
 </body>
 </html>
