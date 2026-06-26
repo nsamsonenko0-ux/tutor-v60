@@ -116,6 +116,10 @@
       <label>Telegram</label>
       <input type="text" id="f-tg" placeholder="@username" oninput="checkForm()">
     </div>
+    <div class="form-field">
+      <label>Номер телефону</label>
+      <input type="tel" id="f-phone" placeholder="+380 XX XXX XX XX" oninput="checkForm()">
+    </div>
     <button id="btn-start" class="btn-start" disabled onclick="submitForm()">Почати тестування →</button>
   </div>
 </section>
@@ -243,18 +247,20 @@
 function checkForm(){
   const name=document.getElementById('f-name').value.trim();
   const tg=document.getElementById('f-tg').value.trim();
-  document.getElementById('btn-start').disabled=!name||!tg;
+  const phone=document.getElementById('f-phone').value.trim();
+  document.getElementById('btn-start').disabled=!name||!tg||!phone;
 }
 function submitForm(){
   const name=document.getElementById('f-name').value.trim();
   const tg=document.getElementById('f-tg').value.trim();
+  const phone=document.getElementById('f-phone').value.trim();
   // Зберігаємо локально
-  localStorage.setItem('tv2_tester',JSON.stringify({name,tg,date:new Date().toISOString()}));
+  localStorage.setItem('tv2_tester',JSON.stringify({name,tg,phone,date:new Date().toISOString()}));
   // TODO: замінити GOOGLE_FORM_URL на справжнє посилання після створення форми
   const GOOGLE_FORM_URL='REPLACE_WITH_GOOGLE_FORM_URL';
   if(GOOGLE_FORM_URL!=='REPLACE_WITH_GOOGLE_FORM_URL'){
     // Відправляємо в Google Form у фоні
-    fetch(GOOGLE_FORM_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams({'entry.NAME_ID':name,'entry.TG_ID':tg})});
+    fetch(GOOGLE_FORM_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams({'entry.NAME_ID':name,'entry.TG_ID':tg,'entry.PHONE_ID':phone})});
   }
   window.location.href='tutor-v60-empty.html';
 }
