@@ -3535,7 +3535,7 @@ function buildStudentJournal(sid){
   (s?.schedule||[]).forEach(sc=>{
     getPastSchedDates(sc.day,90).forEach(ds=>{
       if(ds>todayStr)return;
-      const synId='sched_'+sid+'_'+sc.day;
+      const synId='sched_'+sid+'_'+sc.day+'_'+sc.time;
       const ln=ld('tv2_ln_'+synId+'_'+ds,{});
       if(ln.cancelled)return;
       if(!isLessonPast(ds,sc.time))return;
@@ -3551,7 +3551,7 @@ function buildStudentJournal(sid){
     (g.schedule||[]).forEach(sc=>{
       getPastSchedDates(sc.day,90).forEach(ds=>{
         if(ds>todayStr)return;
-        const synId='sched_'+g.id+'_'+sc.day;
+        const synId='sched_'+g.id+'_'+sc.day+'_'+sc.time;
         const ln=ld('tv2_ln_'+synId+'_'+ds,{});
         if(ln.cancelled)return;
         if(!isLessonPast(ds,sc.time))return;
