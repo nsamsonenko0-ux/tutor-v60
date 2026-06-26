@@ -3861,7 +3861,7 @@ renderDash();
 .fb-cancel{background:#f0f0ec;color:#444;border:none;border-radius:50px;padding:12px 20px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer}
 </style>
 
-<button class="fab-feedback" onclick="document.getElementById('ov-feedback').classList.add('on')">
+<button class="fab-feedback" onclick="openFeedback()">
   <svg width="14" height="14" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
   Надати фідбек
 </button>
@@ -3878,7 +3878,8 @@ renderDash();
     <div class="fb-label">Ваш відгук</div>
     <textarea class="fb-textarea" id="fb-text" placeholder="Опиши що незручно або чого не вистачає..."></textarea>
     <div class="fb-label">Ваш нік в Телеграмі</div>
-    <input class="fb-input" id="fb-tg" placeholder="@username">
+    <input class="fb-input" id="fb-tg">
+    <div style="font-size:12px;color:#888;margin-top:-8px;margin-bottom:16px">Форму можна надсилати скільки завгодно разів — якщо з'являться нові думки, просто відкрий знову.</div>
     <div class="fb-sent" id="fb-sent">✅ Дякуємо! Фідбек отримано.</div>
     <div class="fb-actions" id="fb-actions">
       <button class="fb-cancel" onclick="closeFeedback()">Скасувати</button>
@@ -3887,19 +3888,38 @@ renderDash();
   </div>
 </div>
 <script>
+function openFeedback(){
+  const tg=document.getElementById('fb-tg');
+  if(!tg.value||tg.value==='')tg.value='@';
+  document.getElementById('ov-feedback').classList.add('on');
+  tg.addEventListener('keydown',function fbKey(e){
+    if((e.key==='Backspace'||e.key==='Delete')&&tg.value==='@')e.preventDefault();
+  },{once:false});
+  tg.addEventListener('input',function fbInput(){
+    if(!tg.value.startsWith('@'))tg.value='@'+tg.value.replace(/^@*/,'');
+  });
+}
 function closeFeedback(){
   document.getElementById('ov-feedback').classList.remove('on');
   document.getElementById('fb-text').value='';
-  document.getElementById('fb-tg').value='';
+  document.getElementById('fb-tg').value='@';
   document.getElementById('fb-text').classList.remove('err');
+  document.getElementById('fb-tg').classList.remove('err');
   document.getElementById('fb-sent').style.display='none';
   document.getElementById('fb-actions').style.display='flex';
 }
 function sendFeedback(){
   const text=document.getElementById('fb-text').value.trim();
-  const tg=document.getElementById('fb-tg').value.trim();
-  if(!text){document.getElementById('fb-text').classList.add('err');return;}
-  document.getElementById('fb-text').classList.remove('err');
+  const tgEl=document.getElementById('fb-tg');
+  const tg=tgEl.value.trim();
+  const tgValid=/^@[a-zA-Z0-9_]{3,}$/.test(tg);
+  let ok=true;
+  if(!text){document.getElementById('fb-text').classList.add('err');ok=false;}
+  else document.getElementById('fb-text').classList.remove('err');
+  if(!tgValid){tgEl.classList.add('err');ok=false;}
+  else tgEl.classList.remove('err');
+  if(!ok)return;
+  tgEl.classList.remove('err');
   const SCRIPT_URL='https://script.google.com/macros/s/AKfycbw0arH_8mclg1NlEXgXMFdry0FeWQR6i5A15WVCUQTmeByWVd4K7bPGW5eczQyMdsjwBg/exec';
   if(SCRIPT_URL!=='REPLACE_WITH_FEEDBACK_SCRIPT_URL'){
     fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({feedback:text,tg:tg||'—'})});
