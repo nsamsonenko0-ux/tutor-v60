@@ -282,6 +282,11 @@ function checkForm(){
 }
 // Ініціалізація поля Telegram
 window.addEventListener('DOMContentLoaded',()=>{
+  // Returning tester — skip landing, go straight to app
+  if(localStorage.getItem('tv2_tester')){
+    window.location.replace('tutor-v60-empty.html');
+    return;
+  }
   const tg=document.getElementById('f-tg');
   tg.value='@';
   tg.addEventListener('keydown',e=>{
