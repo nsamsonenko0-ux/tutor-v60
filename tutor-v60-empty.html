@@ -15,6 +15,7 @@
   --accent:#FFE500;--al:#FFFCE0;--am:#FFE500;
   --ok:#2d5f3f;--ok-l:#e4f0e8;--ok-m:#9dc9ae;
   --warn:#a8420f;--wl:#faeae3;
+  --err:#c0392b;--el:#fdf0ef;
   --purple:#5b4a8a;--pl:#eeeaf8;
   --blue:#1f4e78;--blue-l:#e6f0f8;
   --border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.05);
@@ -223,10 +224,10 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
 /* Schedule widget */
 .sched-list{display:flex;flex-direction:column;gap:6px}
 .sched-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:9px}
-.sched-item.conflict{border-color:var(--warn);background:var(--wl)}
+.sched-item.conflict{border-color:var(--err);background:var(--el)}
 .sched-day-sel,.sched-time{padding:0 8px;height:32px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-size:12px;font-family:inherit;outline:none;box-sizing:border-box}
 .sched-time{width:76px}
-.sched-conflict-msg{font-size:12px;color:var(--warn);margin-left:4px;flex:1}
+.sched-conflict-msg{font-size:12px;color:var(--err);margin-left:4px;flex:1}
 .sched-del{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--ink3);padding:3px;border-radius:5px;display:flex;align-items:center;transition:all .14s;flex-shrink:0}
 .sched-del svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
 .sched-del:hover{background:var(--wl);color:var(--warn)}
@@ -651,6 +652,18 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
     </div>
 
     <div class="settings-card">
+      <div class="settings-title">Оплата за пропуски</div>
+      <div class="settings-sub">Визначає як рахується борг, якщо учень не прийшов на заняття.</div>
+      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;margin-top:8px">
+        <input type="checkbox" id="cfg-charge-noshow" onchange="saveSettings()" style="margin-top:2px;accent-color:var(--accent);width:16px;height:16px;flex-shrink:0">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--ink)">Нараховувати оплату за пропущені заняття</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:3px;line-height:1.5">Якщо учень не прийшов, але заняття не скасовано — воно все одно враховується в оплату.<br><b>Скасовані заняття ніколи не оплачуються.</b></div>
+        </div>
+      </label>
+    </div>
+
+    <div class="settings-card">
       <div class="settings-title">Тур по застосунку</div>
       <div class="settings-sub">Покроковий огляд всіх розділів застосунку з підказками.</div>
       <button class="btn btn-p btn-sm" onclick="startTour()">▶ Запустити тур</button>
@@ -723,13 +736,15 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
                   <div class="price-hint" id="ms-ind-hint"></div>
                 </div>
               </div>
-              <label class="flbl">Дні та час занять</label>
-              <div class="fhint">Можна задати кілька слотів на тиждень</div>
-              <div class="sched-list" id="ms-sched"></div>
-              <button class="sched-add" id="ms-sched-add" onclick="addSched('ms-sched','s')">
-                <svg width="13" height="13"><use href="#i-plus"/></svg> Додати час
-              </button>
-              <div id="ms-sched-err" style="display:none;font-size:12px;color:var(--warn);margin-top:5px">Вкажіть час занять</div>
+              <div style="border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;background:var(--bg2);margin-top:4px">
+                <label class="flbl" style="margin-bottom:2px">Дні та час занять</label>
+                <div class="fhint" style="margin-bottom:8px">Можна задати кілька слотів на тиждень</div>
+                <div class="sched-list" id="ms-sched"></div>
+                <button class="sched-add" id="ms-sched-add" onclick="addSched('ms-sched','s')">
+                  <svg width="13" height="13"><use href="#i-plus"/></svg> Додати час
+                </button>
+                <div id="ms-sched-err" style="display:none;font-size:12px;color:var(--err);margin-top:5px">Вкажіть час занять</div>
+              </div>
             </div>
           </div>
 
@@ -773,7 +788,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
       <div class="field">
         <label class="flbl">Нотатки</label>
         <div class="fhint">Цілі навчання, рівень знань, особливості</div>
-        <textarea id="ms-notes" placeholder="Готується до НМТ. Сильна алгебра, слабка геометрія…"></textarea>
+        <textarea id="ms-notes" placeholder="Цілі учня, особливості, на що звернути увагу…"></textarea>
       </div>
     </div>
     <div class="mfoot">
@@ -898,7 +913,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
             <input type="text" id="ev-who-search" placeholder="Почніть вводити ім'я…" autocomplete="off"
               oninput="filterEvWho()" onfocus="showEvWhoList()" style="border-radius:9px 9px 0 0;border-bottom:none" onblur="setTimeout(hideEvWhoList,150)">
           </div>
-          <div id="ev-who-err" style="display:none;font-size:12px;color:var(--warn);margin-top:5px">Оберіть учня або групу</div>
+          <div id="ev-who-err" style="display:none;font-size:12px;color:var(--err);margin-top:5px">Оберіть учня або групу</div>
           <div id="ev-who-selected" style="display:none;padding:7px 12px;background:var(--al);border:1px solid var(--am);border-top:none;border-radius:0 0 9px 9px;font-size:13px;font-weight:500;color:var(--ink);display:flex;align-items:center;justify-content:space-between">
             <span id="ev-who-selected-lbl"></span>
             <span onclick="clearEvWho()" style="cursor:pointer;color:var(--ink3);font-size:15px;line-height:1">×</span>
@@ -915,7 +930,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
           <input type="date" id="ev-date" onchange="checkEvConflict()">
           <input type="text" id="ev-time" placeholder="Час" oninput="applyTimeMask(this);checkEvConflict()">
         </div>
-        <div id="ev-datetime-err" style="display:none;font-size:12px;color:var(--warn);margin-top:5px">Вкажіть дату і час</div>
+        <div id="ev-datetime-err" style="display:none;font-size:12px;color:var(--err);margin-top:5px">Вкажіть дату і час</div>
         <div id="ev-conflict-warn" style="display:none;font-size:12px;color:var(--warn);margin-top:6px;align-items:center;gap:5px">
           <svg width="13" height="13" style="stroke:var(--warn);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:-2px"><use href="#i-warn"/></svg>
           <span id="ev-conflict-text"></span>
@@ -1018,30 +1033,30 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
       <!-- Topic -->
       <div class="field" id="ls-field-topic">
         <label class="flbl">Тема уроку</label>
-        <div id="ls-topic-view" class="ls-view-text"></div>
-        <input type="text" id="ls-topic" placeholder="Напр.: Квадратні рівняння" class="ls-edit-only">
+        <div id="ls-topic-view" class="ls-view-text ls-view-only"></div>
+        <input type="text" id="ls-topic" placeholder="Напр.: Назва теми заняття" class="ls-edit-only">
       </div>
 
       <!-- Homework -->
       <div class="field" id="ls-field-hw" style="margin-top:14px">
         <label class="flbl">Домашнє завдання</label>
-        <div id="ls-homework-view" class="ls-view-text"></div>
-        <textarea id="ls-homework" placeholder="Напр.: Стор. 45, №3–7" style="min-height:60px" class="ls-edit-only"></textarea>
+        <div id="ls-homework-view" class="ls-view-text ls-view-only"></div>
+        <textarea id="ls-homework" placeholder="Напр.: Завдання до наступного заняття" style="min-height:60px" class="ls-edit-only"></textarea>
       </div>
 
       <!-- Notes -->
       <div class="field" id="ls-field-notes" style="margin-top:14px">
         <label class="flbl">Нотатки</label>
         <div class="fhint ls-edit-only">Спостереження, прогрес, що повторити наступного разу</div>
-        <div id="ls-notes-view" class="ls-view-text"></div>
-        <textarea id="ls-notes" placeholder="Добре засвоїв тему, але плутає знаки…" style="min-height:70px" class="ls-edit-only"></textarea>
+        <div id="ls-notes-view" class="ls-view-text ls-view-only"></div>
+        <textarea id="ls-notes" placeholder="Нотатки про прогрес учня, спостереження…" style="min-height:70px" class="ls-edit-only"></textarea>
       </div>
 
       <!-- Materials link -->
       <div class="field" id="ls-field-materials" style="margin-top:14px">
         <label class="flbl">Матеріали</label>
         <div class="fhint ls-edit-only">Посилання на Google Drive, Notion або інший ресурс</div>
-        <div id="ls-materials-view" class="ls-view-text"></div>
+        <div id="ls-materials-view" class="ls-view-text ls-view-only"></div>
         <input type="text" id="ls-materials" placeholder="https://drive.google.com/…" class="ls-edit-only">
       </div>
     </div>
@@ -1059,7 +1074,8 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
       <!-- normal footer row -->
       <div id="ls-foot-row" style="display:flex;align-items:center;gap:8px;width:100%">
         <div class="mfoot-l ls-view-only">
-          <button class="btn btn-d btn-sm" onclick="cancelLesson()">Скасувати заняття</button>
+          <button class="btn btn-d btn-sm" id="ls-cancel-btn" onclick="cancelLesson()">Скасувати заняття</button>
+          <button class="btn btn-g btn-sm" id="ls-reschedule-btn" style="display:none" onclick="rescheduleLesson()">Запланувати заміну</button>
         </div>
         <button class="btn btn-g ls-edit-only" onclick="setLsMode(false)">Відмінити</button>
         <button class="btn btn-p ls-edit-only" onclick="onLsSave()">Зберегти</button>
@@ -1212,6 +1228,14 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
           </div>
         </div>
         <div style="font-size:12px;color:var(--ink3);margin-top:8px">Можна пропустити — введеш пізніше в Налаштуваннях</div>
+        <!-- No-show billing toggle -->
+        <label style="display:flex;align-items:flex-start;gap:12px;margin-top:16px;padding:14px;background:var(--bg3);border-radius:10px;cursor:pointer">
+          <input type="checkbox" id="ob-charge-noshow" style="margin-top:2px;accent-color:var(--accent);width:16px;height:16px;flex-shrink:0">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--ink)">Нараховувати оплату за пропущені заняття</div>
+            <div style="font-size:12px;color:var(--ink3);margin-top:3px;line-height:1.5">Якщо учень не прийшов, але заняття не скасовано — воно все одно враховується в оплату. Скасовані заняття ніколи не оплачуються.</div>
+          </div>
+        </label>
       </div>
       <div style="padding:20px 32px;display:flex;gap:10px">
         <button class="btn btn-g" onclick="obGoStep(1)">← Назад</button>
@@ -1301,6 +1325,8 @@ function loadSettings(){
   const de=document.getElementById('cfg-day-end');
   if(ds)ds.value=settings.dayStart||8;
   if(de)de.value=settings.dayEnd||20;
+  const cns=document.getElementById('cfg-charge-noshow');
+  if(cns)cns.checked=settings.chargeNoShow===true;
 }
 async function resetDemo(){
   const ok=await showConfirm('Скинути всі дані і завантажити демо-приклад? Поточні дані буде втрачено.','Скинути');
@@ -1318,6 +1344,8 @@ function saveSettings(){
   const de=document.getElementById('cfg-day-end');
   if(ds)settings.dayStart=Number(ds.value)||8;
   if(de)settings.dayEnd=Number(de.value)||20;
+  const cns=document.getElementById('cfg-charge-noshow');
+  if(cns)settings.chargeNoShow=cns.checked;
   sv('tv2_cfg',settings);
   if(document.getElementById('pg-schedule').classList.contains('on'))renderSchedule();
 }
@@ -1540,8 +1568,8 @@ function validateSchedItem(el){
   if(!time){item.classList.remove('conflict');msg.textContent='';timeInput.style.borderColor='';return}
   const validTime=/^\d{2}:\d{2}$/.test(time);
   if(!validTime){
-    timeInput.style.borderColor='var(--warn)';
-    msg.innerHTML=`<svg width="11" height="11" style="vertical-align:-1px;stroke:var(--warn);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><use href="#i-warn"/></svg> Формат: 14:00`;
+    timeInput.style.borderColor='var(--err)';
+    msg.innerHTML=`<svg width="11" height="11" style="vertical-align:-1px;stroke:var(--err);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><use href="#i-warn"/></svg> Формат: 14:00`;
     return;
   }
   timeInput.style.borderColor='';
@@ -1550,7 +1578,7 @@ function validateSchedItem(el){
   const conflicts=checkConflict(day,time,excludeId,type);
   if(conflicts.length){
     item.classList.add('conflict');
-    msg.innerHTML=`<svg width="11" height="11" style="vertical-align:-1px;stroke:var(--warn);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><use href="#i-warn"/></svg> Конфлікт: ${conflicts.map(c=>c.label).join(', ')}`;
+    msg.innerHTML=`<svg width="11" height="11" style="vertical-align:-1px;stroke:var(--err);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><use href="#i-warn"/></svg> Конфлікт: ${conflicts.map(c=>c.label).join(', ')}`;
   } else {
     item.classList.remove('conflict');msg.textContent='';
   }
@@ -1828,7 +1856,7 @@ function openStudent(id){
 }
 function fieldError(id){
   const el=document.getElementById(id);if(!el)return;
-  el.style.borderColor='var(--warn)';
+  el.style.borderColor='var(--err)';
   el.style.animation='shake .3s ease';
   setTimeout(()=>{el.style.animation='';el.style.borderColor=''},2000);
 }
@@ -1846,7 +1874,7 @@ function saveStudent(){
   if(msLtInd&&schedCount===0){
     const addBtn=document.getElementById('ms-sched-add');
     const errMsg=document.getElementById('ms-sched-err');
-    if(addBtn){addBtn.style.borderColor='var(--warn)';addBtn.style.color='var(--warn)';setTimeout(()=>{addBtn.style.borderColor='';addBtn.style.color='';},2000);}
+    if(addBtn){addBtn.style.borderColor='var(--err)';addBtn.style.color='var(--err)';setTimeout(()=>{addBtn.style.borderColor='';addBtn.style.color='';},2000);}
     if(errMsg){errMsg.style.display='';setTimeout(()=>{errMsg.style.display='none';},2000);}
     ok=false;
   }
@@ -1855,7 +1883,7 @@ function saveStudent(){
     const errId='lt-type-err';
     if(!document.getElementById(errId)){
       const err=document.createElement('div');
-      err.id=errId;err.style.cssText='font-size:12px;color:var(--warn);margin-top:6px';
+      err.id=errId;err.style.cssText='font-size:12px;color:var(--err);margin-top:6px';
       err.textContent='Виберіть хоча б один тип занять';
       document.querySelector('.lt-list').after(err);
       setTimeout(()=>{const e=document.getElementById(errId);if(e)e.remove();},2500);
@@ -2109,7 +2137,19 @@ function openGroup(id){
 function saveGroup(){
   const id=document.getElementById('mg-id').value||uid();
   const name=document.getElementById('mg-name').value.trim();
-  if(!name){alert('Введіть назву');return}
+  if(!name){fieldError('mg-name');return}
+  if(mgPicked.size===0){
+    let e=document.getElementById('mg-students-err');
+    if(!e){e=document.createElement('div');e.id='mg-students-err';e.style.cssText='font-size:12px;color:var(--err);margin-top:5px';e.textContent='Додайте хоча б одного учня';document.getElementById('mg-picker').after(e);}
+    e.style.display='';setTimeout(()=>{if(e)e.style.display='none';},2500);return;
+  }
+  if(getSchedFrom('mg-sched').length===0){
+    const addBtn=document.querySelector('#ov-g .sched-add');
+    let e=document.getElementById('mg-sched-err');
+    if(!e){e=document.createElement('div');e.id='mg-sched-err';e.style.cssText='font-size:12px;color:var(--err);margin-top:5px';e.textContent='Вкажіть час занять';if(addBtn)addBtn.after(e);}
+    e.style.display='';if(addBtn){addBtn.style.borderColor='var(--err)';addBtn.style.color='var(--err)';setTimeout(()=>{addBtn.style.borderColor='';addBtn.style.color='';},2000);}
+    setTimeout(()=>{if(e)e.style.display='none';},2500);return;
+  }
   const rawP=document.getElementById('mg-price').value;
   const obj={id,name,color:mgColor,groupPrice:rawP?Number(rawP):(settings.grpPrice||0),studentIds:[...mgPicked],schedule:getSchedFrom('mg-sched'),notes:document.getElementById('mg-notes').value.trim(),materials:document.getElementById('mg-materials').value.trim()};
   const idx=groups.findIndex(g=>g.id===id);
@@ -2171,32 +2211,35 @@ function getEventsForDate(ds){
     const d=new Date(ds+'T00:00:00'),dow=(d.getDay()+6)%7;
     (e.slots||[]).forEach(sl=>{if(Number(sl.day)===dow)out.push({...e,_date:ds,_slot:sl,time:sl.time})});
   });
-  // from student/group schedules
-  students.forEach(s=>{
-    if(!s.individual)return;
-    (s.schedule||[]).forEach(sc=>{
-      const d=new Date(ds+'T00:00:00'),dow=(d.getDay()+6)%7;
-      if(Number(sc.day)===dow){
-        const schedId='sched_'+s.id+'_'+sc.day+'_'+sc.time;
-        const lnCheck=ld('tv2_ln_'+schedId+'_'+ds,{});
-        if(lnCheck._skipped)return; // rescheduled for this date
-        const cov=out.some(e=>e.whoId===s.id&&e.time===sc.time);
-        if(!cov)out.push({id:schedId,type:'recurring',whoId:s.id,whoType:'student',time:sc.time,_date:ds,_fromSched:true});
-      }
+  // from student/group schedules — only today and future
+  const todayDs=fmtDate(new Date());
+  if(ds>=todayDs){
+    students.forEach(s=>{
+      if(!s.individual)return;
+      (s.schedule||[]).forEach(sc=>{
+        const d=new Date(ds+'T00:00:00'),dow=(d.getDay()+6)%7;
+        if(Number(sc.day)===dow){
+          const schedId='sched_'+s.id+'_'+sc.day+'_'+sc.time;
+          const lnCheck=ld('tv2_ln_'+schedId+'_'+ds,{});
+          if(lnCheck._skipped)return;
+          const cov=out.some(e=>e.whoId===s.id&&e.time===sc.time);
+          if(!cov)out.push({id:schedId,type:'recurring',whoId:s.id,whoType:'student',time:sc.time,_date:ds,_fromSched:true});
+        }
+      });
     });
-  });
-  groups.forEach(g=>{
-    (g.schedule||[]).forEach(sc=>{
-      const d=new Date(ds+'T00:00:00'),dow=(d.getDay()+6)%7;
-      if(Number(sc.day)===dow){
-        const schedId='sched_'+g.id+'_'+sc.day+'_'+sc.time;
-        const lnCheck=ld('tv2_ln_'+schedId+'_'+ds,{});
-        if(lnCheck._skipped)return;
-        const cov=out.some(e=>e.whoId===g.id&&e.time===sc.time);
-        if(!cov)out.push({id:schedId,type:'recurring',whoId:g.id,whoType:'group',time:sc.time,_date:ds,_fromSched:true});
-      }
+    groups.forEach(g=>{
+      (g.schedule||[]).forEach(sc=>{
+        const d=new Date(ds+'T00:00:00'),dow=(d.getDay()+6)%7;
+        if(Number(sc.day)===dow){
+          const schedId='sched_'+g.id+'_'+sc.day+'_'+sc.time;
+          const lnCheck=ld('tv2_ln_'+schedId+'_'+ds,{});
+          if(lnCheck._skipped)return;
+          const cov=out.some(e=>e.whoId===g.id&&e.time===sc.time);
+          if(!cov)out.push({id:schedId,type:'recurring',whoId:g.id,whoType:'group',time:sc.time,_date:ds,_fromSched:true});
+        }
+      });
     });
-  });
+  }
   return out.sort((a,b)=>a.time.localeCompare(b.time));
 }
 
@@ -2463,7 +2506,7 @@ function clearEvWho(){
 function validateEvSlotTime(inp){
   const v=inp.value.trim();
   if(!v){inp.style.borderColor='';return;}
-  inp.style.borderColor=/^\d{2}:\d{2}$/.test(v)?'':'var(--warn)';
+  inp.style.borderColor=/^\d{2}:\d{2}$/.test(v)?'':'var(--err)';
 }
 function addEvSlot(day,time){
   const list=document.getElementById('ev-slots-list');
@@ -2530,7 +2573,7 @@ function checkEvConflict(){
   const err=document.getElementById('ev-datetime-err');
   const validFmt=/^\d{2}:\d{2}$/.test(time);
   if(time&&!validFmt){
-    te.style.borderColor='var(--warn)';
+    te.style.borderColor='var(--err)';
     if(err){err.style.display='';err.textContent='Формат часу: 14:00';}
     warn.style.display='none';return false;
   }
@@ -2579,7 +2622,7 @@ function saveEvent(){
   if(!whoRaw){
     const ws=document.getElementById('ev-who-search');
     const we=document.getElementById('ev-who-err');
-    if(ws){ws.style.borderColor='var(--warn)';ws.style.animation='shake .3s ease';setTimeout(()=>{ws.style.borderColor='';ws.style.animation='';},2000);}
+    if(ws){ws.style.borderColor='var(--err)';ws.style.animation='shake .3s ease';setTimeout(()=>{ws.style.borderColor='';ws.style.animation='';},2000);}
     if(we){we.style.display='';setTimeout(()=>{we.style.display='none';},2000);}
     return;
   }
@@ -2596,8 +2639,8 @@ function saveEvent(){
       const de=document.getElementById('ev-date');
       const te=document.getElementById('ev-time');
       const err=document.getElementById('ev-datetime-err');
-      if(!date&&de){de.style.outline='2px solid var(--warn)';setTimeout(()=>{de.style.outline='';},2000);}
-      if((!time||!validTime)&&te){te.style.borderColor='var(--warn)';te.style.animation='shake .3s ease';setTimeout(()=>{te.style.borderColor='';te.style.animation='';},2000);}
+      if(!date&&de){de.style.outline='2px solid var(--err)';setTimeout(()=>{de.style.outline='';},2000);}
+      if((!time||!validTime)&&te){te.style.borderColor='var(--err)';te.style.animation='shake .3s ease';setTimeout(()=>{te.style.borderColor='';te.style.animation='';},2000);}
       if(err){err.style.display='';err.textContent=(!time)?'Вкажіть дату і час':'Формат часу: 14:00';setTimeout(()=>{err.style.display='none';},2000);}
       return;
     }
@@ -2613,7 +2656,7 @@ function saveEvent(){
       if(!/^\d{2}:\d{2}$/.test(sl.time)){
         // highlight the bad input
         document.querySelectorAll('#ev-slots-list .ev-slot-time').forEach(inp=>{
-          if(inp.value.trim()===sl.time){inp.style.borderColor='var(--warn)';}
+          if(inp.value.trim()===sl.time){inp.style.borderColor='var(--err)';}
         });
         alert('Формат часу: 14:00');return;
       }
@@ -2791,6 +2834,15 @@ function setLsMode(edit){
     const isPast=document.getElementById('ov-lesson').dataset.past==='1';
     const editBtn=document.querySelector('#ov-lesson .ls-view-only.btn-p');
     if(editBtn)editBtn.style.display=isPast?'none':'';
+    // show cancel or reschedule button depending on cancelled state
+    const lsEventId=document.getElementById('ls-event-id').value;
+    const lsDate=document.getElementById('ls-date').value;
+    const lsLn=lsEventId&&lsDate?ld('tv2_ln_'+lsEventId+'_'+lsDate,{}):null;
+    const isCancelled=lsLn?.cancelled===true;
+    const cancelBtn=document.getElementById('ls-cancel-btn');
+    const reschedBtn=document.getElementById('ls-reschedule-btn');
+    if(cancelBtn)cancelBtn.style.display=isCancelled?'none':'';
+    if(reschedBtn)reschedBtn.style.display=isCancelled?'':'none';
   } else {
     ['ls-field-topic','ls-field-hw','ls-field-notes','ls-field-materials'].forEach(id=>{
       const el=document.getElementById(id);if(el)el.style.display='';
@@ -3024,9 +3076,9 @@ function cancelLesson(){
       if(!ok)return;
       const ln=ld('tv2_ln_'+eventId+'_'+date,{});
       sv('tv2_ln_'+eventId+'_'+date,{...ln,cancelled:true});
-      closeModal('ov-lesson');
-      toast('Заняття скасовано');
-      renderSchedule();
+      toast('Заняття скасовано · Оплата не нараховується');
+      renderSchedule();renderPayments();
+      setLsMode(false); // stay in modal, show reschedule button
     });
   } else {
     // recurring: show options modal
@@ -3045,24 +3097,9 @@ function doCancelLesson(mode){
   if(mode==='one'){
     const ln=ld('tv2_ln_'+eventId+'_'+date,{});
     sv('tv2_ln_'+eventId+'_'+date,{...ln,cancelled:true});
-    toast('Заняття скасовано');
-    // offer reschedule
-    const ev=getEvents().find(e=>e.id===eventId);
-    if(ev){
-      setTimeout(()=>{
-        showConfirm('Перенести заняття на інший час?','Перенести').then(ok=>{
-          if(!ok)return;
-          openEvent();
-          setEvType('once');
-          document.getElementById('ev-who').value=ev.whoId;
-          document.getElementById('ev-who-search').value=ev.whoType==='group'?(getG(ev.whoId)?.name||''):(getS(ev.whoId)?.name||'');
-          document.getElementById('ev-who-selected-lbl').textContent=document.getElementById('ev-who-search').value;
-          document.getElementById('ev-who-selected').style.display='flex';
-          document.getElementById('ev-who-search').style.display='none';
-          evWhoVal=(ev.whoType==='group'?'g_':'s_')+ev.whoId;
-        });
-      },300);
-    }
+    toast('Заняття скасовано · Оплата не нараховується');
+    renderSchedule();renderPayments();
+    setLsMode(false); // stay in modal, reschedule button now visible
   } else if(mode==='following'){
     // mark all occurrences from this date as cancelled by storing a "stop from" marker on the event
     const evs=getEvents();
@@ -3072,9 +3109,42 @@ function doCancelLesson(mode){
     const ln=ld('tv2_ln_'+eventId+'_'+date,{});
     sv('tv2_ln_'+eventId+'_'+date,{...ln,cancelled:true});
     toast('Це і всі наступні заняття скасовано');
+    closeModal('ov-lesson');
+    renderSchedule();renderPayments();
   }
+}
+
+function rescheduleLesson(){
+  const eventId=document.getElementById('ls-event-id').value;
+  const date=document.getElementById('ls-date').value;
+  // determine who
+  let whoId='',whoType='',time='';
+  if(eventId.startsWith('sched_')){
+    const parts=eventId.split('_');
+    whoId=parts[1]; time=parts[3]||'';
+    whoType=getS(whoId)?'student':'group';
+  } else {
+    const ev=getEvents().find(e=>e.id===eventId);
+    if(ev){whoId=ev.whoId;whoType=ev.whoType;time=ev.time||'';}
+  }
+  // suggest +7 days (same weekday, next week)
+  const d=new Date(date+'T00:00:00');
+  d.setDate(d.getDate()+7);
+  const suggestedDate=fmtDate(d);
   closeModal('ov-lesson');
-  renderSchedule();
+  openEvent();
+  setEvType('once');
+  if(whoId){
+    const name=whoType==='group'?(getG(whoId)?.name||''):(getS(whoId)?.name||'');
+    document.getElementById('ev-who').value=whoId;
+    document.getElementById('ev-who-search').value=name;
+    document.getElementById('ev-who-selected-lbl').textContent=name;
+    document.getElementById('ev-who-selected').style.display='flex';
+    document.getElementById('ev-who-search').style.display='none';
+    evWhoVal=(whoType==='group'?'g_':'s_')+whoId;
+  }
+  document.getElementById('ev-date').value=suggestedDate;
+  if(time)document.getElementById('ev-time').value=time;
 }
 function handleLsFiles(e){
   lsFiles=[...lsFiles,...Array.from(e.target.files).map(f=>({name:f.name,size:f.size}))];
@@ -3184,12 +3254,10 @@ function countAttended(sid,scope,gid){
     }
     getPastDates(ev).forEach(ds=>{
       const ln=ld('tv2_ln_'+ev.id+'_'+ds,{});
-      if(ln.cancelled)return;
-      // only count if lesson has actually happened (past + time elapsed)
+      if(ln.cancelled||ln._skipped)return;
       const evTime=ev.time||(ev.slots&&ev.slots.find(s=>s)?.time)||'00:00';
       if(!isLessonPast(ds,evTime))return;
-      if(ev.whoType==='student'&&ln.attended===true) count++;
-      if(ev.whoType==='group'&&(ln.attendance||{})[sid]===true) count++;
+      if(isBillable(ln,ev.whoType,sid)) count++;
     });
   });
   // sched_ entries
@@ -3199,7 +3267,7 @@ function countAttended(sid,scope,gid){
       getPastSchedDates(sc.day,90).forEach(ds=>{
         const synId='sched_'+sid+'_'+sc.day+'_'+sc.time;
         const ln=ld('tv2_ln_'+synId+'_'+ds,{});
-        if(!ln.cancelled&&isLessonPast(ds,sc.time||'00:00')&&ln.attended===true) count++;
+        if(!ln.cancelled&&!ln._skipped&&isLessonPast(ds,sc.time||'00:00')&&isLessonLogged(ln)&&isBillable(ln,'student',sid)) count++;
       });
     });
   }
@@ -3211,7 +3279,7 @@ function countAttended(sid,scope,gid){
         getPastSchedDates(sc.day,90).forEach(ds=>{
           const synId='sched_'+g.id+'_'+sc.day+'_'+sc.time;
           const ln=ld('tv2_ln_'+synId+'_'+ds,{});
-          if(!ln.cancelled&&isLessonPast(ds,sc.time||'00:00')&&(ln.attendance||{})[sid]===true) count++;
+          if(!ln.cancelled&&!ln._skipped&&isLessonPast(ds,sc.time||'00:00')&&isLessonLogged(ln)&&isBillable(ln,'group',sid)) count++;
         });
       });
     });
@@ -3584,6 +3652,7 @@ function obFinish(){
   if(grp) settings.grpPrice=grp;
   settings.dayStart=Number((start||'08:00').split(':')[0])||8;
   settings.dayEnd=Number((end||'20:00').split(':')[0])||20;
+  settings.chargeNoShow=document.getElementById('ob-charge-noshow')?.checked===true;
   sv('tv2_cfg',settings);
   if(document.getElementById('cfg-ind')) document.getElementById('cfg-ind').value=ind||'';
   if(document.getElementById('cfg-grp')) document.getElementById('cfg-grp').value=grp||'';
@@ -3764,6 +3833,28 @@ function setJournalTab(t){
 }
 
 
+// Returns true if this lesson should count as billable for sid
+function isBillable(ln, whoType, sid){
+  if(!ln)return false;
+  if(ln.cancelled)return false;
+  const noShow=settings.chargeNoShow===true;
+  if(whoType==='group'){
+    const att=(ln.attendance||{})[sid];
+    if(att===true)return true;
+    return noShow; // student didn't come — charge only if setting is on
+  }
+  // individual
+  if(ln.attended===true)return true;
+  return noShow;
+}
+
+// Returns true if a lesson note has actual logged content (not a phantom empty slot)
+function isLessonLogged(ln){
+  if(!ln||typeof ln!=='object')return false;
+  return ln.attended===true||ln.cancelled===true||!!(ln.topic)||!!(ln.notes)||!!(ln.homework)||!!(ln.materials)||
+    (ln.attendance&&Object.values(ln.attendance).some(v=>v===true));
+}
+
 // Check if a lesson has already happened (date+time <= now)
 function isLessonPast(ds, time){
   const now=new Date();
@@ -3803,6 +3894,7 @@ function buildStudentJournal(sid){
       if(ds>todayStr)return;
       const synId='sched_'+sid+'_'+sc.day+'_'+sc.time;
       const ln=ld('tv2_ln_'+synId+'_'+ds,{});
+      if(!isLessonLogged(ln))return; // skip phantom unlogged slots
       if(ln.cancelled)return;
       if(!isLessonPast(ds,sc.time))return;
       const present=ln.attended===true;
@@ -3819,6 +3911,7 @@ function buildStudentJournal(sid){
         if(ds>todayStr)return;
         const synId='sched_'+g.id+'_'+sc.day+'_'+sc.time;
         const ln=ld('tv2_ln_'+synId+'_'+ds,{});
+        if(!isLessonLogged(ln))return; // skip phantom unlogged slots
         if(ln.cancelled)return;
         if(!isLessonPast(ds,sc.time))return;
         const present=(ln.attendance||{})[sid]===true;
@@ -3913,12 +4006,13 @@ function buildGroupJournal(gid){
   const todayStr=fmtDate(new Date());
   const entries=[];
 
-  // from sched_ entries
+  // from sched_ entries — only show if actually logged
   (g.schedule||[]).forEach(sc=>{
     getPastSchedDates(sc.day,90).forEach(ds=>{
       if(ds>todayStr)return;
       const synId='sched_'+gid+'_'+sc.day+'_'+sc.time;
       const ln=ld('tv2_ln_'+synId+'_'+ds,{});
+      if(!isLessonLogged(ln))return;
       if(ln.cancelled)return;
       if(!isLessonPast(ds,sc.time))return;
       const attendance=ln.attendance||{};
