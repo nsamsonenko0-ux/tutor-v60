@@ -33,6 +33,8 @@
   --status-debt:#a8420f;--status-prepay:#1f4e78;--status-ok:#2d5f3f;
   --neutral:#6b6b62;
   --cancel-bg:#d4d3ca;--cancel-ink:#4a4a40;
+  --text-on-accent:#fff;
+  --av-sm:24px;--av-md:28px;--av-lg:36px;
 }
 body{font-family:'Outfit',system-ui,-apple-system,sans-serif;font-size:15px;color:var(--ink);background:var(--bg);min-height:100vh}
 #app{display:flex;height:100vh;overflow:hidden}
@@ -40,10 +42,15 @@ svg use{pointer-events:none}
 
 /* Focus-visible — keyboard accessibility (WCAG 2.4.7) */
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
-button:focus-visible,.nav-i:focus-visible,.tab:focus-visible,.att-item:focus-visible,.hg-cell:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
-input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:0}
+button:focus-visible,.nav-i:focus-visible,.tab:focus-visible,.att-item:focus-visible,.hg-cell:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 /* Remove outline only for mouse users who didn't tab */
 :focus:not(:focus-visible){outline:none}
+/* Lesson modal view/edit mode */
+.ls-view-text{font-size:14px;color:var(--ink);min-height:22px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.ls-view-text.empty{color:var(--ink3);font-style:italic}
+.ls-edit-only{transition:opacity .15s}
+.ls-view-only{transition:opacity .15s}
 
 /* Sidebar */
 .sb{width:216px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
@@ -92,7 +99,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
 .st-row:last-child{border-bottom:none}
 .st-row:hover{background:var(--bg3)}
 .st-name-cell{display:flex;align-items:center;gap:9px}
-.st-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.st-av{width:var(--av-md);height:var(--av-md);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
 .st-name{font-weight:700;font-size:14px;font-family:'Syne',sans-serif}
 .st-note{font-size:12px;color:var(--ink3);margin-top:2px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .type-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:3px 8px;border-radius:99px}
@@ -175,7 +182,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
 .mclose:hover{background:var(--bg4);color:var(--ink)}
 .mclose svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
 .mbody{padding:20px 22px}
-.mfoot{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid var(--border2);position:sticky;bottom:0;background:var(--bg2);flex-wrap:wrap}
+.mfoot{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:20px 22px;border-top:1px solid var(--border2);position:sticky;bottom:0;background:var(--bg2);flex-wrap:wrap}
 .save-notice{display:none;width:100%;order:-1;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:600;color:#166534;align-items:center;gap:7px}
 .save-notice svg{flex-shrink:0;stroke:#16a34a;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 .save-notice.on{display:flex}
@@ -253,7 +260,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
 .ing-actions{display:flex;justify-content:flex-end;gap:6px}
 .ing-cancel{padding:5px 11px;border:1px solid var(--border);border-radius:7px;background:none;color:var(--ink3);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:background .14s}
 .ing-cancel:hover{background:var(--bg4)}
-.ing-save{padding:5px 13px;border:none;border-radius:7px;background:var(--accent);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .14s}
+.ing-save{padding:5px 13px;border:none;border-radius:7px;background:var(--accent);color:var(--text-on-accent);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .14s}
 .ing-save:hover{opacity:.88}
 
 /* Colors */
@@ -367,7 +374,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
 .att-item.present .att-cb{background:var(--accent);border-color:var(--accent)}
 .att-cb svg{width:10px;height:10px;stroke:var(--ink);stroke-width:2.5;fill:none;opacity:0;transition:opacity .14s}
 .att-item.present .att-cb svg{opacity:1}
-.att-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.att-av{width:var(--av-md);height:var(--av-md);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
 .att-name{font-size:13px;font-weight:500;flex:1}
 .att-status{font-size:12px;font-weight:600;padding:2px 8px;border-radius:99px}
 .att-item.present .att-status{background:var(--ok-m);color:var(--ok)}
@@ -376,7 +383,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
 /* Payment card */
 .pay-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
 .pay-card-head{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--border2)}
-.pay-card-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.pay-card-av{width:var(--av-lg);height:var(--av-lg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
 .pay-card-name{font-size:15px;font-weight:700;flex:1}
 .pay-card-groups{font-size:12px;color:var(--ink3)}
 .pay-balance{font-size:15px;font-weight:700;white-space:nowrap;text-align:right}
@@ -474,9 +481,9 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
     <div class="nav-i on" role="button" tabindex="0" aria-label="Головна" onclick="nav('dash')" id="n-dash"><svg width="17" height="17"><use href="#i-home"/></svg> Головна</div>
     <div class="nav-i" role="button" tabindex="0" aria-label="Учні" onclick="nav('students')" id="n-students"><svg width="17" height="17"><use href="#i-user"/></svg> Учні</div>
     <div class="nav-i" role="button" tabindex="0" aria-label="Групи" onclick="nav('groups')" id="n-groups"><svg width="17" height="17"><use href="#i-users"/></svg> Групи</div>
-    <div class="nav-i" role="button" tabindex="0" aria-label="Розклад" onclick="nav('schedule')" id="n-schedule"><svg width="17" height="17"><use href="#i-cal"/></svg> Розклад</div>
+    <div class="nav-i" role="button" tabindex="0" aria-label="Календар" onclick="nav('schedule')" id="n-schedule"><svg width="17" height="17"><use href="#i-cal"/></svg> Календар</div>
     <div class="nav-i" role="button" tabindex="0" aria-label="Оплати" onclick="nav('payments')" id="n-payments"><svg width="17" height="17"><use href="#i-coin"/></svg> Оплати</div>
-    <div class="nav-i" role="button" tabindex="0" aria-label="Журнал" onclick="nav('journal')" id="n-journal"><svg width="17" height="17"><use href="#i-journal"/></svg> Журнал</div>
+    <div class="nav-i" role="button" tabindex="0" aria-label="Відвідуваність" onclick="nav('journal')" id="n-journal"><svg width="17" height="17"><use href="#i-journal"/></svg> Відвідуваність</div>
   </nav>
   <div class="sb-footer">
     <div class="nav-i" role="button" tabindex="0" aria-label="Налаштування" onclick="nav('settings')" id="n-settings"><svg width="17" height="17"><use href="#i-settings"/></svg> Налаштування</div>
@@ -521,7 +528,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
   <div class="pg" id="pg-schedule">
     <div class="pg-head" style="flex-direction:column;align-items:flex-start;gap:14px">
       <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
-        <div class="pg-title">Розклад</div>
+        <div class="pg-title">Календар</div>
         <button class="btn btn-p" onclick="openEvent()"><svg width="15" height="15"><use href="#i-plus"/></svg> Нова подія</button>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
@@ -539,7 +546,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
 
   <!-- Journal -->
   <div class="pg" id="pg-journal">
-    <div class="pg-head"><div class="pg-title">Журнал відвідуваності</div></div>
+    <div class="pg-head"><div class="pg-title">Відвідуваність</div></div>
     <div style="display:flex;gap:16px;align-items:flex-start">
       <!-- Left panel -->
       <div style="width:224px;flex-shrink:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden">
@@ -716,7 +723,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
                   <div class="price-hint" id="ms-ind-hint"></div>
                 </div>
               </div>
-              <label class="flbl">Розклад індивідуальних занять</label>
+              <label class="flbl">Дні та час занять</label>
               <div class="fhint">Можна задати кілька слотів на тиждень</div>
               <div class="sched-list" id="ms-sched"></div>
               <button class="sched-add" id="ms-sched-add" onclick="addSched('ms-sched','s')">
@@ -755,7 +762,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
       <div id="ms-journal-section" style="display:none">
         <div class="field" style="margin-bottom:0">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-            <label class="flbl" style="margin-bottom:0">Журнал відвідуваності</label>
+            <label class="flbl" style="margin-bottom:0">Історія занять</label>
           </div>
           <div id="ms-journal" style="display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto"></div>
         </div>
@@ -813,7 +820,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
 
       <!-- Schedule -->
       <div class="field">
-        <label class="flbl">Розклад групи</label>
+        <label class="flbl">Дні та час групи</label>
         <div class="fhint">Задайте дні і час занять — з'явиться в розкладі для всіх учнів групи</div>
         <div class="sched-list" id="mg-sched"></div>
         <button class="sched-add" onclick="addSched('mg-sched','g')">
@@ -841,16 +848,11 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
         <textarea id="mg-notes" placeholder="Особливості групи, загальні цілі…"></textarea>
       </div>
 
-      <!-- Files -->
+      <!-- Materials link -->
       <div class="field">
-        <label class="flbl">Файли</label>
-        <div class="fhint">Матеріали, програма, домашні завдання</div>
-        <label class="file-upload" id="file-drop">
-          <svg width="18" height="18" style="display:inline;vertical-align:-4px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round"><use href="#i-paperclip"/></svg>
-          Натисніть або перетягніть файл сюди
-          <input type="file" id="mg-file-input" multiple onchange="handleFiles(event)">
-        </label>
-        <div class="file-list" id="mg-file-list"></div>
+        <label class="flbl">Матеріали групи</label>
+        <div class="fhint">Посилання на Google Drive, Notion або інший ресурс</div>
+        <input type="text" id="mg-materials" placeholder="https://drive.google.com/…">
       </div>
     </div>
     <div class="mfoot">
@@ -911,7 +913,7 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
         <label class="flbl">Дата і час</label>
         <div style="display:grid;grid-template-columns:1fr 100px;gap:8px">
           <input type="date" id="ev-date" onchange="checkEvConflict()">
-          <input type="text" id="ev-time" placeholder="Час" oninput="checkEvConflict()">
+          <input type="text" id="ev-time" placeholder="Час" oninput="applyTimeMask(this);checkEvConflict()">
         </div>
         <div id="ev-datetime-err" style="display:none;font-size:12px;color:var(--warn);margin-top:5px">Вкажіть дату і час</div>
         <div id="ev-conflict-warn" style="display:none;font-size:12px;color:var(--warn);margin-top:6px;align-items:center;gap:5px">
@@ -983,63 +985,86 @@ textarea{resize:vertical;min-height:75px;line-height:1.6}
             <input type="text" id="ls-link-input" placeholder="Додати посилання на зустріч…" oninput="onLsLinkInput()" style="border:none;background:transparent;font-size:13px;font-family:inherit;outline:none;flex:1;color:var(--ink);padding:0">
           </div>
         </div>
-        <!-- Змінити час button -->
-        <div style="padding-top:10px;border-top:1px solid var(--border2)">
-          <button class="btn btn-g btn-sm" id="ls-edit-btn" onclick="editLessonEvent()" style="font-size:12px">Змінити час</button>
+        <!-- Date/time edit — shown only in edit mode -->
+        <div id="ls-datetime-edit" class="ls-edit-only" style="display:none;padding-top:10px;border-top:1px solid var(--border2);display:none">
+          <div style="display:flex;gap:8px;align-items:center">
+            <div id="ls-edit-date-wrap" style="flex:1">
+              <label class="flbl" style="font-size:11px;margin-bottom:4px">Дата</label>
+              <input type="date" id="ls-edit-date" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;background:var(--bg);color:var(--ink);box-sizing:border-box">
+            </div>
+            <div style="width:90px">
+              <label class="flbl" style="font-size:11px;margin-bottom:4px">Час</label>
+              <input type="text" id="ls-edit-time" placeholder="__:__" maxlength="5" oninput="applyTimeMask(this)" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;background:var(--bg);color:var(--ink);box-sizing:border-box">
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Individual attendance -->
       <div id="ls-ind-attendance" style="display:none;margin-bottom:16px">
-        <label class="flbl" style="margin-bottom:8px">Відвідуваність</label>
+        <label class="flbl" style="margin-bottom:8px">Позначити присутність</label>
         <div id="ls-ind-att-list" style="display:flex;flex-direction:column;gap:6px"></div>
       </div>
 
       <!-- Group attendance list -->
       <div id="ls-attendance-section" style="display:none;margin-bottom:16px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <label class="flbl" style="margin-bottom:0">Відвідуваність</label>
+          <label class="flbl" style="margin-bottom:0">Позначити присутність</label>
           <button id="ls-mark-all-btn" class="btn btn-g btn-sm" onclick="markAllPresent()" style="font-size:12px;display:none">Відмітити всіх</button>
         </div>
         <div id="ls-attendance-list" style="display:flex;flex-direction:column;gap:6px"></div>
       </div>
 
       <!-- Topic -->
-      <div class="field">
+      <div class="field" id="ls-field-topic">
         <label class="flbl">Тема уроку</label>
-        <input type="text" id="ls-topic" placeholder="Напр.: Квадратні рівняння">
+        <div id="ls-topic-view" class="ls-view-text"></div>
+        <input type="text" id="ls-topic" placeholder="Напр.: Квадратні рівняння" class="ls-edit-only">
       </div>
 
       <!-- Homework -->
-      <div class="field" style="margin-top:14px">
+      <div class="field" id="ls-field-hw" style="margin-top:14px">
         <label class="flbl">Домашнє завдання</label>
-        <textarea id="ls-homework" placeholder="Напр.: Стор. 45, №3–7" style="min-height:60px"></textarea>
+        <div id="ls-homework-view" class="ls-view-text"></div>
+        <textarea id="ls-homework" placeholder="Напр.: Стор. 45, №3–7" style="min-height:60px" class="ls-edit-only"></textarea>
       </div>
 
       <!-- Notes -->
-      <div class="field" style="margin-top:14px">
+      <div class="field" id="ls-field-notes" style="margin-top:14px">
         <label class="flbl">Нотатки</label>
-        <div class="fhint">Спостереження, прогрес, що повторити наступного разу</div>
-        <textarea id="ls-notes" placeholder="Добре засвоїв тему, але плутає знаки…" style="min-height:70px"></textarea>
+        <div class="fhint ls-edit-only">Спостереження, прогрес, що повторити наступного разу</div>
+        <div id="ls-notes-view" class="ls-view-text"></div>
+        <textarea id="ls-notes" placeholder="Добре засвоїв тему, але плутає знаки…" style="min-height:70px" class="ls-edit-only"></textarea>
       </div>
 
-      <!-- Files -->
-      <div class="field" style="margin-top:14px">
-        <label class="flbl">Файли</label>
-        <label class="file-upload">
-          <svg width="16" height="16" style="display:inline;vertical-align:-3px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round"><use href="#i-paperclip"/></svg>
-          Прикріпити файл
-          <input type="file" id="ls-file-input" multiple onchange="handleLsFiles(event)" style="display:none">
-        </label>
-        <div class="file-list" id="ls-file-list"></div>
+      <!-- Materials link -->
+      <div class="field" id="ls-field-materials" style="margin-top:14px">
+        <label class="flbl">Матеріали</label>
+        <div class="fhint ls-edit-only">Посилання на Google Drive, Notion або інший ресурс</div>
+        <div id="ls-materials-view" class="ls-view-text"></div>
+        <input type="text" id="ls-materials" placeholder="https://drive.google.com/…" class="ls-edit-only">
       </div>
     </div>
-    <div class="mfoot">
+    <div class="mfoot" style="flex-direction:column;align-items:stretch;gap:0">
       <div class="save-notice" id="ls-notice"><svg width="14" height="14" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Збережено</div>
-      <div class="mfoot-l">
-        <button class="btn btn-d btn-sm" onclick="cancelLesson()">Скасувати заняття</button>
+      <!-- scope choice — shown when recurring datetime changes -->
+      <div id="ls-scope-choice" style="display:none;flex-direction:column;gap:10px;width:100%">
+        <div style="font-size:12px;color:var(--ink3)" id="ls-scope-label">Час змінено. Застосувати до:</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-g btn-sm" onclick="doSaveLesson('one')">Тільки цього заняття</button>
+          <button class="btn btn-p btn-sm" onclick="doSaveLesson('future')">Цього і всіх наступних</button>
+          <button class="btn btn-g btn-sm" onclick="hideLsScopeChoice()">Відмінити</button>
+        </div>
       </div>
-      <button class="btn btn-p" onclick="saveLesson()">Зберегти</button>
+      <!-- normal footer row -->
+      <div id="ls-foot-row" style="display:flex;align-items:center;gap:8px;width:100%">
+        <div class="mfoot-l ls-view-only">
+          <button class="btn btn-d btn-sm" onclick="cancelLesson()">Скасувати заняття</button>
+        </div>
+        <button class="btn btn-g ls-edit-only" onclick="setLsMode(false)">Відмінити</button>
+        <button class="btn btn-p ls-edit-only" onclick="onLsSave()">Зберегти</button>
+        <button class="btn btn-p ls-view-only" onclick="setLsMode(true)">Редагувати</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1499,7 +1524,7 @@ function addSched(cid,type){
       <option value="" disabled selected>День</option>
       ${DAYS.map((d,i)=>`<option value="${i}">${d}</option>`).join('')}
     </select>
-    <input type="text" class="sched-time" placeholder="Час" oninput="validateSchedItem(this)">
+    <input type="text" class="sched-time" placeholder="Час" oninput="applyTimeMask(this);validateSchedItem(this)">
     <span class="sched-conflict-msg"></span>
     <button class="sched-del" onclick="this.closest('.sched-item').remove()">
       <svg width="13" height="13"><use href="#i-trash"/></svg>
@@ -1547,7 +1572,7 @@ function fillSched(cid,schedule,type){
         <option value="" disabled>День</option>
         ${DAYS.map((d,i)=>`<option value="${i}"${i===sc.day?' selected':''}>${d}</option>`).join('')}
       </select>
-      <input type="text" class="sched-time" placeholder="Час" value="${sc.time||''}" oninput="validateSchedItem(this)">
+      <input type="text" class="sched-time" placeholder="Час" value="${sc.time||''}" oninput="applyTimeMask(this);validateSchedItem(this)">
       <span class="sched-conflict-msg"></span>
       <button class="sched-del" onclick="this.closest('.sched-item').remove()">
         <svg width="13" height="13"><use href="#i-trash"/></svg>
@@ -1652,7 +1677,7 @@ function msRenderView(s){
       const amt=price>0?` · ${fmt(Math.round(Math.abs(n)*price))}₴`:'';
       return`<span style="color:var(--warn);font-weight:700;font-size:13px">Борг: ${Math.abs(rounded)%1===0?Math.abs(rounded):Math.abs(rounded).toFixed(1)} ур.${amt}</span>`;
     }
-    if(rounded>0) return`<span style="color:var(--ok);font-weight:600;font-size:13px">Передплата: ${rounded%1===0?rounded:rounded.toFixed(1)} ур.</span>`;
+    if(rounded>0){const amtPre=price>0?` · ${fmt(Math.round(n*price))}₴`:'';return`<span style="color:var(--ok);font-weight:600;font-size:13px">Передплата: ${rounded%1===0?rounded:rounded.toFixed(1)} ур.${amtPre}</span>`;}
     return`<span style="color:var(--ok);font-size:13px">Без боргу</span>`;
   }
 
@@ -1731,9 +1756,39 @@ function msRenderView(s){
       ${grpBlocks}
     </div>`:''}
     ${s.notes?`<div style="margin-top:14px">
-      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Нотатки</div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Профільні нотатки</div>
       <div style="font-size:13px;color:var(--ink2);line-height:1.6;background:var(--bg3);border-radius:var(--r2);padding:11px 13px">${s.notes}</div>
-    </div>`:''}`;
+    </div>`:''}
+    ${(()=>{
+      const sid=s.id;
+      const history=[];
+      for(let i=0;i<localStorage.length;i++){
+        const k=localStorage.key(i);
+        if(!k||!k.startsWith('tv2_ln_'))continue;
+        try{const ln=JSON.parse(localStorage.getItem(k)||'{}');
+          if(ln.cancelled)continue;
+          if(ln.attended===true||(ln.attendance&&ln.attendance[sid]===true)){
+            const parts=k.replace('tv2_ln_','').split('_');
+            const ds=parts[parts.length-1];
+            if(ds&&ds.match(/^\d{4}-\d{2}-\d{2}$/))history.push({ds,topic:ln.topic||''});
+          }
+        }catch(e){}
+      }
+      history.sort((a,b)=>b.ds.localeCompare(a.ds));
+      const recent=history.slice(0,5);
+      if(!recent.length)return'';
+      const MO=['січ','лют','бер','квіт','трав','черв','лип','серп','вер','жовт','лист','груд'];
+      return`<div style="margin-top:14px">
+        <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Останні заняття</div>
+        <div style="background:var(--bg3);border-radius:var(--r2);overflow:hidden">
+          ${recent.map(({ds,topic},i)=>{const d=new Date(ds+'T00:00:00');const lbl=d.getDate()+' '+MO[d.getMonth()];
+            return`<div style="display:flex;gap:12px;padding:8px 13px;${i>0?'border-top:1px solid var(--border2)':''}">
+              <div style="font-size:12px;color:var(--ink3);min-width:70px;flex-shrink:0">${lbl}</div>
+              <div style="font-size:12px;color:var(--ink2)">${topic||'—'}</div>
+            </div>`;}).join('')}
+        </div>
+      </div>`;
+    })()}`;
 }
 
 function openStudent(id){
@@ -1795,7 +1850,18 @@ function saveStudent(){
     if(errMsg){errMsg.style.display='';setTimeout(()=>{errMsg.style.display='none';},2000);}
     ok=false;
   }
-  if(!msLtInd&&!msLtGrp){ok=false;}
+  if(!msLtInd&&!msLtGrp){
+    fieldError('lt-ind');fieldError('lt-grp');
+    const errId='lt-type-err';
+    if(!document.getElementById(errId)){
+      const err=document.createElement('div');
+      err.id=errId;err.style.cssText='font-size:12px;color:var(--warn);margin-top:6px';
+      err.textContent='Виберіть хоча б один тип занять';
+      document.querySelector('.lt-list').after(err);
+      setTimeout(()=>{const e=document.getElementById(errId);if(e)e.remove();},2500);
+    }
+    ok=false;
+  }
   if(!ok)return;
   const obj={id,name,cls:document.getElementById('ms-class').value.trim(),age:document.getElementById('ms-age').value.trim(),phone:document.getElementById('ms-phone').value.trim(),parent:document.getElementById('ms-parent').value.trim(),notes:document.getElementById('ms-notes').value.trim(),individual:msLtInd,individualPrice:rawP?Number(rawP):(settings.indPrice||0),schedule:getSchedFrom('ms-sched')};
   const idx=students.findIndex(s=>s.id===id);
@@ -1946,7 +2012,8 @@ function handleFiles(e){
   renderFileList();
 }
 function renderFileList(){
-  document.getElementById('mg-file-list').innerHTML=mgFiles.map((f,i)=>`
+  const el=document.getElementById('mg-file-list');if(!el)return;
+  el.innerHTML=mgFiles.map((f,i)=>`
     <div class="file-item">
       <svg width="13" height="13" style="stroke:var(--ink3);fill:none;stroke-width:1.9;stroke-linecap:round;flex-shrink:0"><use href="#i-paperclip"/></svg>
       <span class="file-item-name">${f.name}</span>
@@ -2016,12 +2083,13 @@ function openGroup(id){
   const g=id?getG(id):null;
   mgColor=g?.color||COLORS[groups.length%COLORS.length];
   mgPicked=new Set(g?.studentIds||[]);
-  mgFiles=g?.files||[];
+  mgFiles=[];
   document.getElementById('mg-title').textContent=g?g.name:'Нова група';
   document.getElementById('mg-id').value=id||'';
   document.getElementById('mg-name').value=g?.name||'';
   document.getElementById('mg-price').value=g?.groupPrice||'';
   document.getElementById('mg-notes').value=g?.notes||'';
+  document.getElementById('mg-materials').value=g?.materials||'';
   document.getElementById('mg-search').value='';
   document.getElementById('mg-del').style.display=g?'':'none';
   const delView=document.getElementById('mg-del-view');
@@ -2043,7 +2111,7 @@ function saveGroup(){
   const name=document.getElementById('mg-name').value.trim();
   if(!name){alert('Введіть назву');return}
   const rawP=document.getElementById('mg-price').value;
-  const obj={id,name,color:mgColor,groupPrice:rawP?Number(rawP):(settings.grpPrice||0),studentIds:[...mgPicked],schedule:getSchedFrom('mg-sched'),notes:document.getElementById('mg-notes').value.trim(),files:mgFiles};
+  const obj={id,name,color:mgColor,groupPrice:rawP?Number(rawP):(settings.grpPrice||0),studentIds:[...mgPicked],schedule:getSchedFrom('mg-sched'),notes:document.getElementById('mg-notes').value.trim(),materials:document.getElementById('mg-materials').value.trim()};
   const idx=groups.findIndex(g=>g.id===id);
   if(idx>=0)groups[idx]=obj;else groups.push(obj);
   sv('tv2_g',groups);
@@ -2109,8 +2177,11 @@ function getEventsForDate(ds){
     (s.schedule||[]).forEach(sc=>{
       const d=new Date(ds+'T00:00:00'),dow=(d.getDay()+6)%7;
       if(Number(sc.day)===dow){
+        const schedId='sched_'+s.id+'_'+sc.day+'_'+sc.time;
+        const lnCheck=ld('tv2_ln_'+schedId+'_'+ds,{});
+        if(lnCheck._skipped)return; // rescheduled for this date
         const cov=out.some(e=>e.whoId===s.id&&e.time===sc.time);
-        if(!cov)out.push({id:'sched_'+s.id+'_'+sc.day+'_'+sc.time,type:'recurring',whoId:s.id,whoType:'student',time:sc.time,_date:ds,_fromSched:true});
+        if(!cov)out.push({id:schedId,type:'recurring',whoId:s.id,whoType:'student',time:sc.time,_date:ds,_fromSched:true});
       }
     });
   });
@@ -2118,8 +2189,11 @@ function getEventsForDate(ds){
     (g.schedule||[]).forEach(sc=>{
       const d=new Date(ds+'T00:00:00'),dow=(d.getDay()+6)%7;
       if(Number(sc.day)===dow){
+        const schedId='sched_'+g.id+'_'+sc.day+'_'+sc.time;
+        const lnCheck=ld('tv2_ln_'+schedId+'_'+ds,{});
+        if(lnCheck._skipped)return;
         const cov=out.some(e=>e.whoId===g.id&&e.time===sc.time);
-        if(!cov)out.push({id:'sched_'+g.id+'_'+sc.day+'_'+sc.time,type:'recurring',whoId:g.id,whoType:'group',time:sc.time,_date:ds,_fromSched:true});
+        if(!cov)out.push({id:schedId,type:'recurring',whoId:g.id,whoType:'group',time:sc.time,_date:ds,_fromSched:true});
       }
     });
   });
@@ -2284,7 +2358,8 @@ function quickCreateEvent(ds,hour){
   openEvent();
   setEvType('once');
   document.getElementById('ev-date').value=ds;
-  document.getElementById('ev-time').value='';
+  if(hour!=null&&hour!==''){const h=String(hour).padStart(2,'0');document.getElementById('ev-time').value=h+':00';}
+  else{document.getElementById('ev-time').value='';}
   checkEvConflict();
 }
 
@@ -2331,6 +2406,10 @@ function setEvType(t){
   document.getElementById('ev-type-recurring').classList.toggle('on',t==='recurring');
   document.getElementById('ev-date-time-wrap').style.display=t==='once'?'':'none';
   document.getElementById('ev-slots-wrap').style.display=t==='recurring'?'':'none';
+  const titleEl=document.getElementById('ev-title');
+  if(titleEl&&!document.getElementById('ev-id').value){
+    titleEl.textContent=t==='once'?'Разове заняття':'Регулярне заняття';
+  }
 }
 
 // Who search
@@ -2394,7 +2473,7 @@ function addEvSlot(day,time){
     <option value="" disabled${day==null?' selected':''}>День</option>
     ${DAYS.map((d,i)=>`<option value="${i}"${i===day?' selected':''}>${d}</option>`).join('')}
   </select>
-  <input type="text" value="${time||''}" placeholder="Час" class="ev-slot-time" oninput="validateEvSlotTime(this)" style="width:70px;height:32px;padding:0 8px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-size:12px;font-family:inherit;outline:none;box-sizing:border-box">
+  <input type="text" value="${time||''}" placeholder="Час" class="ev-slot-time" oninput="applyTimeMask(this);validateEvSlotTime(this)" style="width:70px;height:32px;padding:0 8px;border:1px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-size:12px;font-family:inherit;outline:none;box-sizing:border-box">
   <button onclick="this.closest('div').remove()" style="background:none;border:none;cursor:pointer;color:var(--ink3);padding:3px;border-radius:5px;display:flex;align-items:center;margin-left:auto">
     <svg width="12" height="12" style="stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><use href="#i-x"/></svg>
   </button>`;
@@ -2587,13 +2666,14 @@ function openLesson(eventId,date){
   }
 
   const ln=ld('tv2_ln_'+eventId+'_'+date,{notes:'',files:[]});
-  lsFiles=[...(ln.files||[])];
+  lsFiles=[];
   lsIndAttended=ln.attended===true;
   document.getElementById('ls-event-id').value=eventId;
   document.getElementById('ls-date').value=date;
   document.getElementById('ls-notes').value=ln.notes||'';
   document.getElementById('ls-topic').value=ln.topic||'';
   document.getElementById('ls-homework').value=ln.homework||'';
+  document.getElementById('ls-materials').value=ln.materials||'';
 
   // header
   const color=getEvColor(ev);
@@ -2654,10 +2734,85 @@ function openLesson(eventId,date){
     linkAdd.style.display='flex';
     linkInput.value='';
   }
-  document.getElementById('ls-edit-btn').style.display=ev._fromSched?'none':'';
 
   renderLsFiles();
+  // past lessons are read-only — hide edit button
+  const isPast=date<fmtDate(new Date());
+  document.getElementById('ov-lesson').dataset.past=isPast?'1':'';
+  setLsMode(false);
   document.getElementById('ov-lesson').classList.add('on');
+}
+
+function setLsMode(edit){
+  // toggle edit-only and view-only elements
+  document.querySelectorAll('#ov-lesson .ls-edit-only').forEach(el=>el.style.display=edit?'':'none');
+  document.querySelectorAll('#ov-lesson .ls-view-only').forEach(el=>el.style.display=edit?'none':'');
+  if(!edit){
+    const topic=document.getElementById('ls-topic').value.trim();
+    const hw=document.getElementById('ls-homework').value.trim();
+    const notes=document.getElementById('ls-notes').value.trim();
+    const mats=document.getElementById('ls-materials').value.trim();
+    const fields=[
+      {rowId:'ls-field-topic',viewId:'ls-topic-view',val:topic},
+      {rowId:'ls-field-hw',viewId:'ls-homework-view',val:hw},
+      {rowId:'ls-field-notes',viewId:'ls-notes-view',val:notes},
+      {rowId:'ls-field-materials',viewId:'ls-materials-view',val:mats},
+    ];
+    let anyContent=false;
+    fields.forEach(({rowId,viewId,val})=>{
+      const row=document.getElementById(rowId);
+      const viewEl=document.getElementById(viewId);
+      if(!row||!viewEl)return;
+      if(val){
+        anyContent=true;
+        row.style.display='';
+        if(viewId==='ls-materials-view'&&val.startsWith('http')){
+          viewEl.innerHTML=`<a href="${val}" target="_blank" style="color:var(--accent);text-decoration:none;word-break:break-all">${val.replace(/^https?:\/\//,'')}</a>`;
+        } else {
+          viewEl.textContent=val;
+        }
+      } else {
+        row.style.display='none';
+      }
+    });
+    let emptyHint=document.getElementById('ls-empty-hint');
+    if(!emptyHint){
+      emptyHint=document.createElement('div');
+      emptyHint.id='ls-empty-hint';
+      emptyHint.style.cssText='font-size:13px;color:var(--ink3);padding:4px 0 8px;line-height:1.5';
+      emptyHint.innerHTML='Тема, ДЗ і нотатки поки не заповнені.<br><span style="opacity:.7">Натисніть <b>Редагувати</b>, щоб додати.</span>';
+      document.getElementById('ls-field-topic').parentNode.insertBefore(emptyHint,document.getElementById('ls-field-topic'));
+    }
+    emptyHint.style.display=anyContent?'none':'';
+    const linkAdd=document.getElementById('ls-link-add');
+    if(linkAdd)linkAdd.style.display='none';
+    hideLsScopeChoice();
+    // hide "Редагувати" for past lessons
+    const isPast=document.getElementById('ov-lesson').dataset.past==='1';
+    const editBtn=document.querySelector('#ov-lesson .ls-view-only.btn-p');
+    if(editBtn)editBtn.style.display=isPast?'none':'';
+  } else {
+    ['ls-field-topic','ls-field-hw','ls-field-notes','ls-field-materials'].forEach(id=>{
+      const el=document.getElementById(id);if(el)el.style.display='';
+    });
+    const hint=document.getElementById('ls-empty-hint');
+    if(hint)hint.style.display='none';
+    const linkBtn=document.getElementById('ls-link-btn');
+    const linkAdd=document.getElementById('ls-link-add');
+    if(linkBtn&&linkAdd&&linkBtn.style.display!=='flex')linkAdd.style.display='flex';
+    // populate date/time edit fields
+    const dateVal=document.getElementById('ls-date').value;
+    const evId=document.getElementById('ls-event-id').value;
+    const evs=getEvents();
+    const ev=evs.find(e=>e.id===evId);
+    const time=ev?ev.time:(evId.startsWith('sched_')?evId.split('_')[3]||'':'');
+    document.getElementById('ls-edit-date').value=dateVal;
+    document.getElementById('ls-edit-time').value=time;
+    // hide date field for recurring (can't change day-of-week for all future)
+    const isRecurring2=(evId.startsWith('sched_')||(getEvents().find(e=>e.id===evId)||{}).type==='recurring');
+    const dateWrap=document.getElementById('ls-edit-date-wrap');
+    if(dateWrap)dateWrap.style.display=isRecurring2?'none':'';
+  }
 }
 
 function toggleAttItemInd(el){
@@ -2676,30 +2831,114 @@ function toggleAttItem(el){
   updateMarkAllBtn();
   saveAttendanceNow();
 }
-function saveLesson(){
-  const eventId=document.getElementById('ls-event-id').value;
-  const date=document.getElementById('ls-date').value;
+function _collectLnData(eventId,date){
   const existing=ld('tv2_ln_'+eventId+'_'+date,{});
-  // collect group attendance
   const attItems=document.querySelectorAll('#ls-attendance-list .att-item');
   let attendance=null;
-  if(attItems.length){
-    attendance={};
-    attItems.forEach(el=>{attendance[el.dataset.sid]=el.dataset.present==='true'});
-  }
+  if(attItems.length){attendance={};attItems.forEach(el=>{attendance[el.dataset.sid]=el.dataset.present==='true'});}
   const ln={...existing,
     notes:document.getElementById('ls-notes').value.trim(),
     topic:document.getElementById('ls-topic').value.trim(),
     homework:document.getElementById('ls-homework').value.trim(),
-    files:lsFiles};
-  // individual attendance — read from att-item state
+    materials:document.getElementById('ls-materials').value.trim()};
   const indAtt=document.getElementById('ls-ind-attendance');
   if(indAtt&&indAtt.style.display!=='none'){
     const indItem=document.querySelector('#ls-ind-att-list .att-item');
-    if(indItem) ln.attended=indItem.dataset.present==='true';
+    if(indItem)ln.attended=indItem.dataset.present==='true';
   }
-  if(attendance!==null) ln.attendance=attendance;
-  sv('tv2_ln_'+eventId+'_'+date,ln);
+  if(attendance!==null)ln.attendance=attendance;
+  return ln;
+}
+
+function onLsSave(){
+  const eventId=document.getElementById('ls-event-id').value;
+  const date=document.getElementById('ls-date').value;
+  const newDate=document.getElementById('ls-edit-date').value||date;
+  const newTime=document.getElementById('ls-edit-time').value.trim();
+  const evs=getEvents();
+  const ev=evs.find(e=>e.id===eventId);
+  const origTime=ev?ev.time:(eventId.startsWith('sched_')?eventId.split('_')[3]||'':'');
+  const dateChanged=newDate&&newDate!==date;
+  const timeChanged=newTime&&newTime!==origTime;
+  const isRecurring=(ev&&ev.type==='recurring')||eventId.startsWith('sched_');
+  if((dateChanged||timeChanged)&&isRecurring){
+    document.getElementById('ls-scope-choice').style.display='flex';
+    document.getElementById('ls-foot-row').style.display='none';
+  } else {
+    doSaveLesson(null);
+  }
+}
+
+function hideLsScopeChoice(){
+  document.getElementById('ls-scope-choice').style.display='none';
+  document.getElementById('ls-foot-row').style.display='flex';
+}
+
+function doSaveLesson(scope){
+  hideLsScopeChoice();
+  const eventId=document.getElementById('ls-event-id').value;
+  const date=document.getElementById('ls-date').value;
+  const newDate=document.getElementById('ls-edit-date').value||date;
+  const newTime=document.getElementById('ls-edit-time').value.trim();
+  const ln=_collectLnData(eventId,date);
+  const evs=getEvents();
+  const ev=evs.find(e=>e.id===eventId);
+  const origTime=ev?ev.time:(eventId.startsWith('sched_')?eventId.split('_')[3]||'':'');
+  const dateChanged=newDate&&newDate!==date;
+  const timeChanged=newTime&&newTime!==origTime;
+
+  if(scope==='one'){
+    // Mark original slot as skipped (hides it from calendar)
+    const skipLn=ld('tv2_ln_'+eventId+'_'+date,{});
+    skipLn._skipped=true;
+    sv('tv2_ln_'+eventId+'_'+date,skipLn);
+    // Create a new one-off event at the new time/date
+    const targetDate=dateChanged?newDate:date;
+    const targetTime=timeChanged?newTime:origTime;
+    const whoId=ev?ev.whoId:(eventId.startsWith('sched_')?eventId.split('_')[1]:'');
+    const whoType=ev?ev.whoType:(getS(whoId)?'student':'group');
+    const newEv={id:'once_'+Date.now(),type:'once',date:targetDate,time:targetTime,whoId,whoType};
+    evs.push(newEv);
+    sv('tv2_events',evs);
+    // Save note under the new event key
+    sv('tv2_ln_'+newEv.id+'_'+targetDate,ln);
+  } else if(scope==='future'){
+    // Time-only change (date change for future scope not supported — would require day-of-week change)
+    if(timeChanged){
+      if(ev&&ev.type==='recurring'){
+        const d=new Date(date+'T00:00:00'),dow=(d.getDay()+6)%7;
+        const slot=(ev.slots||[]).find(s=>Number(s.day)===dow&&s.time===origTime);
+        if(slot)slot.time=newTime;
+        sv('tv2_events',evs);
+      } else if(eventId.startsWith('sched_')){
+        const parts=eventId.split('_');
+        const whoId=parts[1],day=Number(parts[2]);
+        const s=getS(whoId);const g=getG(whoId);
+        if(s){
+          const sc=(s.schedule||[]).find(x=>Number(x.day)===day&&x.time===origTime);
+          if(sc)sc.time=newTime;
+          sv('tv2_s',students);
+        } else if(g){
+          const sc=(g.schedule||[]).find(x=>Number(x.day)===day&&x.time===origTime);
+          if(sc)sc.time=newTime;
+          sv('tv2_g',groups);
+        }
+        // save note under new key (new time in eventId)
+        const newEventId='sched_'+eventId.split('_').slice(1,3).join('_')+'_'+newTime;
+        sv('tv2_ln_'+newEventId+'_'+date,ln);
+      }
+    } else {
+      sv('tv2_ln_'+eventId+'_'+date,ln);
+    }
+  } else if(ev&&ev.type==='once'){
+    if(dateChanged){ev.date=newDate;document.getElementById('ls-date').value=newDate;}
+    if(timeChanged)ev.time=newTime;
+    sv('tv2_events',evs);
+    sv('tv2_ln_'+eventId+'_'+(dateChanged?newDate:date),ln);
+  } else {
+    sv('tv2_ln_'+eventId+'_'+date,ln);
+  }
+  setLsMode(false);
   showNotice('ls-notice');
   renderSchedule();renderPayments();
   if(document.getElementById('pg-journal').classList.contains('on'))renderJournal();
@@ -2807,6 +3046,23 @@ function doCancelLesson(mode){
     const ln=ld('tv2_ln_'+eventId+'_'+date,{});
     sv('tv2_ln_'+eventId+'_'+date,{...ln,cancelled:true});
     toast('Заняття скасовано');
+    // offer reschedule
+    const ev=getEvents().find(e=>e.id===eventId);
+    if(ev){
+      setTimeout(()=>{
+        showConfirm('Перенести заняття на інший час?','Перенести').then(ok=>{
+          if(!ok)return;
+          openEvent();
+          setEvType('once');
+          document.getElementById('ev-who').value=ev.whoId;
+          document.getElementById('ev-who-search').value=ev.whoType==='group'?(getG(ev.whoId)?.name||''):(getS(ev.whoId)?.name||'');
+          document.getElementById('ev-who-selected-lbl').textContent=document.getElementById('ev-who-search').value;
+          document.getElementById('ev-who-selected').style.display='flex';
+          document.getElementById('ev-who-search').style.display='none';
+          evWhoVal=(ev.whoType==='group'?'g_':'s_')+ev.whoId;
+        });
+      },300);
+    }
   } else if(mode==='following'){
     // mark all occurrences from this date as cancelled by storing a "stop from" marker on the event
     const evs=getEvents();
@@ -2825,7 +3081,8 @@ function handleLsFiles(e){
   renderLsFiles();
 }
 function renderLsFiles(){
-  document.getElementById('ls-file-list').innerHTML=lsFiles.map((f,i)=>`
+  const el=document.getElementById('ls-file-list');if(!el)return;
+  el.innerHTML=lsFiles.map((f,i)=>`
     <div class="file-item">
       <svg width="13" height="13" style="stroke:var(--ink3);fill:none;stroke-width:1.9;stroke-linecap:round;flex-shrink:0"><use href="#i-paperclip"/></svg>
       <span class="file-item-name">${f.name}</span>
@@ -3327,22 +3584,12 @@ function obFinish(){
   if(grp) settings.grpPrice=grp;
   settings.dayStart=Number((start||'08:00').split(':')[0])||8;
   settings.dayEnd=Number((end||'20:00').split(':')[0])||20;
-  sv('tv2_settings',settings);
+  sv('tv2_cfg',settings);
   if(document.getElementById('cfg-ind')) document.getElementById('cfg-ind').value=ind||'';
   if(document.getElementById('cfg-grp')) document.getElementById('cfg-grp').value=grp||'';
   sv(OB_KEY,true);
-  document.getElementById('ov-onboard').style.display='none';
-  renderDash();
-  if(!ld('tv2_tooltip_shown')){
-    setTimeout(()=>{
-      const t=document.getElementById('fab-tooltip');
-      if(!t)return;
-      t.style.display='block';
-      sv('tv2_tooltip_shown',true);
-      const hide=()=>{t.style.display='none';document.removeEventListener('click',hide);};
-      document.addEventListener('click',hide);
-    },1500);
-  }
+  // Reload so all settings are applied cleanly from localStorage
+  location.reload();
 }
 
 function shakeField(id){
@@ -3670,7 +3917,7 @@ function buildGroupJournal(gid){
   (g.schedule||[]).forEach(sc=>{
     getPastSchedDates(sc.day,90).forEach(ds=>{
       if(ds>todayStr)return;
-      const synId='sched_'+gid+'_'+sc.day;
+      const synId='sched_'+gid+'_'+sc.day+'_'+sc.time;
       const ln=ld('tv2_ln_'+synId+'_'+ds,{});
       if(ln.cancelled)return;
       if(!isLessonPast(ds,sc.time))return;
@@ -3880,6 +4127,8 @@ document.addEventListener('keydown',e=>{
     e.preventDefault();e.target.click();
   }
 });
+function applyTimeMask(inp){const raw=inp.value.replace(/\D/g,'').slice(0,4);inp.value=raw.length>=2?raw.slice(0,2)+':'+raw.slice(2):raw;}
+document.addEventListener('keydown',function(e){if(e.key!=='Backspace')return;const inp=e.target;if(!inp.matches||!inp.matches('.sched-time,.ev-slot-time,#ev-time'))return;const v=inp.value;if(v.length===3&&v[2]===':'){e.preventDefault();inp.value=v.slice(0,1);}});
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2600)}
 function showNotice(id){const n=document.getElementById(id);if(!n)return;n.classList.add('on');clearTimeout(n._t);n._t=setTimeout(()=>n.classList.remove('on'),5000);}
 
